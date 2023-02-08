@@ -1,17 +1,19 @@
 package uz.nt.uzumproject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 public class Users {
     @Id
+    @GeneratedValue(generator = "userIdSequence")
+    @SequenceGenerator(name = "userIdSequence", sequenceName = "user_id_seq", allocationSize = 1)
     private Integer id;
     private String phoneNumber;
     private String firstName;
@@ -19,5 +21,5 @@ public class Users {
     private String middleName;
     private String email;
     private String gender;
-    private Date birhtDate;
+    private Date birthDate;
 }

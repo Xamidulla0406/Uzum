@@ -14,7 +14,7 @@ public class UsersMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setEmail(dto.getEmail());
         entity.setGender(dto.getGender());
-        entity.setBirhtDate(dto.getBirhtDate());
+        entity.setBirthDate(dto.getBirhtDate());
 
         return entity;
     }
@@ -28,7 +28,7 @@ public class UsersMapper {
         dto.setMiddleName(entity.getMiddleName());
         dto.setEmail(entity.getEmail());
         dto.setGender(entity.getGender());
-        dto.setBirhtDate(entity.getBirhtDate());
+        dto.setBirhtDate(entity.getBirthDate());
 
         return dto;
     }
