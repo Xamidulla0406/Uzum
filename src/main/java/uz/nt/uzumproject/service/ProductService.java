@@ -10,6 +10,9 @@ import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -34,4 +37,15 @@ public class ProductService {
                 .success(true)
                 .build();
     }
+
+    public List<ResponseDto<ProductDto>> getAllProduct() {
+        return productRepository.findAll().stream().
+                map(s -> ResponseDto.<ProductDto>builder()
+                        .message("OK")
+                        .success(true)
+                        .data(ProductMapper.toDto(s))
+                        .build()).collect(Collectors.toList());
+    }
+
+
 }
