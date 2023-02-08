@@ -14,13 +14,14 @@ public class UsersMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setEmail(dto.getEmail());
         entity.setGender(dto.getGender());
-        entity.setBirhtDate(dto.getBirhtDate());
+        entity.setBirthDate(dto.getBirthDate());
 
         return entity;
     }
 
     public static UsersDto toDto(Users entity) {
         UsersDto dto = new UsersDto();
+
         dto.setId(entity.getId());
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setFirstName(entity.getFirstName());
@@ -28,7 +29,7 @@ public class UsersMapper {
         dto.setMiddleName(entity.getMiddleName());
         dto.setEmail(entity.getEmail());
         dto.setGender(entity.getGender());
-        dto.setBirhtDate(entity.getBirhtDate());
+        dto.setBirthDate(entity.getBirthDate());
 
         return dto;
     }
