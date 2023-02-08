@@ -24,7 +24,7 @@ public class Product {
     private Integer amount;
     private String description;
     private String imageUrl;
-    private Boolean isAvailable;
+    private Boolean isAvailable = false;
 }
 //1. Product qo'shish
 //2. Bor productni o'zgartirish
