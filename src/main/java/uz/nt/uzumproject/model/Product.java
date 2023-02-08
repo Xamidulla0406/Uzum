@@ -20,6 +20,7 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
+
     private String imageUrl;
     private Boolean isAvailable;
 }
