@@ -38,7 +38,7 @@ public class ProductService {
                     .build();
         }
 
-        Optional<Product> product = productRepository.findByIdAndIsAvailable(productDto.getId(), true);
+        Optional<Product> product = productRepository.findById(productDto.getId());
 
         if(product.isEmpty()){
             return ResponseDto.<ProductDto>builder()
