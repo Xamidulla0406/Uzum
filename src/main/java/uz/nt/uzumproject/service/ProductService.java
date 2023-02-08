@@ -18,7 +18,15 @@ public class ProductService {
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
         Product product = ProductMapper.toEntity(productDto);
+        if(product.getAmount() < 0 || product.getPrice() < 0){
+            return ResponseDto.<ProductDto>builder()
+                    .data(ProductMapper.toDto(product))
+                    .code(2)
+                    .message("Xato ma'lumot")
+                    .build();
+        }
         productRepository.save(product);
+
 
         return ResponseDto.<ProductDto>builder()
                 .data(ProductMapper.toDto(product))
