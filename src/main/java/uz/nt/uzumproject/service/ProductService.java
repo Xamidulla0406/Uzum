@@ -20,6 +20,14 @@ public class ProductService {
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
         Product product = ProductMapper.toEntity(productDto);
+        if(product.getPrice() < 0 || product.getAmount() < 0){
+            return ResponseDto.<ProductDto>builder()
+                    .data(ProductMapper.toDto(product))
+                    .message("Xato ma'lumot")
+                    .code(2)
+                    .build();
+        }
+
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
@@ -31,6 +39,8 @@ public class ProductService {
     }
 
     public ResponseDto<ProductDto> update(ProductDto productDto) {
+
+
         if(productDto.getId() == null){
             return ResponseDto.<ProductDto>builder()
                     .code(-2)
@@ -47,6 +57,7 @@ public class ProductService {
                     .build();
         }
         Product product1=product.get();
+
         if(product1.getName() != null){
             product1.setName(productDto.getName());
         }
@@ -89,15 +100,5 @@ public class ProductService {
                 .data(productRepository.findAll().stream().map(ProductMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
-
-    public List<ResponseDto<ProductDto>> getAllProduct() {
-        return productRepository.findAll().stream().
-                map(s -> ResponseDto.<ProductDto>builder()
-                        .message("OK")
-                        .success(true)
-                        .data(ProductMapper.toDto(s))
-                        .build()).collect(Collectors.toList());
-    }
-
 
 }

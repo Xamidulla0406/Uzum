@@ -26,8 +26,8 @@ public class ProductResources {
 
 
     @GetMapping("/get-all-product")
-    public List<ResponseDto<ProductDto>> getAll(){
-        return productService.getAllProduct();
+    public ResponseDto<List<ProductDto>> getAll(){
+        return productService.getAllProducts();
     }
 
 
