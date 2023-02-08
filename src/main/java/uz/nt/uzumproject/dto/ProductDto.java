@@ -1,20 +1,15 @@
-package uz.nt.uzumproject.model;
+package uz.nt.uzumproject.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
-    @Id
-    @GeneratedValue(generator = "productIdSeq")
-    @SequenceGenerator(name = "productIdSeq", sequenceName = "product_id_seq", allocationSize = 1)
+public class ProductDto {
     private Integer id;
     private String name;
     private Integer price;
@@ -23,6 +18,3 @@ public class Product {
     private String imageUrl;
     private Boolean isAvailable;
 }
-//1. Product qo'shish
-//2. Bor productni o'zgartirish
-//3. Umumiy productlar ro'yxatini qaytarish
