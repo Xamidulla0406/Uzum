@@ -14,7 +14,11 @@ public class UsersMapper {
         entity.setMiddleName(dto.getMiddleName());
         entity.setEmail(dto.getEmail());
         entity.setGender(dto.getGender());
+<<<<<<< HEAD
         entity.setBirthDate(dto.getBirthDate());
+=======
+        entity.setBirthDate(dto.getBirhtDate());
+>>>>>>> origin/develop
 
         return entity;
     }
@@ -29,7 +33,11 @@ public class UsersMapper {
         dto.setMiddleName(entity.getMiddleName());
         dto.setEmail(entity.getEmail());
         dto.setGender(entity.getGender());
+<<<<<<< HEAD
         dto.setBirthDate(entity.getBirthDate());
+=======
+        dto.setBirhtDate(entity.getBirthDate());
+>>>>>>> origin/develop
 
         return dto;
     }

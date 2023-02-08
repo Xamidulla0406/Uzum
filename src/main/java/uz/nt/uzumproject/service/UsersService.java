@@ -6,6 +6,7 @@ import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.service.mapper.UsersMapper;
 
+<<<<<<< HEAD
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 
+=======
+import java.util.Optional;
+
+>>>>>>> origin/develop
 @Service
 @RequiredArgsConstructor
 public class UsersService {
@@ -32,24 +37,39 @@ public class UsersService {
     }
 
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto) {
+<<<<<<< HEAD
         if (usersDto.getId() == null) {
             return ResponseDto.<UsersDto>builder()
                     .message("User id is null")
+=======
+        if (usersDto.getId() == null){
+            return ResponseDto.<UsersDto>builder()
+                    .message("UserID is null")
+>>>>>>> origin/develop
                     .code(-2)
                     .data(usersDto)
                     .build();
         }
 
+<<<<<<< HEAD
         Optional<Users> optionalUsers = usersRepository.findById(usersDto.getId());
 
 
         if (optionalUsers.isEmpty() || optionalUsers.get().getIsActive() == 0) {
             return ResponseDto.<UsersDto>builder()
                     .message("User is not found with " + usersDto.getId() + " id")
+=======
+        Optional<Users> userOptional = usersRepository.findById(usersDto.getId());
+
+        if (userOptional.isEmpty()){
+            return ResponseDto.<UsersDto>builder()
+                    .message("User with ID " + usersDto.getId() + " is not found")
+>>>>>>> origin/develop
                     .code(-1)
                     .data(usersDto)
                     .build();
         }
+<<<<<<< HEAD
         Users user = optionalUsers.get();
 
         if (usersDto.getFirstName() != null) {
@@ -75,19 +95,40 @@ public class UsersService {
         }
         try {
             usersRepository.save(user);
+=======
+        Users user = userOptional.get();
+        if (usersDto.getGender() != null){
+            user.setGender(usersDto.getGender());
+        }
+        if (usersDto.getEmail() != null){
+            user.setEmail(usersDto.getEmail());
+        }
+        if (usersDto.getLastName() != null){
+            user.setLastName(usersDto.getLastName());
+        }
+        //...
+        try {
+            usersRepository.save(user);
+
+>>>>>>> origin/develop
             return ResponseDto.<UsersDto>builder()
                     .data(UsersMapper.toDto(user))
                     .success(true)
                     .message("OK")
                     .build();
+<<<<<<< HEAD
 
         } catch (Exception e) {
+=======
+        }catch (Exception e){
+>>>>>>> origin/develop
             return ResponseDto.<UsersDto>builder()
                     .data(UsersMapper.toDto(user))
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
         }
+<<<<<<< HEAD
 
     }
 
@@ -130,4 +171,20 @@ public class UsersService {
     public List<Users> getAll() {
         return usersRepository.findByIsActive(1);
     }
+=======
+    }
+
+    public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
+        return usersRepository.findFirstByPhoneNumber(phoneNumber)
+                .map(u -> ResponseDto.<UsersDto>builder()
+                        .data(UsersMapper.toDto(u))
+                        .success(true)
+                        .message("OK")
+                        .build())
+                .orElse(ResponseDto.<UsersDto>builder()
+                        .message("User with phone number " + phoneNumber + " is not found")
+                        .code(-1)
+                        .build());
+    }
+>>>>>>> origin/develop
 }
