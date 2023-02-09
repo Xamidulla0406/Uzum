@@ -1,13 +1,16 @@
 package uz.nt.uzumproject.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class ProductsDto {
+
     private Integer id;
     private String name;
     private Integer price;

@@ -30,5 +30,6 @@ public class ProductsResources {
     @GetMapping
     public ResponseDto<List<ProductsDto>> getAllProducts() {
         return service.getAllProducts();
+
     }
 }
