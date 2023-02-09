@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ErrorDto {
     private String field;
-    private
+    private String error;
 }
