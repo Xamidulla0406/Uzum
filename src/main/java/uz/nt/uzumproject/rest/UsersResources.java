@@ -2,9 +2,12 @@ package uz.nt.uzumproject.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.UsersService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -25,4 +28,15 @@ public class UsersResources {
     public ResponseDto<UsersDto> getUserByPhoneNumber(@RequestParam String phoneNumber){
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
+
+    @DeleteMapping
+    public ResponseDto<UsersDto> deleteUser(@RequestParam  Integer id){
+        return usersService.deleteUser(id);
+    }
+
+    @GetMapping("users-list")
+    private List<ResponseDto<UsersDto>> getUserById(){
+        return usersService.getAllUsers();
+    }
+
 }

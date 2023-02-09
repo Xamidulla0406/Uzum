@@ -8,7 +8,9 @@ import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.service.mapper.UsersMapper;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +19,7 @@ public class UsersService {
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = UsersMapper.toEntity(dto);
+        users.setIsActive((short) 1);
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
@@ -36,15 +39,15 @@ public class UsersService {
         }
 
         Optional<Users> userOptional = usersRepository.findById(usersDto.getId());
+        Users user = userOptional.get();
 
-        if (userOptional.isEmpty()){
+        if (userOptional.isEmpty() || user.getIsActive() == 0 ){
             return ResponseDto.<UsersDto>builder()
                     .message("User with ID " + usersDto.getId() + " is not found")
                     .code(-1)
                     .data(usersDto)
                     .build();
         }
-        Users user = userOptional.get();
         if (usersDto.getGender() != null){
             user.setGender(usersDto.getGender());
         }
@@ -83,5 +86,37 @@ public class UsersService {
                         .message("User with phone number " + phoneNumber + " is not found")
                         .code(-1)
                         .build());
+    }
+
+    public ResponseDto<UsersDto> deleteUser(Integer id) {
+        Optional<Users> optionalUser = usersRepository.findById(id);
+
+        Users users = optionalUser.get();
+
+        if(optionalUser.isEmpty() || users.getIsActive() == 0){
+            return ResponseDto.<UsersDto>builder()
+                    .message("User with ID " + id + " is not found")
+                    .code(-1)
+                    .build();
+        }
+
+        users.setIsActive((short) 0);
+        usersRepository.save(users);
+
+        return ResponseDto.<UsersDto>builder()
+                .message("User with ID " + id + " is deleted")
+                .code(0)
+                .data(UsersMapper.toDto(users))
+                .build();
+    }
+
+    public List<ResponseDto<UsersDto>> getAllUsers() {
+        return usersRepository.findAll().stream()
+                .map(u ->
+                ResponseDto.<UsersDto>builder()
+                        .data(UsersMapper.toDto(u))
+                        .success(true)
+                        .message("OK")
+                        .build()).collect(Collectors.toList());
     }
 }

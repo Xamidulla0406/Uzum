@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Setter
 public class Image {
     @Id
-    @GeneratedValue(generator = "image_seq")
-    @SequenceGenerator(name = "image_seq", sequenceName = "image_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "imageIdSeq")
+    @SequenceGenerator(name = "imageIdSeq", sequenceName = "image_id_seq", allocationSize = 1)
     private Integer id;
     private String name;
     private String url;
