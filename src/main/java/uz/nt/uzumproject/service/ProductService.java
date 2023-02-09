@@ -2,42 +2,51 @@ package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
+import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductValidator productValidator;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
 
-        if (productDto.getAmount() < 0){
-            productDto.setAmount(0);
+        List<ErrorDto> errors = productValidator.validate(productDto);
+        if (!errors.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .message(VALIDATION_ERROR)
+                    .code(VALIDATION_ERROR_CODE)
+                    .errors(errors)
+                    .data(productDto)
+                    .build();
         }
 
         Product product = ProductMapper.toEntity(productDto);
 
-        if (product.getAmount() != null && product.getAmount() > 0){
-            product.setIsAvailable(true);
-        }else {
-            product.setIsAvailable(false);
-        }
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
                 .success(true)
-                .code(0)
+                .code(OK_CODE)
                 .data(ProductMapper.toDto(product))
-                .message("OK")
+                .message(OK)
                 .build();
     }
 

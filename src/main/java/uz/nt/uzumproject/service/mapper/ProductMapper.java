@@ -7,13 +7,11 @@ public class ProductMapper {
 
     public static Product toEntity(ProductDto productDto){
         Product product = new Product();
-
-        product.setId(productDto.getId());
         product.setName(productDto.getName());
         product.setAmount(productDto.getAmount());
         product.setPrice(productDto.getPrice());
         product.setDescription(productDto.getDescription());
-        product.setIsAvailable(productDto.getIsAvailable());
+        product.setIsAvailable(true);
 
         return product;
     }
