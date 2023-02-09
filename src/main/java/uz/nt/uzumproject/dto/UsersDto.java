@@ -8,7 +8,6 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class UsersDto {
     private Integer id;
     private String phoneNumber;
@@ -17,5 +16,5 @@ public class UsersDto {
     private String middleName;
     private String email;
     private String gender;
-    private Date birhtDate;
+    private Date birthDate;
 }
