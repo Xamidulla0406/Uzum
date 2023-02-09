@@ -4,18 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
-
+public class ImageDto {
     private Integer id;
     private String name;
-    private Integer price;
-    private Integer amount;
-    private String description;
-    private String imageUrl;
-    private Boolean isAvailable;
+    private String extension;
 }

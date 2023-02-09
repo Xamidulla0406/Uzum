@@ -73,9 +73,9 @@ public class ProductService {
         if (productDto.getDescription() != null) {
             product.setDescription(productDto.getDescription());
         }
-        if (productDto.getImageUrl() != null) {
-            product.setImageUrl(productDto.getImageUrl());
-        }
+//        if (productDto.getImageUrl() != null) {
+//            product.setImages(productDto.getImageUrl());
+//        }
         try {
 
             productRepository.save(product);
