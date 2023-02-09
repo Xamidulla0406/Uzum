@@ -2,6 +2,8 @@ package uz.nt.uzumproject.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class ProductDto {
@@ -12,4 +14,5 @@ public class ProductDto {
     private String description;
     private String imageUrl;
     private Boolean isAvailable;
+
 }
