@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImageDto {
-    private Integer id;
-    private String name;
-    private String extension;
+public class ErrorDto {
+    private String field;
+    private
 }
