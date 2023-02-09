@@ -8,7 +8,6 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class UsersDto {
     private Integer id;
     private String phoneNumber;
