@@ -9,7 +9,7 @@ import uz.nt.uzumproject.service.UsersService;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class UsersResources {
+public class UsersResources {gti
     private final UsersService usersService;
     @PostMapping
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
