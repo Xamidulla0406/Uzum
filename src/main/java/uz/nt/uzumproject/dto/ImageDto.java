@@ -1,17 +1,17 @@
 package uz.nt.uzumproject.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Setter
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageDto {
-
     private Integer id;
     private String name;
     private String extension;
-    private MultipartFile file;
 }

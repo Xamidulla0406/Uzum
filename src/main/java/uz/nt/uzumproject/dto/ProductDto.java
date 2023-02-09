@@ -1,18 +1,21 @@
 package uz.nt.uzumproject.dto;
 
-import lombok.*;
-import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Setter
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDto {
+
     private Integer id;
     private String name;
     private Integer price;
     private Integer amount;
     private String description;
     private String imageUrl;
+    private Boolean isAvailable;
 }
