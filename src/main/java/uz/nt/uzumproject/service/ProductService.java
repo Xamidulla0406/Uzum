@@ -20,6 +20,7 @@ public class ProductService {
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
         Product product = ProductMapper.toEntity(productDto);
+
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
