@@ -15,78 +15,103 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+
     private final ProductRepository productRepository;
 
+    public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
 
-    public ResponseDto<ProductDto> add(ProductDto productDto) {
+        if (productDto.getAmount() < 0){
+            productDto.setAmount(0);
+        }
+
         Product product = ProductMapper.toEntity(productDto);
+
+        if (product.getAmount() != null && product.getAmount() > 0){
+            product.setIsAvailable(true);
+        }else {
+            product.setIsAvailable(false);
+        }
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
-                .code(0)
                 .success(true)
-                .message("OK")
+                .code(0)
                 .data(ProductMapper.toDto(product))
+                .message("OK")
                 .build();
     }
 
-    public ResponseDto<ProductDto> update(ProductDto productDto) {
-        if(productDto.getId() == null){
+    public ResponseDto<ProductDto> updateProduct(ProductDto productDto) {
+        if (productDto.getId() == null) {
             return ResponseDto.<ProductDto>builder()
+                    .message("Product ID is null")
                     .code(-2)
-                    .message("ID is null")
                     .build();
         }
 
-        Optional<Product> product = productRepository.findById(productDto.getId());
+        Optional<Product> optional = productRepository.findById(productDto.getId());
 
-        if(product.isEmpty()){
+        if (optional.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
                     .code(-1)
-                    .message("Product with this id not found")
+                    .message("Product with ID " + productDto.getId() + " is not found!")
                     .build();
         }
-        Product product1=product.get();
-        if(product1.getName() != null){
-            product1.setName(productDto.getName());
+
+        Product product = optional.get();
+
+        if (productDto.getName() != null) {
+            product.setName(productDto.getName());
         }
-        if(product1.getAmount() != null){
-            product1.setAmount(productDto.getAmount());
+        if (productDto.getPrice() != null && productDto.getPrice() > 0) {
+            product.setPrice(productDto.getPrice());
         }
-        if(product1.getAmount()!=null){
-            product1.setAmount(productDto.getAmount());
+        if (productDto.getAmount() != null && productDto.getAmount() > 0) {
+            product.setIsAvailable(true);
+            product.setAmount(productDto.getAmount());
         }
-        if(product1.getPrice()!=null){
-            product1.setPrice(productDto.getPrice());
+        if (productDto.getDescription() != null) {
+            product.setDescription(productDto.getDescription());
         }
-        if(product1.getDescription()!=null){
-            product1.setDescription(productDto.getDescription());
-        }
-        if(product1.getIsAvailable()!=null){
-            product1.setIsAvailable(productDto.getIsAvailable());
-        }
+//        if (productDto.getImageUrl() != null) {
+//            product.setImages(productDto.getImageUrl());
+//        }
         try {
-            productRepository.save(product1);
+
+            productRepository.save(product);
 
             return ResponseDto.<ProductDto>builder()
+                    .message("OK")
+                    .data(ProductMapper.toDto(product))
                     .success(true)
-                    .data(ProductMapper.toDto(product1))
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseDto.<ProductDto>builder()
-                    .code(1)
                     .message("Error while saving product: " + e.getMessage())
+                    .code(1)
                     .build();
         }
-
     }
 
     public ResponseDto<List<ProductDto>> getAllProducts() {
         return ResponseDto.<List<ProductDto>>builder()
-                .code(0)
                 .message("OK")
+                .code(0)
                 .success(true)
-                .data(productRepository.findAll().stream().map(p->ProductMapper.toDto(p)).collect(Collectors.toList()))
+                .data( productRepository.findAll().stream().map(ProductMapper::toDto).collect(Collectors.toList()))
                 .build();
+    }
+    public ResponseDto<ProductDto> getProductById(Integer id) {
+        return productRepository.findById(id)
+                .map(products -> ResponseDto.<ProductDto>builder()
+                        .data(ProductMapper.toDto(products))
+                        .success(true)
+                        .message("OK")
+                        .build())
+                .orElse(ResponseDto.<ProductDto>builder()
+                        .message("Product with id " + id + " not found")
+                        .code(-1)
+                        .build()
+                );
     }
 }
