@@ -2,46 +2,51 @@ package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.ProductValidator;
+import uz.nt.uzumproject.service.validator.AppStatusCodes.*
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductValidator productValidator;
 
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
-        if (productDto.getAmount() < 0) {
+        if(!productValidator.productValidator(productDto).isEmpty()){
             return ResponseDto.<ProductDto>builder()
-                    .success(false)
-                    .code(-2)
-                    .message("wrong input amount of product")
+                    .code(VALIDATION_ERROR_CODE)
+                    .errors(productValidator.productValidator(productDto))
                     .build();
         }
-            Product product = ProductMapper.toEntity(productDto);
-            product.setIsAvailable(true);
-            productRepository.save(product);
+        Product product = ProductMapper.toEntity(productDto);
+        product.setIsAvailable(true);
+        productRepository.save(product);
 
-            return ResponseDto.<ProductDto>builder()
-                    .code(0)
-                    .success(true)
-                    .message("OK")
-                    .data(ProductMapper.toDto(product))
-                    .build();
+        return ResponseDto.<ProductDto>builder()
+                .code(OK_CODE)
+                .success(true)
+                .message("OK")
+                .data(ProductMapper.toDto(product))
+                .build();
 
     }
         public ResponseDto<ProductDto> update (ProductDto productDto){
             if (productDto.getId() == null) {
                 return ResponseDto.<ProductDto>builder()
-                        .code(-2)
+                        .code(VALIDATION_ERROR_CODE)
                         .message("ID is null")
                         .build();
             }
