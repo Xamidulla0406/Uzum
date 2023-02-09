@@ -1,12 +1,9 @@
 package uz.nt.uzumproject.dto;
-
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class ProductDto {
     private Integer id;
     private String name;

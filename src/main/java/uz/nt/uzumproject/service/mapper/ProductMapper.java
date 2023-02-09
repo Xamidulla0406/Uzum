@@ -4,31 +4,30 @@ import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.model.Product;
 
 public class ProductMapper {
-    public static Product toEntity(ProductDto dto) {
-        Product entity = new Product();
 
-        entity.setId(dto.getId());
-        entity.setName(dto.getName());
-        entity.setAmount(dto.getAmount());
-        entity.setPrice(dto.getPrice());
-        entity.setDescription(dto.getDescription());
-        entity.setImageUrl(dto.getImageUrl());
-        entity.setIsAvailable(dto.getIsAvailable());
+    public static Product toEntity(ProductDto productDto){
+        Product product = new Product();
 
-        return entity;
+        product.setId(productDto.getId());
+        product.setName(productDto.getName());
+        product.setAmount(productDto.getAmount());
+        product.setPrice(productDto.getPrice());
+        product.setDescription(productDto.getDescription());
+        product.setIsAvailable(productDto.getIsAvailable());
+
+        return product;
     }
 
-    public static ProductDto toDto(Product entity) {
-        ProductDto dto = new ProductDto();
+    public static ProductDto toDto(Product product){
+        ProductDto productDto = new ProductDto();
 
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setPrice(entity.getPrice());
-        dto.setAmount(entity.getAmount());
-        dto.setDescription(entity.getDescription());
-        dto.setIsAvailable(entity.getIsAvailable());
-        dto.setImageUrl(entity.getImageUrl());
+        productDto.setId(product.getId());
+        productDto.setName(product.getName());
+        productDto.setAmount(product.getAmount());
+        productDto.setPrice(product.getPrice());
+        productDto.setDescription(product.getDescription());
+        productDto.setIsAvailable(product.getIsAvailable());
 
-        return dto;
+        return productDto;
     }
 }

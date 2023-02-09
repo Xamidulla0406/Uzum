@@ -22,9 +22,8 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
-    @OneToMany
-    private List<Image> imagesList;
-    private String imageUrl;
+    @OneToMany(mappedBy = "product")
+    private List<Image> images;
     private Boolean isAvailable;
 }
 //1. Product qo'shish

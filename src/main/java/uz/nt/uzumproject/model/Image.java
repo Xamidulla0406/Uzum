@@ -1,6 +1,5 @@
 package uz.nt.uzumproject.model;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

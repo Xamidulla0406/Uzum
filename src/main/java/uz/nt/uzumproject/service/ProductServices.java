@@ -6,7 +6,7 @@ import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
-import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.mapper.ProductsMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +18,12 @@ public class ProductServices {
     private final ProductRepository repository;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
-        Product product = ProductMapper.toEntity(productDto);
+        Product product = ProductsMapper.toEntity(productDto);
         repository.save(product);
 
         return ResponseDto.<ProductDto>builder()
                 .success(true)
-                .data(ProductMapper.toDto(product))
+                .data(ProductsMapper.toDto(product))
                 .message("OK")
                 .build();
     }
@@ -77,13 +77,13 @@ public class ProductServices {
             repository.save(product);
 
             return ResponseDto.<ProductDto>builder()
-                    .data(ProductMapper.toDto(product))
+                    .data(ProductsMapper.toDto(product))
                     .success(true)
                     .message("OK")
                     .build();
         } catch (Exception e) {
             return ResponseDto.<ProductDto>builder()
-                    .data(ProductMapper.toDto(product))
+                    .data(ProductsMapper.toDto(product))
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
@@ -97,7 +97,7 @@ public class ProductServices {
                 .success(true)
                 .data(repository.findAll()
                         .stream()
-                        .map(p -> ProductMapper.toDto(p))
+                        .map(p -> ProductsMapper.toDto(p))
                         .collect(Collectors.toList()))
                 .build();
     }
