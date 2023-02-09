@@ -1,8 +1,11 @@
 package uz.nt.uzumproject.model;
 
 import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,7 +19,8 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
-    private String imageUrl;
+    @OneToMany(mappedBy = "product")
+    private List<Image> images;
     private Boolean isAvailable;
 }
 //1. Product qo'shish
