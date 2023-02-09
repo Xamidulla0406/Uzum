@@ -16,6 +16,7 @@ public class ProductResources {
 
     @PostMapping
     public ResponseDto<ProductDto> add(@RequestBody ProductDto productDto){
+
         return productService.add(productDto);
     }
 
@@ -27,6 +28,7 @@ public class ProductResources {
 
     @GetMapping("/get-all-product")
     public ResponseDto<List<ProductDto>> getAll(){
+
         return productService.getAllProducts();
     }
 
