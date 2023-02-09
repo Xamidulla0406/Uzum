@@ -26,10 +26,12 @@ import java.time.format.DateTimeFormatterBuilder;
 public class ImageService {
     private final ImageRepository imageRepository;
     public ResponseDto<Image> saveImage(MultipartFile file) {
+
         Image image = new Image();
         image.setName(file.getOriginalFilename());
         image.setExtension(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         image.setCreatedAt(LocalDateTime.now());
+
 
         try {
             String filePath;

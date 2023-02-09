@@ -21,6 +21,7 @@ public class UsersMapper {
 
     public static UsersDto toDto(Users entity) {
         UsersDto dto = new UsersDto();
+
         dto.setId(entity.getId());
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setFirstName(entity.getFirstName());

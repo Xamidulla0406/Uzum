@@ -22,4 +22,5 @@ public class Users {
     private String email;
     private String gender;
     private Date birthDate;
+    private short isActive;
 }
