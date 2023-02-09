@@ -9,7 +9,7 @@ import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
-import uz.nt.uzumproject.service.validator.AppStatusCodes.*
+import uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 
 import java.util.List;
 import java.util.Optional;
