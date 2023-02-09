@@ -5,24 +5,29 @@ import uz.nt.uzumproject.model.Product;
 
 public class ProductMapper {
 
-    public static Product toEntity(ProductDto productDto) {
+    public static Product toEntity(ProductDto productDto){
         Product product = new Product();
+
+        product.setId(productDto.getId());
         product.setName(productDto.getName());
-        product.setPrice(productDto.getPrice());
         product.setAmount(productDto.getAmount());
+        product.setPrice(productDto.getPrice());
         product.setDescription(productDto.getDescription());
-        product.setImageUrl(productDto.getImageUrl());
+        product.setIsAvailable(productDto.getIsAvailable());
+
         return product;
     }
 
-    public static ProductDto toDto(Product product) {
+    public static ProductDto toDto(Product product){
         ProductDto productDto = new ProductDto();
+
         productDto.setId(product.getId());
         productDto.setName(product.getName());
-        productDto.setPrice(product.getPrice());
         productDto.setAmount(product.getAmount());
+        productDto.setPrice(product.getPrice());
         productDto.setDescription(product.getDescription());
-        productDto.setImageUrl(product.getImageUrl());
+        productDto.setIsAvailable(product.getIsAvailable());
+
         return productDto;
     }
 }
