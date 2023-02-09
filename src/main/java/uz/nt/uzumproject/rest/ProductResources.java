@@ -4,30 +4,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
-import uz.nt.uzumproject.dto.UsersDto;
-import uz.nt.uzumproject.service.ProductService;
-import uz.nt.uzumproject.service.UsersService;
+import uz.nt.uzumproject.model.Product;
+import uz.nt.uzumproject.service.ProductsService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductResources {
-    private final ProductService productService;
+    private final ProductsService service;
     @PostMapping
     public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
-        return productService.post(productDto);
+        return service.addProduct(productDto);
     }
 
     @PatchMapping
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
-        return productService.patch(productDto);
+    public ResponseDto<ProductDto> updateUser(@RequestBody ProductDto productDto){
+        return service.editProducts(productDto);
     }
-
-
-    @GetMapping()
-    public ResponseDto<List<ProductDto>> get(){
-        return productService.get();
+    @GetMapping
+    public ResponseDto<List<ProductDto>> getAll(){
+        return service.getAll();
     }
 }
