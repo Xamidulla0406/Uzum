@@ -75,6 +75,7 @@ public class UsersService {
 
             return ResponseDto.<UsersDto>builder()
                     .data(UsersMapper.toDto(user))
+                    .code(0)
                     .success(true)
                     .message("OK")
                     .build();

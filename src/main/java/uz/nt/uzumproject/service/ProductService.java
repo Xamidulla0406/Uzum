@@ -62,22 +62,22 @@ public class ProductService {
                         .message("wrong input amount of product")
                         .build();
             }
-            if (product.getName() != null) {
+            if (productDto.getName() != null) {
                 product.setName(productDto.getName());
             }
-            if (product.getAmount() != null) {
+            if (productDto.getAmount() != null) {
                 product.setAmount(productDto.getAmount());
             }
-            if (product.getAmount() != null) {
+            if (productDto.getAmount() != null) {
                 product.setAmount(productDto.getAmount());
             }
-            if (product.getPrice() != null) {
+            if (productDto.getPrice() != null) {
                 product.setPrice(productDto.getPrice());
             }
-            if (product.getDescription() != null) {
+            if (productDto.getDescription() != null) {
                 product.setDescription(productDto.getDescription());
             }
-            if (product.getIsAvailable() != null) {
+            if (productDto.getIsAvailable() != null) {
                 product.setIsAvailable(productDto.getIsAvailable());
             }
             try {
