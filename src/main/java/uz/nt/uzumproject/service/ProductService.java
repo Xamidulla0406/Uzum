@@ -52,9 +52,7 @@ public class ProductService {
         if(dto.getDescription() != null){
             product.setDescription(dto.getDescription());
         }
-        if(dto.getImageUrl() != null){
-            product.setImageUrl(dto.getImageUrl());
-        }
+
         if(dto.getPrice() != null){
             product.setPrice(dto.getPrice());
         }
