@@ -1,12 +1,10 @@
 package uz.nt.uzumproject.service.mapper;
 
-import uz.nt.uzumproject.dto.ProductsDto;
-import uz.nt.uzumproject.dto.UsersDto;
+import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.model.Product;
-import uz.nt.uzumproject.model.Users;
 
 public class ProductsMapper {
-    public static Product toEntity(ProductsDto dto) {
+    public static Product toEntity(ProductDto dto) {
         Product entity = new Product();
 
         entity.setId(dto.getId());
@@ -20,8 +18,8 @@ public class ProductsMapper {
         return entity;
     }
 
-    public static ProductsDto toDto(Product entity) {
-        ProductsDto dto = new ProductsDto();
+    public static ProductDto toDto(Product entity) {
+        ProductDto dto = new ProductDto();
 
         dto.setId(entity.getId());
         dto.setName(entity.getName());

@@ -2,13 +2,9 @@ package uz.nt.uzumproject.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import uz.nt.uzumproject.dto.ProductsDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.UsersService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -25,7 +21,6 @@ UsersResources {
     public ResponseDto<UsersDto> updateUser(@RequestBody UsersDto usersDto){
         return usersService.updateUser(usersDto);
     }
-
 
 
 
