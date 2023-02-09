@@ -10,4 +10,5 @@ import uz.nt.uzumproject.service.ProductService;
 @RequiredArgsConstructor
 public class ProductResources {
     private final ProductService productService;
+
 }
