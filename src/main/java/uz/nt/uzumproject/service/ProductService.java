@@ -2,39 +2,48 @@ package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
+import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductValidator productValidator;
 
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
-        if (productDto.getAmount() < 0) {
+        List<ErrorDto> error = productValidator.getError(productDto);
+
+        if(!error.isEmpty()){
             return ResponseDto.<ProductDto>builder()
-                    .success(false)
-                    .code(-2)
-                    .message("wrong input amount of product")
+                    .message(VALIDATION_ERROR)
+                    .error(error)
+                    .code(VALIDATION_ERROR_CODE)
                     .build();
         }
 
-            Product product = ProductMapper.toEntity(productDto);
-            product.setIsAvailable(true);
-            productRepository.save(product);
+        Product product = ProductMapper.toEntity(productDto);
+        product.setIsAvailable(true);
+        productRepository.save(product);
 
-            return ResponseDto.<ProductDto>builder()
-                    .code(0)
+        return ResponseDto.<ProductDto>builder()
                     .success(true)
-                    .message("OK")
+                    .message(OK)
                     .data(ProductMapper.toDto(product))
                     .build();
 
@@ -42,8 +51,8 @@ public class ProductService {
         public ResponseDto<ProductDto> update (ProductDto productDto){
             if (productDto.getId() == null) {
                 return ResponseDto.<ProductDto>builder()
-                        .code(-2)
-                        .message("ID is null")
+                        .code(VALIDATION_ERROR_CODE)
+                        .message(NULL_VALUE)
                         .build();
             }
 
@@ -51,16 +60,15 @@ public class ProductService {
 
             if (productOptional.isEmpty()) {
                 return ResponseDto.<ProductDto>builder()
-                        .code(-1)
-                        .message("Product with this id not found")
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .message(NOT_FOUND)
                         .build();
             }
             Product product = productOptional.get();
             if (productDto.getAmount() < 0) {
                 return ResponseDto.<ProductDto>builder()
-                        .success(false)
-                        .code(-2)
-                        .message("wrong input amount of product")
+                        .code(VALIDATION_ERROR_CODE)
+                        .message(UNEXPECTED_ERROR)
                         .build();
             }
             if (productDto.getName() != null) {
@@ -89,11 +97,12 @@ public class ProductService {
 
                 return ResponseDto.<ProductDto>builder()
                         .success(true)
+                        .message(OK)
                         .data(ProductMapper.toDto(product))
                         .build();
             } catch (Exception e) {
                 return ResponseDto.<ProductDto>builder()
-                        .code(1)
+                        .code(DATABASE_ERROR_CODE)
                         .message("Error while saving product: " + e.getMessage())
                         .build();
             }
@@ -102,8 +111,7 @@ public class ProductService {
 
         public ResponseDto<List<ProductDto>> getAllProducts () {
             return ResponseDto.<List<ProductDto>>builder()
-                    .code(0)
-                    .message("OK")
+                    .message(OK)
                     .success(true)
                     .data(productRepository.findAll().stream().map(p->ProductMapper.toDto(p)).collect(Collectors.toList()))
                     .build();
