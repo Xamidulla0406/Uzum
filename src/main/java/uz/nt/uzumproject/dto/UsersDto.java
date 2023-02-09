@@ -16,5 +16,5 @@ public class UsersDto {
     private String middleName;
     private String email;
     private String gender;
-    private Date birhtDate;
+    private Date birthDate;
 }
