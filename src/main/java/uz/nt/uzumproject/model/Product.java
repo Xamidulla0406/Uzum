@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -20,7 +22,8 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
-
+    @OneToMany
+    private List<Image> imagesList;
     private String imageUrl;
     private Boolean isAvailable;
 }
