@@ -17,5 +17,6 @@ public class ProductDto {
     private Integer amount;
     private String description;
     private String imageUrl;
+
     private Boolean isAvailable;
 }
