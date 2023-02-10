@@ -8,7 +8,6 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
-import uz.nt.uzumproject.service.mapper.ProductMapperManual;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
