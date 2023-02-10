@@ -1,33 +1,19 @@
 package uz.nt.uzumproject.service.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.model.Product;
+import uz.nt.uzumproject.service.ProductService;
 
-public class ProductMapper {
+@Mapper(componentModel = "spring")
+public abstract class ProductMapper {
 
-    public static Product toEntity(ProductDto productDto){
-        Product product = new Product();
 
-        product.setId(productDto.getId());
-        product.setName(productDto.getName());
-        product.setAmount(productDto.getAmount());
-        product.setPrice(productDto.getPrice());
-        product.setDescription(productDto.getDescription());
-        product.setIsAvailable(productDto.getIsAvailable());
+    @Mapping(target = "isAvailable", expression = "java(true)")
+    public abstract Product toEntity(ProductDto dto);
 
-        return product;
-    }
 
-    public static ProductDto toDto(Product product){
-        ProductDto productDto = new ProductDto();
-
-        productDto.setId(product.getId());
-        productDto.setName(product.getName());
-        productDto.setAmount(product.getAmount());
-        productDto.setPrice(product.getPrice());
-        productDto.setDescription(product.getDescription());
-        productDto.setIsAvailable(product.getIsAvailable());
-
-        return productDto;
-    }
+    public abstract ProductDto toProduct(Product product);
 }

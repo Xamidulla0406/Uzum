@@ -9,6 +9,8 @@ import uz.nt.uzumproject.dto.ImageDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Image;
 import uz.nt.uzumproject.repository.ImageRepository;
+import uz.nt.uzumproject.service.mapper.ImageMapper;
+import uz.nt.uzumproject.service.mapper.UsersMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +27,14 @@ import java.time.format.DateTimeFormatterBuilder;
 @Slf4j
 public class ImageService {
     private final ImageRepository imageRepository;
-    public ResponseDto<Image> saveImage(MultipartFile file) {
+    private final UsersMapper usersMapper;
+    private final ImageMapper imageMapper;
+    public ResponseDto<ImageDto> saveImage(MultipartFile file) {
 
         Image image = new Image();
         image.setName(file.getOriginalFilename());
         image.setExtension(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         image.setCreatedAt(LocalDateTime.now());
-
 
         try {
             String filePath;
@@ -39,16 +42,16 @@ public class ImageService {
             image.setUrl(filePath);
             imageRepository.save(image);
 
-            return ResponseDto.<Image>builder()
-                    .data(image)
+            return ResponseDto.<ImageDto>builder()
+                    .data(imageMapper.toDto(image))
                     .message("OK")
                     .success(true)
                     .build();
         } catch (IOException e) {
             log.error("Error while saving file: {}", e.getMessage());
-            return ResponseDto.<Image>builder()
+            return ResponseDto.<ImageDto>builder()
                     .code(2)
-                    .data(image)
+                    .data(imageMapper.toDto(image))
                     .message("Error while saving file: " + e.getMessage())
                     .build();
         }

@@ -7,6 +7,7 @@ import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.service.mapper.UsersMapper;
+import uz.nt.uzumproject.service.mapper.UsersMapperManual;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,15 +17,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final UsersMapper usersMapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = UsersMapper.toEntity(dto);
+        Users users = usersMapper.toEntity(dto);
         users.setIsActive((short) 1);
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
-                .data(UsersMapper.toDto(users))
+                .data(usersMapper.toDto(users))
                 .message("OK")
                 .build();
     }
@@ -62,13 +64,13 @@ public class UsersService {
             usersRepository.save(user);
 
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(UsersMapperManual.toDto(user))
                     .success(true)
                     .message("OK")
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(UsersMapperManual.toDto(user))
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
@@ -78,7 +80,7 @@ public class UsersService {
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
         return usersRepository.findFirstByPhoneNumber(phoneNumber)
                 .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(UsersMapper.toDto(u))
+                        .data(UsersMapperManual.toDto(u))
                         .success(true)
                         .message("OK")
                         .build())
@@ -106,7 +108,7 @@ public class UsersService {
         return ResponseDto.<UsersDto>builder()
                 .message("User with ID " + id + " is deleted")
                 .code(0)
-                .data(UsersMapper.toDto(users))
+                .data(UsersMapperManual.toDto(users))
                 .build();
     }
 
@@ -114,7 +116,7 @@ public class UsersService {
         return usersRepository.findAll().stream()
                 .map(u ->
                 ResponseDto.<UsersDto>builder()
-                        .data(UsersMapper.toDto(u))
+                        .data(UsersMapperManual.toDto(u))
                         .success(true)
                         .message("OK")
                         .build()).collect(Collectors.toList());

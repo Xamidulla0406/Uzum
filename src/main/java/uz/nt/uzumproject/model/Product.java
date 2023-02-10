@@ -25,6 +25,7 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Image> images;
     private Boolean isAvailable;
+//    mvn clean package -Dmaven .test.skip
 }
 //1. Product qo'shish
 //2. Bor productni o'zgartirish

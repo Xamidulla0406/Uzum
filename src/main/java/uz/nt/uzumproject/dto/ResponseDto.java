@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class ResponseDto<T> {
     /**
-     * Response code for defining type of error:
+     * Response code  for defining type of error:
      * <p> -2 - Validation error </p>
      * <p> -1 - Not found </p>
      * <p> 0 - OK </p>

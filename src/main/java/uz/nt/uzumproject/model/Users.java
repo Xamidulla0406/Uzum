@@ -18,7 +18,7 @@ public class Users {
     private String phoneNumber;
     private String firstName;
     private String lastName;
-    private String middleName;
+    private String fathersName;
     private String email;
     private String gender;
     private Date birthDate;

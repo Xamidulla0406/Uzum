@@ -8,6 +8,7 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.mapper.ProductMapperManual;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
 import uz.nt.uzumproject.service.validator.AppStatusMessages;
 import uz.nt.uzumproject.service.validator.ValidationSerivce;
@@ -22,12 +23,11 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    private final ProductMapper productMapper;
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
 
+
         List< ErrorDto> errors = ValidationSerivce.validation(productDto);
-
-
-
         if(!errors.isEmpty()){
             return ResponseDto.<ProductDto>builder()
                     .errors(errors)
@@ -37,15 +37,14 @@ public class ProductService {
                     .build();
         }
 
-        Product product = ProductMapper.toEntity(productDto);
 
+        Product product = productMapper.toEntity(productDto);
         product.setIsAvailable(true);
         productRepository.save(product);
-
         return ResponseDto.<ProductDto>builder()
                 .success(true)
                 .code(0)
-                .data(ProductMapper.toDto(product))
+                .data(ProductMapperManual.toDto(product))
                 .message("OK")
                 .build();
 
@@ -72,8 +71,17 @@ public class ProductService {
                     .build();
         }
 
-        Optional<Product> optional = productRepository.findById(productDto.getId());
+        List< ErrorDto> errors = ValidationSerivce.validation(productDto);
+        if(!errors.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .errors(errors)
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .data(productDto)
+                    .message(AppStatusMessages.VALIDATION_ERROR)
+                    .build();
+        }
 
+        Optional<Product> optional = productRepository.findById(productDto.getId());
         if (optional.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
                     .code(-1)
@@ -81,21 +89,25 @@ public class ProductService {
                     .build();
         }
 
+
+
         Product product = optional.get();
 
-        if (productDto.getName() != null) {
-            product.setName(productDto.getName());
-        }
-        if (productDto.getPrice() != null && productDto.getPrice() > 0) {
-            product.setPrice(productDto.getPrice());
-        }
-        if (productDto.getAmount() != null && productDto.getAmount() > 0) {
-            product.setIsAvailable(true);
-            product.setAmount(productDto.getAmount());
-        }
-        if (productDto.getDescription() != null) {
-            product.setDescription(productDto.getDescription());
-        }
+
+
+//        if (productDto.getName() != null) {
+//            product.setName(productDto.getName());
+//        }
+//        if (productDto.getPrice() != null && productDto.getPrice() > 0) {
+//            product.setPrice(productDto.getPrice());
+//        }
+//        if (productDto.getAmount() != null && productDto.getAmount() > 0) {
+//            product.setIsAvailable(true);
+//            product.setAmount(productDto.getAmount());
+//        }
+//        if (productDto.getDescription() != null) {
+//            product.setDescription(productDto.getDescription());
+//        }
 //        if (productDto.getImageUrl() != null) {
 //            product.setImages(productDto.getImageUrl());
 //        }
@@ -105,7 +117,7 @@ public class ProductService {
 
             return ResponseDto.<ProductDto>builder()
                     .message("OK")
-                    .data(ProductMapper.toDto(product))
+                    .data(ProductMapperManual.toDto(product))
                     .success(true)
                     .build();
         } catch (Exception e) {
@@ -121,13 +133,13 @@ public class ProductService {
                 .message("OK")
                 .code(0)
                 .success(true)
-                .data( productRepository.findAll().stream().map(ProductMapper::toDto).collect(Collectors.toList()))
+                .data( productRepository.findAll().stream().map(ProductMapperManual::toDto).collect(Collectors.toList()))
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()
-                        .data(ProductMapper.toDto(products))
+                        .data(ProductMapperManual.toDto(products))
                         .success(true)
                         .message("OK")
                         .build())

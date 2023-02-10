@@ -1,37 +1,27 @@
 package uz.nt.uzumproject.service.mapper;
 
+import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
+import uz.nt.uzumproject.service.UsersService;
 
-public class UsersMapper {
-    public static Users toEntity(UsersDto dto) {
-        Users entity = new Users();
+//@RequiredArgsConstructor
+@Mapper(componentModel = "spring")
+public abstract class UsersMapper {
 
-        entity.setId(dto.getId());
-        entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setFirstName(dto.getFirstName());
-        entity.setLastName(dto.getLastName());
-        entity.setMiddleName(dto.getMiddleName());
-        entity.setEmail(dto.getEmail());
-        entity.setGender(dto.getGender());
-        entity.setBirthDate(dto.getBirthDate());
+    @Autowired
+    protected  UsersService usersService;
 
-        return entity;
-    }
+    @Mapping(target = "fathersName", source = "middleName")
+    public abstract Users toEntity(UsersDto dto);
 
-    public static UsersDto toDto(Users entity) {
-        UsersDto dto = new UsersDto();
 
-        dto.setId(entity.getId());
-        dto.setPhoneNumber(entity.getPhoneNumber());
-        dto.setFirstName(entity.getFirstName());
-        dto.setLastName(entity.getLastName());
-        dto.setMiddleName(entity.getMiddleName());
-        dto.setEmail(entity.getEmail());
-        dto.setGender(entity.getGender());
-        dto.setBirthDate(entity.getBirthDate());
 
-        return dto;
-    }
+    @Mapping(target = "middleName", source = "fathersName")
+    public abstract UsersDto toDto(Users users);
 
 }
