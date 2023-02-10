@@ -16,22 +16,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
-        Product product = ProductMapper.toEntity(productDto);
+        Product product = productMapper.toEntity(productDto);
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
                 .code(0)
                 .success(true)
                 .message("OK")
-                .data(ProductMapper.toDto(product))
+                .data(productMapper.toDto(product))
                 .build();
     }
 
     public ResponseDto<ProductDto> update(ProductDto productDto) {
-        if(productDto.getId() == null){
+        if (productDto.getId() == null) {
             return ResponseDto.<ProductDto>builder()
                     .code(-2)
                     .message("ID is null")
@@ -40,29 +41,29 @@ public class ProductService {
 
         Optional<Product> product = productRepository.findById(productDto.getId());
 
-        if(product.isEmpty()){
+        if (product.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
                     .code(-1)
                     .message("Product with this id not found")
                     .build();
         }
-        Product product1=product.get();
-        if(product1.getName() != null){
+        Product product1 = product.get();
+        if (product1.getName() != null) {
             product1.setName(productDto.getName());
         }
-        if(product1.getAmount() != null){
+        if (product1.getAmount() != null) {
             product1.setAmount(productDto.getAmount());
         }
-        if(product1.getAmount()!=null){
+        if (product1.getAmount() != null) {
             product1.setAmount(productDto.getAmount());
         }
-        if(product1.getPrice()!=null){
+        if (product1.getPrice() != null) {
             product1.setPrice(productDto.getPrice());
         }
-        if(product1.getDescription()!=null){
+        if (product1.getDescription() != null) {
             product1.setDescription(productDto.getDescription());
         }
-        if(product1.getIsAvailable()!=null){
+        if (product1.getIsAvailable() != null) {
             product1.setIsAvailable(productDto.getIsAvailable());
         }
         try {
@@ -70,9 +71,9 @@ public class ProductService {
 
             return ResponseDto.<ProductDto>builder()
                     .success(true)
-                    .data(ProductMapper.toDto(product1))
+                    .data(productMapper.toDto(product1))
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseDto.<ProductDto>builder()
                     .code(1)
                     .message("Error while saving product: " + e.getMessage())
@@ -86,7 +87,7 @@ public class ProductService {
                 .code(0)
                 .message("OK")
                 .success(true)
-                .data(productRepository.findAll().stream().map(ProductMapper::toDto).collect(Collectors.toList()))
+                .data(productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 }
