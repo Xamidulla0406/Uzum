@@ -50,7 +50,7 @@ public class ImageService {
 
     private String filePath(String ext){
         LocalDate localDate=LocalDate.now();
-        String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MMM/dd"));
+        String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         File file=new File("upload/"+path);
         if(!file.exists()){
             file.mkdirs();
