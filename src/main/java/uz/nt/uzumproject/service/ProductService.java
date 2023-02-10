@@ -8,8 +8,6 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
-import uz.nt.uzumproject.service.validator.AppStatusCodes;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
@@ -25,6 +23,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
 
+    private final ProductMapper productMapper;
+
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
         List<ErrorDto> error = productValidator.getError(productDto);
@@ -37,14 +37,14 @@ public class ProductService {
                     .build();
         }
 
-        Product product = ProductMapper.toEntity(productDto);
+        Product product = productMapper.toEntity(productDto);
         product.setIsAvailable(true);
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
                     .success(true)
                     .message(OK)
-                    .data(ProductMapper.toDto(product))
+                    .data(productMapper.toDto(product))
                     .build();
 
     }
@@ -98,7 +98,7 @@ public class ProductService {
                 return ResponseDto.<ProductDto>builder()
                         .success(true)
                         .message(OK)
-                        .data(ProductMapper.toDto(product))
+                        .data(productMapper.toDto(product))
                         .build();
             } catch (Exception e) {
                 return ResponseDto.<ProductDto>builder()
@@ -113,7 +113,7 @@ public class ProductService {
             return ResponseDto.<List<ProductDto>>builder()
                     .message(OK)
                     .success(true)
-                    .data(productRepository.findAll().stream().map(p->ProductMapper.toDto(p)).collect(Collectors.toList()))
+                    .data(productRepository.findAll().stream().map(p-> productMapper.toDto(p)).collect(Collectors.toList()))
                     .build();
         }
     }
