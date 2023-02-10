@@ -9,7 +9,9 @@ import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.ProductsRepository;
 import uz.nt.uzumproject.rest.ProductResources;
+import uz.nt.uzumproject.service.mapper.ProductMap;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.mapper.UserMap;
 import uz.nt.uzumproject.service.validator.*;
 import uz.nt.uzumproject.service.validator.*;
 import uz.nt.uzumproject.service.validator.ProductValidator;
@@ -26,6 +28,8 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.UNEXPECTED_E
 @Service
 @RequiredArgsConstructor
 public class ProductsService {
+
+    private final ProductMap productMap;
     private final ProductsRepository repository;
     private final ProductValidator productValidator;
     public ResponseDto<List<ProductDto>> getAll(){
@@ -33,7 +37,7 @@ public class ProductsService {
                 .code(0)
                 .success(true)
                 .message("Ok")
-                .data(repository.findAll().stream().map(ProductMapper::toProductDto).toList())
+                .data(repository.findAll().stream().map(productMap::toProductDto).toList())
                 .build();
     }
     public ResponseDto<ProductDto> addProduct(ProductDto productDto){
@@ -44,7 +48,7 @@ public class ProductsService {
                     .code(UNEXPECTED_ERROR_CODE)
                     .build();
         }
-        repository.save(ProductMapper.toEntity(productDto));
+        repository.save(productMap.toProduct(productDto));
         return ResponseDto.<ProductDto>builder()
                 .message("Success")
                 .code(0)

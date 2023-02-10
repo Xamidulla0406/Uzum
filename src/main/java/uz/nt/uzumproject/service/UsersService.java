@@ -6,6 +6,7 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
+import uz.nt.uzumproject.service.mapper.UserMap;
 import uz.nt.uzumproject.service.mapper.UsersMapper;
 
 import java.util.Optional;
@@ -13,15 +14,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UsersService {
+    private final UserMap userMap;
     private final UsersRepository usersRepository;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = UsersMapper.toEntity(dto);
-        usersRepository.save(users);
+        Users users = userMap.toUser(dto);
+        usersRepository.save(userMap.toUser(dto));
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
-                .data(UsersMapper.toDto(users))
+                .data(userMap.toUserDto(users))
                 .message("OK")
                 .build();
     }
@@ -59,13 +61,13 @@ public class UsersService {
             usersRepository.save(user);
 
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(userMap.toUserDto(user))
                     .success(true)
                     .message("OK")
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(userMap.toUserDto(user))
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
@@ -75,7 +77,7 @@ public class UsersService {
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
         return usersRepository.findFirstByPhoneNumber(phoneNumber)
                 .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(UsersMapper.toDto(u))
+                        .data(userMap.toUserDto(u))
                         .success(true)
                         .message("OK")
                         .build())
