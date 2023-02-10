@@ -10,7 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorDto {
-    private Integer error;
     private String field;
+    private String error;
+
 
 }

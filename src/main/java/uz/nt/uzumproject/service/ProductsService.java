@@ -10,6 +10,8 @@ import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.ProductsRepository;
 import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.*;
+import uz.nt.uzumproject.service.validator.*;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.ArrayList;
@@ -17,10 +19,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.UNEXPECTED_ERROR_CODE;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.UNEXPECTED_ERROR;
+
 @Service
 @RequiredArgsConstructor
 public class ProductsService {
     private final ProductsRepository repository;
+    private final ProductValidator productValidator;
     public ResponseDto<List<ProductDto>> getAll(){
         return ResponseDto.<List<ProductDto>>builder()
                 .code(0)
@@ -30,12 +37,11 @@ public class ProductsService {
                 .build();
     }
     public ResponseDto<ProductDto> addProduct(ProductDto productDto){
-        ProductValidator productValidator = new ProductValidator();
         if(!productValidator.error(productDto).isEmpty()){
            return ResponseDto.<ProductDto>builder()
                     .errorDtoList(productValidator.error(productDto))
-                    .message("Failed")
-                    .code(2)
+                    .message(UNEXPECTED_ERROR)
+                    .code(UNEXPECTED_ERROR_CODE)
                     .build();
         }
         repository.save(ProductMapper.toEntity(productDto));
