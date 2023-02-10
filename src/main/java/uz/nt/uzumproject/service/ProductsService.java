@@ -10,6 +10,7 @@ import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.ProductsRepository;
 import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,17 +26,23 @@ public class ProductsService {
                 .code(0)
                 .success(true)
                 .message("Ok")
-                .data(repository.findAll().stream().map(ProductMapper::toDTO).toList())
+                .data(repository.findAll().stream().map(ProductMapper::toProductDto).toList())
                 .build();
     }
     public ResponseDto<ProductDto> addProduct(ProductDto productDto){
-        Product product= ProductMapper.toEntity(productDto);
-        repository.save(product);
+        ProductValidator productValidator = new ProductValidator();
+        if(!productValidator.error(productDto).isEmpty()){
+           return ResponseDto.<ProductDto>builder()
+                    .errorDtoList(productValidator.error(productDto))
+                    .message("Failed")
+                    .code(2)
+                    .build();
+        }
+        repository.save(ProductMapper.toEntity(productDto));
         return ResponseDto.<ProductDto>builder()
-                .message("Saved")
+                .message("Success")
                 .code(0)
                 .success(true)
-                .data(ProductMapper.toDTO(repository.save(product)))
                 .build();
     }
     public ResponseDto<ProductDto> editProducts(ProductDto product){
@@ -60,9 +67,9 @@ public class ProductsService {
         if (product.getDescription() != null){
             productEntity.setDescription(product.getDescription());
         }
-        if (product.getImageUrl() != null){
-            productEntity.setImageUrl(product.getImageUrl());
-        }
+//        if (product.getImageUrl() != null){
+//            productEntity.setImages(product.getImageUrl());
+//        }
         if (product.getIsAvailable() != null){
             productEntity.setIsAvailable(product.getIsAvailable());
         }
@@ -72,7 +79,7 @@ public class ProductsService {
                     .code(-2)
                     .success(true)
                     .message("OK")
-                    .data(ProductMapper.toDTO(productEntity))
+                    .data(ProductMapper.toProductDto(productEntity))
                     .build();
         }catch (Exception e){
             return ResponseDto.<ProductDto>builder()

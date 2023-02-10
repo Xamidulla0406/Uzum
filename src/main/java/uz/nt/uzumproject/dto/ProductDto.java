@@ -10,10 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDto {
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/iTeam
     private Integer id;
     private String name;
     private Integer price;
