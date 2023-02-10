@@ -6,8 +6,10 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
-import uz.nt.uzumproject.service.mapper.UsersMapper;
+import uz.nt.uzumproject.service.mapper.UserMapper;
+import uz.nt.uzumproject.service.mapper.UsersMapperManual;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,15 +18,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final UserMapper userMapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = UsersMapper.toEntity(dto);
+        Users users = userMapper.toEntity(dto);
         users.setIsActive((short) 1);
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
-                .data(UsersMapper.toDto(users))
+                .data(userMapper.toDto(users))
                 .message("OK")
                 .build();
     }
@@ -68,20 +71,20 @@ public class UsersService {
             user.setPhoneNumber(usersDto.getPhoneNumber());
         }
         if (usersDto.getBirthDate() != null) {
-            user.setBirthDate(usersDto.getBirthDate());
+            user.setBirthDate(Date.valueOf(usersDto.getBirthDate()));
         }
         try {
             usersRepository.save(user);
 
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(userMapper.toDto(user))
                     .code(0)
                     .success(true)
                     .message("OK")
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(userMapper.toDto(user))
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
@@ -91,7 +94,7 @@ public class UsersService {
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
         return usersRepository.findFirstByPhoneNumberAndIsActive(phoneNumber, (short) 1)
                 .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(UsersMapper.toDto(u))
+                        .data(userMapper.toDto(u))
                         .success(true)
                         .message("OK")
                         .build())
@@ -116,7 +119,7 @@ public class UsersService {
             return ResponseDto.<UsersDto>builder()
                     .success(true)
                     .message("OK")
-                    .data(UsersMapper.toDto(delUser))
+                    .data(userMapper.toDto(delUser))
                     .build();
 
         }catch (Exception e){
@@ -133,7 +136,7 @@ public class UsersService {
                 .code(0)
                 .message("OK")
                 .success(true)
-                .data(usersRepository.findAllByIsActive(1).stream().map(u->UsersMapper.toDto(u)).collect(Collectors.toList()))
+                .data(usersRepository.findAllByIsActive(1).stream().map(u-> UsersMapperManual.toDto(u)).collect(Collectors.toList()))
                 .build();
     }
 }

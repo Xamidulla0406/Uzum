@@ -2,14 +2,13 @@ package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.mapper.ProductMapperManual;
 import uz.nt.uzumproject.service.validator.ProductValidator;
-import uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
+    private final ProductMapper productMapper;
 
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
@@ -31,7 +31,7 @@ public class ProductService {
                     .errors(productValidator.productValidator(productDto))
                     .build();
         }
-        Product product = ProductMapper.toEntity(productDto);
+        Product product = productMapper.toEntity(productDto);
         product.setIsAvailable(true);
         productRepository.save(product);
 
@@ -39,7 +39,7 @@ public class ProductService {
                 .code(OK_CODE)
                 .success(true)
                 .message("OK")
-                .data(ProductMapper.toDto(product))
+                .data(productMapper.toDto(product))
                 .build();
 
     }
@@ -93,7 +93,7 @@ public class ProductService {
 
                 return ResponseDto.<ProductDto>builder()
                         .success(true)
-                        .data(ProductMapper.toDto(product))
+                        .data(productMapper.toDto(product))
                         .build();
             } catch (Exception e) {
                 return ResponseDto.<ProductDto>builder()
@@ -109,7 +109,7 @@ public class ProductService {
                     .code(0)
                     .message("OK")
                     .success(true)
-                    .data(productRepository.findAll().stream().map(p->ProductMapper.toDto(p)).collect(Collectors.toList()))
+                    .data(productRepository.findAll().stream().map(p-> productMapper.toDto(p)).collect(Collectors.toList()))
                     .build();
         }
     }
