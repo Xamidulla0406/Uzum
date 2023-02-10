@@ -9,6 +9,7 @@ import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.service.mapper.UsersMapper;
 
 import java.util.Optional;
+import static uz.nt.uzumproject.service.validator.AppStatusCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class UsersService {
         if (usersDto.getId() == null) {
             return ResponseDto.<UsersDto>builder()
                     .message("UserID is null")
-                    .code(-2)
+                    .code()
                     .data(usersDto)
                     .build();
         }
