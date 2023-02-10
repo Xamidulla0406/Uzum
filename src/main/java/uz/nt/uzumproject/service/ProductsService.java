@@ -1,29 +1,21 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.springframework.stereotype.Service;
+import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
-import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.ProductsRepository;
-import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMap;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
-import uz.nt.uzumproject.service.mapper.UserMap;
-import uz.nt.uzumproject.service.validator.*;
-import uz.nt.uzumproject.service.validator.*;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static uz.nt.uzumproject.service.validator.AppStatusCodes.UNEXPECTED_ERROR_CODE;
-import static uz.nt.uzumproject.service.validator.AppStatusMessages.UNEXPECTED_ERROR;
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +33,10 @@ public class ProductsService {
                 .build();
     }
     public ResponseDto<ProductDto> addProduct(ProductDto productDto){
-        if(!productValidator.error(productDto).isEmpty()){
+        List<ErrorDto> errors=productValidator.saving(productDto);
+        if(!errors.isEmpty()){
            return ResponseDto.<ProductDto>builder()
-                    .errorDtoList(productValidator.error(productDto))
+                    .errorDtoList(errors)
                     .message(UNEXPECTED_ERROR)
                     .code(UNEXPECTED_ERROR_CODE)
                     .build();
@@ -55,33 +48,42 @@ public class ProductsService {
                 .success(true)
                 .build();
     }
-    public ResponseDto<ProductDto> editProducts(ProductDto product){
-        if(product.getId()==null){
+    public ResponseDto<ProductDto> editProducts(ProductDto productDto){
+        List<ErrorDto> errors=productValidator.editing(productDto);
+        if(!errors.isEmpty()){
             return ResponseDto.<ProductDto>builder()
-                    .code(-2)
-                    .message("No ID")
+                    .errorDtoList(errors)
+                    .message(VALIDATION_ERROR)
+                    .code(VALIDATION_ERROR_CODE)
                     .build();
         }
-        Optional<Product> productOptional = repository.findById(product.getId());
+        Optional<Product> productOptional = repository.findById(productDto.getId());
+        if(productOptional.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_CODE)
+                    .data(productDto)
+                    .build();
+        }
 
         Product productEntity = productOptional.get();
-        if (product.getName() != null){
-            productEntity.setName(product.getName());
+        if (productDto.getName() != null){
+            productEntity.setName(productDto.getName());
         }
-        if (product.getPrice() != null){
-            productEntity.setPrice(product.getPrice());
+        if (productDto.getPrice() != null){
+            productEntity.setPrice(productDto.getPrice());
         }
-        if (product.getAmount() != null){
-            productEntity.setAmount(product.getAmount());
+        if (productDto.getAmount() != null){
+            productEntity.setAmount(productDto.getAmount());
         }
-        if (product.getDescription() != null){
-            productEntity.setDescription(product.getDescription());
+        if (productDto.getDescription() != null){
+            productEntity.setDescription(productDto.getDescription());
         }
 //        if (product.getImageUrl() != null){
 //            productEntity.setImages(product.getImageUrl());
 //        }
-        if (product.getIsAvailable() != null){
-            productEntity.setIsAvailable(product.getIsAvailable());
+        if (productDto.getIsAvailable() != null){
+            productEntity.setIsAvailable(productDto.getIsAvailable());
         }
         try{
             repository.save(productEntity);
