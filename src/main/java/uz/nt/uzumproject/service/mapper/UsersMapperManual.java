@@ -3,7 +3,7 @@ package uz.nt.uzumproject.service.mapper;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 
-public class UsersMapper {
+public class UsersMapperManual {
     public static Users toEntity(UsersDto dto) {
         Users entity = new Users();
 

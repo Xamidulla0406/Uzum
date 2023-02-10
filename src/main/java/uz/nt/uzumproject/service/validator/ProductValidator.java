@@ -3,7 +3,7 @@ package uz.nt.uzumproject.service.validator;
 import org.springframework.stereotype.Component;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
-import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 public class ProductValidator {
-    public List<ErrorDto> productValidator(ProductDto productDto){
+    public List<ErrorDto> validateProduct(ProductDto productDto){
         List<ErrorDto> errors = new ArrayList<>();
 
         if(productDto.getAmount() == null){
