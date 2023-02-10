@@ -6,34 +6,41 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
-import uz.nt.uzumproject.service.mapper.UsersMapper;
+import uz.nt.uzumproject.service.mapper.UserMapper;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final UserMapper userMapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = UsersMapper.toEntity(dto);
+        Users users = userMapper.toEntity(dto);
         users.setIsActive((short) 1);
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
-                .data(UsersMapper.toDto(users))
-                .message("OK")
+                .data(userMapper.toDto(users))
+                .message(OK)
                 .build();
     }
 
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto) {
         if (usersDto.getId() == null){
             return ResponseDto.<UsersDto>builder()
-                    .message("UserID is null")
-                    .code(-2)
+                    .message(NULL_VALUE)
+                    .code(VALIDATION_ERROR_CODE)
                     .data(usersDto)
                     .build();
         }
@@ -43,8 +50,8 @@ public class UsersService {
 
         if (userOptional.isEmpty() || user.getIsActive() == 0 ){
             return ResponseDto.<UsersDto>builder()
-                    .message("User with ID " + usersDto.getId() + " is not found")
-                    .code(-1)
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_CODE)
                     .data(usersDto)
                     .build();
         }
@@ -62,15 +69,15 @@ public class UsersService {
             usersRepository.save(user);
 
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(userMapper.toDto(user))
                     .success(true)
-                    .message("OK")
+                    .message(OK)
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
-                    .code(1)
-                    .message("Error while saving user: " + e.getMessage())
+                    .data(userMapper.toDto(user))
+                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
@@ -78,9 +85,9 @@ public class UsersService {
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
         return usersRepository.findFirstByPhoneNumber(phoneNumber)
                 .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(UsersMapper.toDto(u))
+                        .data(userMapper.toDto(u))
                         .success(true)
-                        .message("OK")
+                        .message(OK)
                         .build())
                 .orElse(ResponseDto.<UsersDto>builder()
                         .message("User with phone number " + phoneNumber + " is not found")
@@ -95,8 +102,8 @@ public class UsersService {
 
         if(optionalUser.isEmpty() || users.getIsActive() == 0){
             return ResponseDto.<UsersDto>builder()
-                    .message("User with ID " + id + " is not found")
-                    .code(-1)
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_CODE)
                     .build();
         }
 
@@ -105,8 +112,8 @@ public class UsersService {
 
         return ResponseDto.<UsersDto>builder()
                 .message("User with ID " + id + " is deleted")
-                .code(0)
-                .data(UsersMapper.toDto(users))
+                .code(OK_CODE)
+                .data(userMapper.toDto(users))
                 .build();
     }
 
@@ -114,9 +121,9 @@ public class UsersService {
         return usersRepository.findAll().stream()
                 .map(u ->
                 ResponseDto.<UsersDto>builder()
-                        .data(UsersMapper.toDto(u))
+                        .data(userMapper.toDto(u))
                         .success(true)
-                        .message("OK")
+                        .message(OK)
                         .build()).collect(Collectors.toList());
     }
 }

@@ -23,6 +23,7 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
+    private final ProductMapper productMapper;
 
     public ResponseDto<ProductDto> addProduct(ProductDto dto){
         List<ErrorDto> errors = productValidator.productValidator(dto);
@@ -35,7 +36,7 @@ public class ProductService {
                     .build();
         }
 
-        Product product = ProductMapper.toEntity(dto);
+        Product product = productMapper.toEntity(dto);
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
@@ -48,8 +49,8 @@ public class ProductService {
     public ResponseDto<ProductDto> updateProduct(ProductDto dto){
         if(dto.getId() == null){
             return ResponseDto.<ProductDto>builder()
-                    .message("Product Id is null")
-                    .code(-2)
+                    .message(NULL_VALUE)
+                    .code(VALIDATION_ERROR_CODE)
                     .data(dto)
                     .build();
         }
@@ -57,8 +58,8 @@ public class ProductService {
         Optional<Product> optionalProduct = productRepository.findById(dto.getId());
         if (optionalProduct.isEmpty()){
             return ResponseDto.<ProductDto>builder()
-                    .code(-1)
-                    .message("Product with ID " + dto.getId() + " is not found")
+                    .code(-NOT_FOUND_CODE)
+                    .message(NOT_FOUND)
                     .success(false)
                     .data(dto)
                     .build();
@@ -85,16 +86,16 @@ public class ProductService {
             productRepository.save(product);
 
             return ResponseDto.<ProductDto>builder()
-                    .code(0)
-                    .message("Ok")
+                    .code(OK_CODE)
+                    .message(OK)
                     .data(dto)
                     .success(true)
                     .build();
         }catch (Exception e){
             return ResponseDto.<ProductDto>builder()
-                    .data(ProductMapper.toDto(product))
-                    .code(1)
-                    .message("Error while saving product: " + e.getMessage())
+                    .data(productMapper.toDto(product))
+                    .code(DATABASE_ERROR_CODE)
+                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
     }
@@ -102,8 +103,8 @@ public class ProductService {
     public ResponseDto<List<Product>> getAllProduct(){
         List<Product> productList = productRepository.findAll();
         return ResponseDto.<List<Product>>builder()
-                .code(0)
-                .message("Ok")
+                .code(OK_CODE)
+                .message(OK)
                 .success(true)
                 .data(productList)
                 .build();
