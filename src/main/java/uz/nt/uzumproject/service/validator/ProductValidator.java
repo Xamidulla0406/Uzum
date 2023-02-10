@@ -13,9 +13,10 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Component
 public class ProductValidator {
-    List<ErrorDto> errors = new ArrayList<>();
-
     public List<ErrorDto> validateProduct(ProductDto productDto){
+
+        List<ErrorDto> errors = new ArrayList<>();
+
         if (productDto.getAmount() == null){
             errors.add(new ErrorDto("amount", NULL_VALUE));
         }else if (productDto.getAmount() < 0)

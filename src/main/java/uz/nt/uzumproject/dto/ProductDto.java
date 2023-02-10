@@ -14,5 +14,4 @@ public class ProductDto {
     private String description;
     private String imageUrl;
     private Boolean isAvailable;
-
 }

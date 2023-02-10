@@ -25,6 +25,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
+
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
 
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
