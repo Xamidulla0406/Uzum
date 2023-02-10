@@ -2,6 +2,8 @@ package uz.nt.uzumproject.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,5 +21,6 @@ public class ResponseDto<T> {
     private Integer code;
     private String message;
     private boolean success;
+    private List<ErrorDto> errors;
     private T data;
 }

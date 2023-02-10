@@ -6,22 +6,28 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
-import uz.nt.uzumproject.service.mapper.UsersMapper;
+import uz.nt.uzumproject.service.mapper.UserMapper;
+import uz.nt.uzumproject.service.mapper.UsersMapperManual;
 
+import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final UserMapper userMapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = UsersMapper.toEntity(dto);
+        Users users = userMapper.toEntity(dto);
+        users.setIsActive((short) 1);
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
-                .data(UsersMapper.toDto(users))
+                .data(userMapper.toDto(users))
                 .message("OK")
                 .build();
     }
@@ -35,7 +41,7 @@ public class UsersService {
                     .build();
         }
 
-        Optional<Users> userOptional = usersRepository.findById(usersDto.getId());
+        Optional<Users> userOptional = usersRepository.findByIdAndIsActive(usersDto.getId(), (short) 1);
 
         if (userOptional.isEmpty()){
             return ResponseDto.<UsersDto>builder()
@@ -45,27 +51,40 @@ public class UsersService {
                     .build();
         }
         Users user = userOptional.get();
-        if (usersDto.getGender() != null){
-            user.setGender(usersDto.getGender());
+        if (usersDto.getFirstName() != null) {
+            user.setFirstName(usersDto.getFirstName());
         }
-        if (usersDto.getEmail() != null){
-            user.setEmail(usersDto.getEmail());
-        }
-        if (usersDto.getLastName() != null){
+        if (usersDto.getLastName() != null) {
             user.setLastName(usersDto.getLastName());
         }
-        //...
+        if (usersDto.getMiddleName() != null) {
+            user.setMiddleName(usersDto.getMiddleName());
+        }
+        if (usersDto.getEmail() != null) {
+            user.setEmail(usersDto.getEmail());
+        }
+        if (usersDto.getGender() != null) {
+            user.setGender(usersDto.getGender());
+        }
+
+        if (usersDto.getPhoneNumber() != null) {
+            user.setPhoneNumber(usersDto.getPhoneNumber());
+        }
+        if (usersDto.getBirthDate() != null) {
+            user.setBirthDate(Date.valueOf(usersDto.getBirthDate()));
+        }
         try {
             usersRepository.save(user);
 
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(userMapper.toDto(user))
+                    .code(0)
                     .success(true)
                     .message("OK")
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapper.toDto(user))
+                    .data(userMapper.toDto(user))
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
@@ -73,9 +92,9 @@ public class UsersService {
     }
 
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
-        return usersRepository.findFirstByPhoneNumber(phoneNumber)
+        return usersRepository.findFirstByPhoneNumberAndIsActive(phoneNumber, (short) 1)
                 .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(UsersMapper.toDto(u))
+                        .data(userMapper.toDto(u))
                         .success(true)
                         .message("OK")
                         .build())
@@ -83,5 +102,41 @@ public class UsersService {
                         .message("User with phone number " + phoneNumber + " is not found")
                         .code(-1)
                         .build());
+    }
+
+    public ResponseDto<UsersDto> deleteUser(Integer id) {
+        Optional<Users> user=usersRepository.findByIdAndIsActive(id,(short)1);
+        if(user.isEmpty()) {
+            return (ResponseDto.<UsersDto>builder()
+                    .message("User with ID=" + id + " not found")
+                    .code(-1)
+                    .build());
+        }
+        Users delUser= user.get();
+        delUser.setIsActive((short) 0);
+        try {
+            usersRepository.save(delUser);
+            return ResponseDto.<UsersDto>builder()
+                    .success(true)
+                    .message("OK")
+                    .data(userMapper.toDto(delUser))
+                    .build();
+
+        }catch (Exception e){
+            return ResponseDto.<UsersDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .code(1)
+                    .build();
+        }
+    }
+
+    public ResponseDto<List<UsersDto>> getAllUsers() {
+        return ResponseDto.<List<UsersDto>>builder()
+                .code(0)
+                .message("OK")
+                .success(true)
+                .data(usersRepository.findAllByIsActive(1).stream().map(u-> UsersMapperManual.toDto(u)).collect(Collectors.toList()))
+                .build();
     }
 }
