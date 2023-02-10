@@ -17,6 +17,6 @@ public abstract class UserMapper {
     public abstract Users toEntity(UsersDto usersDto);
 
     @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
-    @Mapping(target = "productDtos", expression = "java(productService.getAllProducts().getData())")
+    @Mapping(target = "productDtos", expression = "java(productService.get().getData())")
     public abstract UsersDto toDto(Users users);
 }

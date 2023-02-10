@@ -7,7 +7,8 @@ import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.service.mapper.UserMapper;
-import uz.nt.uzumproject.service.mapper.UsersMapperManual;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
 import java.sql.Date;
 import java.util.List;
@@ -18,16 +19,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
-    private final UserMapper userMapper;
+    private final UserMapper mapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = userMapper.toEntity(dto);
+        Users users = mapper.toEntity(dto);
         users.setIsActive((short) 1);
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
-                .data(userMapper.toDto(users))
+                .data(mapper.toDto(users))
                 .message("OK")
                 .build();
     }
@@ -35,8 +36,8 @@ public class UsersService {
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto) {
         if (usersDto.getId() == null){
             return ResponseDto.<UsersDto>builder()
-                    .message("UserID is null")
-                    .code(-2)
+                    .message(AppStatusMessages.NULL_VALUE)
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
                     .data(usersDto)
                     .build();
         }
@@ -45,8 +46,8 @@ public class UsersService {
 
         if (userOptional.isEmpty()){
             return ResponseDto.<UsersDto>builder()
-                    .message("User with ID " + usersDto.getId() + " is not found")
-                    .code(-1)
+                    .message(AppStatusMessages.NOT_FOUND)
+                    .code(AppStatusCodes.NOT_FOUND_CODE)
                     .data(usersDto)
                     .build();
         }
@@ -75,18 +76,17 @@ public class UsersService {
         }
         try {
             usersRepository.save(user);
-
             return ResponseDto.<UsersDto>builder()
-                    .data(userMapper.toDto(user))
-                    .code(0)
+                    .data(mapper.toDto(user))
+                    .code(AppStatusCodes.OK_CODE)
                     .success(true)
-                    .message("OK")
+                    .message(AppStatusMessages.OK)
                     .build();
-        }catch (Exception e){
+        } catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(userMapper.toDto(user))
-                    .code(1)
-                    .message("Error while saving user: " + e.getMessage())
+                    .data(mapper.toDto(user))
+                    .code(AppStatusCodes.UNEXPECTED_ERROR_CODE)
+                    .message(AppStatusMessages.UNEXPECTED_ERROR + e.getMessage())
                     .build();
         }
     }
@@ -94,7 +94,7 @@ public class UsersService {
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
         return usersRepository.findFirstByPhoneNumberAndIsActive(phoneNumber, (short) 1)
                 .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(userMapper.toDto(u))
+                        .data(mapper.toDto(u))
                         .success(true)
                         .message("OK")
                         .build())
@@ -119,7 +119,7 @@ public class UsersService {
             return ResponseDto.<UsersDto>builder()
                     .success(true)
                     .message("OK")
-                    .data(userMapper.toDto(delUser))
+                    .data(mapper.toDto(delUser))
                     .build();
 
         }catch (Exception e){
@@ -136,7 +136,7 @@ public class UsersService {
                 .code(0)
                 .message("OK")
                 .success(true)
-                .data(usersRepository.findAllByIsActive(1).stream().map(u-> UsersMapperManual.toDto(u)).collect(Collectors.toList()))
+                .data(usersRepository.findAllByIsActive(1).stream().map(u-> mapper.toDto(u)).collect(Collectors.toList()))
                 .build();
     }
 }

@@ -7,6 +7,8 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,23 +17,42 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     public final ProductRepository productRepository;
+    private final ProductMapper mapper;
     public ResponseDto<ProductDto> post(ProductDto productDto){
-        productRepository.save(ProductMapper.toEntity(productDto));
+        productDto.setId(null);
+        Product product = productRepository.save(mapper.toEntity(productDto));
         return ResponseDto.<ProductDto>builder()
-                .message("Success")
-                .code(0)
+                .message(AppStatusMessages.OK)
+                .code(AppStatusCodes.OK_CODE)
                 .success(true)
+                .data(mapper.toDTO(product))
                 .build();
     }
 
 
 
     public ResponseDto<ProductDto> patch(ProductDto productDto){
-        if(productDto.getId() == null)
-            return ResponseDto.<ProductDto>builder().message("Id is null").code(2).data(productDto).build();
+        if(productDto.getId() == null) {
+            return ResponseDto.<ProductDto>builder()
+                    .message(AppStatusMessages.VALIDATION_ERROR)
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .data(productDto)
+                    .build();
+        }
         Optional<Product> optional = productRepository.findFirstById(productDto.getId());
-        if(optional.isEmpty() || productDto.getAmount()<0)
-        return ResponseDto.<ProductDto>builder().message("Id is not found or amount small zero").code(1).data(productDto).build();
+        if(optional.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .message(AppStatusMessages.NOT_FOUND)
+                    .code(AppStatusCodes.NOT_FOUND_CODE)
+                    .data(productDto)
+                    .build();
+        } else if (productDto.getAmount()<0){
+        return ResponseDto.<ProductDto>builder()
+                .message(AppStatusMessages.VALIDATION_ERROR)
+                .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                .data(productDto)
+                .build();
+        }
 
         ProductDto product = new ProductDto();
 
@@ -60,25 +81,26 @@ public class ProductService {
 
             return ResponseDto.<ProductDto>builder()
                     .success(true)
-                    .code(1)
-                    .message("Succes")
-                    .data(ProductMapper.toProductDto(productRepository.save(ProductMapper.toEntity(productDto))))
+                    .code(AppStatusCodes.OK_CODE)
+                    .message(AppStatusMessages.OK)
+                    .data(mapper.toDTO(productRepository.save(mapper.toEntity(productDto))))
                     .build();
         }catch (Exception e){
             return ResponseDto.<ProductDto>builder()
-                    .code(2)
-                    .message("Database error")
+                    .code(AppStatusCodes.DATABASE_ERROR_CODE)
+                    .message(AppStatusMessages.DATABASE_ERROR)
                     .build();
         }
-
-
-
-
     }
 
 
 
     public ResponseDto<List<ProductDto>> get(){
-        return ResponseDto.<List<ProductDto>>builder().success(true).code(0).message("success").data(ProductMapper.productDtoList(productRepository.findByIsAvailable(true))).build();
+        return ResponseDto.<List<ProductDto>>builder()
+                .success(true)
+                .code(AppStatusCodes.OK_CODE)
+                .message(AppStatusMessages.OK)
+                .data(productRepository.findAll().stream().map(mapper::toDTO).toList())
+                .build();
     }
 }
