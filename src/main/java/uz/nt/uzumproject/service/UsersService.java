@@ -6,7 +6,7 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
-import uz.nt.uzumproject.service.mapper.UsersMapper;
+import uz.nt.uzumproject.service.mapper.UserMapper;
 
 import java.util.Optional;
 
@@ -14,31 +14,31 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
-    private final UsersMapper usersMapper;
+    private final UserMapper userMapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
-        Users users = usersMapper.toEntity(dto);
+        Users users = userMapper.toEntity(dto);
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
-                .data(usersMapper.toDto(users))
+                .data(userMapper.toDto(users))
                 .message("OK")
                 .build();
     }
 
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto) {
-        if (usersDto.getId() == null) {
+        if (usersDto.getId() == null){
             return ResponseDto.<UsersDto>builder()
                     .message("UserID is null")
-                    .code(-1)
+                    .code(-2)
                     .data(usersDto)
                     .build();
         }
 
         Optional<Users> userOptional = usersRepository.findById(usersDto.getId());
 
-        if (userOptional.isEmpty()) {
+        if (userOptional.isEmpty()){
             return ResponseDto.<UsersDto>builder()
                     .message("User with ID " + usersDto.getId() + " is not found")
                     .code(-1)
@@ -46,27 +46,27 @@ public class UsersService {
                     .build();
         }
         Users user = userOptional.get();
-        if (usersDto.getGender() != null) {
+        if (usersDto.getGender() != null){
             user.setGender(usersDto.getGender());
         }
-        if (usersDto.getEmail() != null) {
+        if (usersDto.getEmail() != null){
             user.setEmail(usersDto.getEmail());
         }
-        if (usersDto.getLastName() != null) {
+        if (usersDto.getLastName() != null){
             user.setLastName(usersDto.getLastName());
         }
-
+        //...
         try {
             usersRepository.save(user);
 
             return ResponseDto.<UsersDto>builder()
-                    .data(usersMapper.toDto(user))
+                    .data(userMapper.toDto(user))
                     .success(true)
                     .message("OK")
                     .build();
-        } catch (Exception e) {
+        }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(usersMapper.toDto(user))
+                    .data(userMapper.toDto(user))
                     .code(1)
                     .message("Error while saving user: " + e.getMessage())
                     .build();
@@ -76,7 +76,7 @@ public class UsersService {
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
         return usersRepository.findFirstByPhoneNumber(phoneNumber)
                 .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(usersMapper.toDto(u))
+                        .data(userMapper.toDto(u))
                         .success(true)
                         .message("OK")
                         .build())

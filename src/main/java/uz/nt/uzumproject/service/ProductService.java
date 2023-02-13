@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static uz.nt.uzumproject.service.validator.AppStatusCode.*;
-import static uz.nt.uzumproject.service.validator.AppStatusMessage.*;
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,36 +26,35 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
-
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
 
-        if (!errors.isEmpty()) {
+        if (!errors.isEmpty()){
             return ResponseDto.<ProductDto>builder()
-                    .message(VALIDATION_ERROR)
-                    .code(VALIDATION_ERROR_CODE)
                     .errors(errors)
                     .data(productDto)
+                    .message(VALIDATION_ERROR)
+                    .code(VALIDATION_ERROR_CODE)
+                    .success(false)
                     .build();
         }
 
-
         Product product = productMapper.toEntity(productDto);
-        product.setIsAvailable(true);
+
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
                 .success(true)
-                .code(OK_CODE)
+                .code(0)
                 .data(productMapper.toDto(product))
-                .message(OK)
+                .message("OK")
                 .build();
     }
 
     public ResponseDto<ProductDto> updateProduct(ProductDto productDto) {
         if (productDto.getId() == null) {
             return ResponseDto.<ProductDto>builder()
-                    .message(NULL_VALUE)
-                    .code(VALIDATION_ERROR_CODE)
+                    .message("Product ID is null")
+                    .code(-2)
                     .build();
         }
 
@@ -63,8 +62,8 @@ public class ProductService {
 
         if (optional.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
-                    .code(NOT_FOUND_CODE)
-                    .message("Product with ID " + productDto.getId() + " is not found!")
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
                     .build();
         }
 
@@ -90,13 +89,14 @@ public class ProductService {
 
             return ResponseDto.<ProductDto>builder()
                     .message(OK)
+                    .code(OK_CODE)
                     .data(productMapper.toDto(product))
                     .success(true)
                     .build();
         } catch (Exception e) {
             return ResponseDto.<ProductDto>builder()
-                    .message("Error while saving product: " + e.getMessage())
-                    .code(UNEXPECTED_ERROR_CODE)
+                    .message(DATABASE_ERROR + ": " + e.getMessage())
+                    .code(DATABASE_ERROR_CODE)
                     .build();
         }
     }
@@ -104,22 +104,22 @@ public class ProductService {
     public ResponseDto<List<ProductDto>> getAllProducts() {
         return ResponseDto.<List<ProductDto>>builder()
                 .message(OK)
-                .code(0)
+                .code(OK_CODE)
                 .success(true)
-                .data(productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
+                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
-
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()
                         .data(productMapper.toDto(products))
                         .success(true)
+                        .code(OK_CODE)
                         .message(OK)
                         .build())
                 .orElse(ResponseDto.<ProductDto>builder()
-                        .message("Product with id " + id + " not found")
-                        .code(NOT_FOUND_CODE)
+                        .message(NOT_FOUND)
+                        .code(NOT_FOUND_ERROR_CODE)
                         .build()
                 );
     }

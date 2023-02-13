@@ -3,6 +3,7 @@ package uz.nt.uzumproject.dto;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,11 +12,12 @@ import java.util.Date;
 @Builder
 public class UsersDto {
     private Integer id;
-    private String phoneNumber;
+    private String phone;
     private String firstName;
     private String lastName;
     private String middleName;
     private String email;
     private String gender;
-    private Date birhtDate;
+    private String birthDate;
+    private List<ProductDto> product;
 }
