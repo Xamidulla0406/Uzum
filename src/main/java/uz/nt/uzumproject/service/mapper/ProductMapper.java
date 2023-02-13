@@ -5,10 +5,6 @@ import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.model.Product;
 
 @Mapper(componentModel = "spring")
-public interface ProductMapper {
-
-    Product toEntity(ProductDto productDto);
-
-    ProductDto toDto(Product product);
+public interface ProductMapper extends CommonMapper<ProductDto, Product>{
 
 }

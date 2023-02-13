@@ -6,9 +6,6 @@ import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
+public interface UserMapper extends CommonMapper<UsersDto, Users>{
 
-    Users toEntity(UsersDto usersDto);
-
-    UsersDto toDto(Users users);
 }
