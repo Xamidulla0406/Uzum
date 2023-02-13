@@ -7,7 +7,6 @@ import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.service.mapper.UserMapper;
-import uz.nt.uzumproject.service.mapper.UsersMapperManual;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,7 +86,7 @@ public class UsersService {
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
-                    .data(UsersMapperManual.toDto(user))
+                    .data(userMapper.toDto(user))
                     .code(1)
                     .message(DATABASE_ERROR + e.getMessage())
                     .build();
@@ -139,7 +138,11 @@ public class UsersService {
                 .code(OK_CODE)
                 .message(OK)
                 .success(true)
-                .data(usersRepository.findAllByIsActive(1).stream().map(u-> userMapper.toDto(u)).collect(Collectors.toList()))
+                .data(usersRepository
+                        .findAllByIsActive(1)
+                        .stream()
+                        .map(u-> userMapper.toDto(u))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
