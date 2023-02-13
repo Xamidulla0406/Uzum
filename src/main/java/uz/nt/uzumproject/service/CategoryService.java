@@ -8,6 +8,7 @@ import uz.nt.uzumproject.model.Category;
 import uz.nt.uzumproject.repository.CategoryRepository;
 import uz.nt.uzumproject.service.mapper.CategoryMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,10 +69,13 @@ public class CategoryService {
         }
     }
 
+    //public List<CategoryDto> list = new ArrayList<>();
 
     public List<CategoryDto> listCategory(Integer categoryId) {
-        return categoryRepository.findFirstByParentId(categoryId).stream()
+        return categoryRepository.findAllByParentId(categoryId).stream()
                 .map(categoryMapper::toDto)
                 .collect(Collectors.toList());
+
+//        return list.addAll(categoryRepository.findAllByParentId(categoryId).map(categoryMapper.toDto(categoryId)));
     }
 }
