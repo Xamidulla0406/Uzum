@@ -16,22 +16,22 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
+    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
+    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
         return productService.updateProduct(productDto);
     }
 
     @GetMapping()
-    public ResponseDto<List<ProductDto>>getAllProducts(){
+    public ResponseDto<List<ProductDto>> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("by-id")
-    public ResponseDto<ProductDto>getProductById(@RequestParam Integer id){
+    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id) {
         return productService.getProductById(id);
     }
 

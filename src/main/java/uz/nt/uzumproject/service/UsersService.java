@@ -28,7 +28,7 @@ public class UsersService {
     }
 
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto) {
-        if (usersDto.getId() == null){
+        if (usersDto.getId() == null) {
             return ResponseDto.<UsersDto>builder()
                     .message("UserID is null")
                     .code(-2)
@@ -38,7 +38,7 @@ public class UsersService {
 
         Optional<Users> userOptional = usersRepository.findById(usersDto.getId());
 
-        if (userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             return ResponseDto.<UsersDto>builder()
                     .message("User with ID " + usersDto.getId() + " is not found")
                     .code(-1)
@@ -46,13 +46,13 @@ public class UsersService {
                     .build();
         }
         Users user = userOptional.get();
-        if (usersDto.getGender() != null){
+        if (usersDto.getGender() != null) {
             user.setGender(usersDto.getGender());
         }
-        if (usersDto.getEmail() != null){
+        if (usersDto.getEmail() != null) {
             user.setEmail(usersDto.getEmail());
         }
-        if (usersDto.getLastName() != null){
+        if (usersDto.getLastName() != null) {
             user.setLastName(usersDto.getLastName());
         }
         //...
@@ -64,7 +64,7 @@ public class UsersService {
                     .success(true)
                     .message("OK")
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseDto.<UsersDto>builder()
                     .data(userMapper.toDto(user))
                     .code(1)

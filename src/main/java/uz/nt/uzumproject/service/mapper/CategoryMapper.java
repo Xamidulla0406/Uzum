@@ -6,4 +6,5 @@ import uz.nt.uzumproject.model.Category;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper extends CommonMapper<CategoryDto, Category> {
+
 }

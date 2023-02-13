@@ -6,7 +6,6 @@ import uz.nt.uzumproject.dto.CategoryDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.repository.CategoryRepository;
 import uz.nt.uzumproject.service.mapper.CategoryMapper;
-import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;

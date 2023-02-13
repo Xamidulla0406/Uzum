@@ -28,7 +28,7 @@ public class ProductService {
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
 
-        if (!errors.isEmpty()){
+        if (!errors.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
                     .errors(errors)
                     .data(productDto)
@@ -106,9 +106,10 @@ public class ProductService {
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
+                .data(productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
+
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()

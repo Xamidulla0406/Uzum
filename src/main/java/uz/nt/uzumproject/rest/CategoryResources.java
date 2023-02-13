@@ -18,7 +18,7 @@ public class CategoryResources {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto){
+    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto) {
         return categoryService.addCategory(categoryDto);
     }
 }

@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class ImageService {
     private final ImageRepository imageRepository;
+
     public ResponseDto<Image> saveImage(MultipartFile file) {
         Image image = new Image();
         image.setName(file.getOriginalFilename());
@@ -48,13 +49,13 @@ public class ImageService {
         }
     }
 
-    private synchronized String filePath(String ext){
+    private synchronized String filePath(String ext) {
         LocalDate localDate = LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         File file = new File("upload/" + path);
-        if (!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
-        return file.getPath() + "\\"+ System.currentTimeMillis() + ext;
+        return file.getPath() + "\\" + System.currentTimeMillis() + ext;
     }
 }
