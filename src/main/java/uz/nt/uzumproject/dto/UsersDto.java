@@ -1,8 +1,10 @@
 package uz.nt.uzumproject.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -11,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class UsersDto {
     private Integer id;
+
     private String phoneNumber;
     private String firstName;
     private String lastName;

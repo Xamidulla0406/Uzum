@@ -25,7 +25,7 @@ public class ProductService {
                 .message(AppStatusMessages.OK)
                 .code(AppStatusCodes.OK_CODE)
                 .success(true)
-                .data(mapper.toDTO(product))
+                .data(mapper.toDto(product))
                 .build();
     }
 
@@ -83,7 +83,7 @@ public class ProductService {
                     .success(true)
                     .code(AppStatusCodes.OK_CODE)
                     .message(AppStatusMessages.OK)
-                    .data(mapper.toDTO(productRepository.save(mapper.toEntity(productDto))))
+                    .data(mapper.toDto(productRepository.save(mapper.toEntity(productDto))))
                     .build();
         }catch (Exception e){
             return ResponseDto.<ProductDto>builder()
@@ -100,7 +100,7 @@ public class ProductService {
                 .success(true)
                 .code(AppStatusCodes.OK_CODE)
                 .message(AppStatusMessages.OK)
-                .data(productRepository.findAll().stream().map(mapper::toDTO).toList())
+                .data(productRepository.findAll().stream().map(mapper::toDto).toList())
                 .build();
     }
 }

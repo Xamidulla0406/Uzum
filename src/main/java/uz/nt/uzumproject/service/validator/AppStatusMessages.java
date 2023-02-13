@@ -9,4 +9,6 @@ public class AppStatusMessages {
     public static final String UNEXPECTED_ERROR = "Unexpected error is occured";
     public static final String DATABASE_ERROR = "Database error";
     public static final String OK = "OK";
+    public static final String SIZE_MISMATCH = "Value's size is not valid";
+    public static final String ALREADY_EXISTS = "Value is already exists";
 }
