@@ -1,42 +1,24 @@
 package uz.nt.uzumproject.rest;
 
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import uz.nt.uzumproject.dto.CategoryDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.service.CategoryService;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
-@RequestMapping("category")
 @RequiredArgsConstructor
+@RequestMapping("category")
 public class CategoryResources {
 
     private final CategoryService categoryService;
 
-
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto dto){
-        return categoryService.addCategory(dto);
+    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto){
+        return categoryService.addCategory(categoryDto);
     }
-
-
-    @GetMapping("get-by-parent-id")
-    public List<List<CategoryDto>> getByParentId(@RequestParam Integer id){
-        return categoryService.getByParentId(id);
-    }
-
-    @GetMapping("map")
-    public Map<CategoryDto, List<CategoryDto>> get(@RequestParam Integer id){
-        return categoryService.get(id);
-
-    }
-
-
 }
