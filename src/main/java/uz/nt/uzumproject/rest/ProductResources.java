@@ -29,7 +29,7 @@ public class ProductResources {
     public ResponseDto<List<ProductDto>> get() {
         return service.get();
     }
-    @GetMapping
+    @GetMapping("by-category-id")
     public ResponseDto<List<ProductDto>> getByCategoryId(@RequestParam Integer id){
         return service.getByCategoryId(id);
     }

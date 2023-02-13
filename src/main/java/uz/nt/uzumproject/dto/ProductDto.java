@@ -12,7 +12,6 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDto {
-    @NotNull(message = NULL_VALUE)
     private Integer id;
     @NotNull(message = NULL_VALUE)
     @NotBlank(message = EMPTY_STRING)
@@ -29,6 +28,6 @@ public class ProductDto {
     private String imageUrl;
     private Boolean isAvailable;
     @NotNull(message = NULL_VALUE)
-    @NotBlank(message = EMPTY_STRING)
+    @Positive
     private Integer CategoryId;
 }

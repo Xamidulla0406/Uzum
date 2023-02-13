@@ -25,5 +25,5 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Image> images;
     private Boolean isAvailable;
-    private Integer CategoryId;
+    private Integer categoryId;
 }
