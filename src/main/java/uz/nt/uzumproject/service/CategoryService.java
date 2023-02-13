@@ -21,7 +21,7 @@ public class CategoryService {
 
     public ResponseDto<CategoryDto> addCategory(CategoryDto categoryDto) {
         if(categoryDto.getParentId() != null){
-                   if(categoryRepository.findFirstByParentId(categoryDto.getParentId()).isEmpty()){
+                   if(categoryRepository.findById(categoryDto.getParentId()).isEmpty()){
                        return ResponseDto.<CategoryDto>builder().code(AppStatusCodes.NOT_FOUND_CODE).message(AppStatusMessages.NOT_FOUND).build();
                    }
         }
