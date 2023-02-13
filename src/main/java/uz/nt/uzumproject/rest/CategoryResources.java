@@ -2,13 +2,12 @@ package uz.nt.uzumproject.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.CategoryDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.service.CategoryService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,4 +21,8 @@ public class CategoryResources {
         return categoryService.addCategory(categoryDto);
     }
 
+    @GetMapping
+    public List<CategoryDto> listCategory(@RequestParam Integer categoryId) {
+        return categoryService.listCategory(categoryId);
+    }
 }

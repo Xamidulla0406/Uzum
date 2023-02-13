@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
-//    Optional<Category> findFirstById(Integer parentId);
+    Optional<Category> findFirstByParentId(Integer id);
 
 
 }
