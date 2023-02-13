@@ -25,7 +25,5 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Image> images;
     private Boolean isAvailable;
+    private Integer CategoryId;
 }
-//1. Product qo'shish
-//2. Bor productni o'zgartirish
-//3. Umumiy productlar ro'yxatini qaytarish

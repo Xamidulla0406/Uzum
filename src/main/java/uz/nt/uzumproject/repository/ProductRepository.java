@@ -10,8 +10,9 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Integer>{
 
-    List<Product> findByIsAvailable(boolean b);
+    List<Product> findByIsAvailable(Boolean b);
 
     Optional<Product> findFirstById(Integer id);
 
+    List<Product> findByCategoryId(Integer id);
 }

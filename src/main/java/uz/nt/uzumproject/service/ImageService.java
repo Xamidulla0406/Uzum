@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.OK;
+
 @Service
 @RequiredArgsConstructor
 public class ImageService {
@@ -32,7 +34,7 @@ public class ImageService {
             imageRepository.save(image);
             return ResponseDto.<Image>builder()
                     .code(0)
-                    .message("OK")
+                    .message(OK)
                     .data(image)
                     .success(true)
                     .build();

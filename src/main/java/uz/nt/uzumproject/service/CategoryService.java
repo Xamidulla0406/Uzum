@@ -58,4 +58,14 @@ public class CategoryService {
                 .data(repository.findAll().stream().map(mapper::toDto).collect(Collectors.toList()))
                 .build();
     }
+
+    public ResponseDto<List<CategoryDto>> getCategoriesByCategoryId(Integer id) {
+        List<Category> categories=repository.findAllByParentId(id);
+        return ResponseDto.<List<CategoryDto>>builder()
+                .code(categories.size()==0?NOT_FOUND_CODE:OK_CODE)
+                .message(categories.size()==0?NOT_FOUND:OK)
+                .success(categories.size()>0)
+                .data(categories.size()>0?categories.stream().map(mapper::toDto).collect(Collectors.toList()):null)
+                .build();
+    }
 }

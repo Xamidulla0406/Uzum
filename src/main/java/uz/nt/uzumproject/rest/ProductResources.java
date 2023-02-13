@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
@@ -13,17 +14,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductResources {
     private final ProductService service;
+
     @PostMapping
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
-        return service.post(productDto);
+    public ResponseDto<ProductDto> addProduct(@RequestBody @Valid ProductDto productDto) {
+        return service.add(productDto);
     }
 
     @PatchMapping
-    public ResponseDto<ProductDto> updateUser(@RequestBody ProductDto productDto){
-        return service.patch(productDto);
+    public ResponseDto<ProductDto> updateUser(@RequestBody ProductDto productDto) {
+        return service.edit(productDto);
+    }
+
+    @GetMapping
+    public ResponseDto<List<ProductDto>> get() {
+        return service.get();
     }
     @GetMapping
-    public ResponseDto<List<ProductDto>> getAll(){
-        return service.get();
+    public ResponseDto<List<ProductDto>> getByCategoryId(@RequestParam Integer id){
+        return service.getByCategoryId(id);
     }
 }

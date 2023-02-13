@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.OK;
+
 @Service
 @RequiredArgsConstructor
 public class UsersService {
@@ -29,7 +31,7 @@ public class UsersService {
         return ResponseDto.<UsersDto>builder()
                 .success(true)
                 .data(mapper.toDto(users))
-                .message("OK")
+                .message(OK)
                 .build();
     }
 
@@ -80,7 +82,7 @@ public class UsersService {
                     .data(mapper.toDto(user))
                     .code(AppStatusCodes.OK_CODE)
                     .success(true)
-                    .message(AppStatusMessages.OK)
+                    .message(OK)
                     .build();
         } catch (Exception e){
             return ResponseDto.<UsersDto>builder()
@@ -96,7 +98,7 @@ public class UsersService {
                 .map(u -> ResponseDto.<UsersDto>builder()
                         .data(mapper.toDto(u))
                         .success(true)
-                        .message("OK")
+                        .message(OK)
                         .build())
                 .orElse(ResponseDto.<UsersDto>builder()
                         .message("User with phone number " + phoneNumber + " is not found")
@@ -108,7 +110,7 @@ public class UsersService {
         Optional<Users> user=usersRepository.findByIdAndIsActive(id,(short)1);
         if(user.isEmpty()) {
             return (ResponseDto.<UsersDto>builder()
-                    .message("User with ID=" + id + " not found")
+                    .message("User with ID " + id + " not found")
                     .code(-1)
                     .build());
         }
@@ -118,7 +120,7 @@ public class UsersService {
             usersRepository.save(delUser);
             return ResponseDto.<UsersDto>builder()
                     .success(true)
-                    .message("OK")
+                    .message(OK)
                     .data(mapper.toDto(delUser))
                     .build();
 
@@ -134,9 +136,9 @@ public class UsersService {
     public ResponseDto<List<UsersDto>> getAllUsers() {
         return ResponseDto.<List<UsersDto>>builder()
                 .code(0)
-                .message("OK")
+                .message(OK)
                 .success(true)
-                .data(usersRepository.findAllByIsActive(1).stream().map(u-> mapper.toDto(u)).collect(Collectors.toList()))
+                .data(usersRepository.findAllByIsActive(1).stream().map(mapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 }
