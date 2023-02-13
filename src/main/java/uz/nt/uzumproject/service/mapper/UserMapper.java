@@ -9,7 +9,7 @@ import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.service.ProductService;
 
 @Mapper(componentModel = "spring")
-public abstract class UserMapper {
+public abstract class UserMapper implements CommonMapper<UsersDto, Users>{
 
 //    @Autowired
 //    protected ProductService productService;
