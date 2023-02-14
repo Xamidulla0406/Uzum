@@ -19,10 +19,10 @@ public class CategoryDto {
 
     private Integer id;
     @NotBlank(message = EMPTY_STRING)
-    @Size(max = 100, min = 3, message = SIZE_MISMATCH)
+    @Size(max = 500, min = 3, message = SIZE_MISMATCH)
     private String name;
     @Positive(message = NEGATIVE_VALUE)
-    @NotNull(message = NULL_VALUE)
+//    @NotNull(message = NULL_VALUE)
     private Integer parentId;
 
 }
