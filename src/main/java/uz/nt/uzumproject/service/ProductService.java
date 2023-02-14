@@ -118,7 +118,7 @@ public class ProductService {
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()
-                        .data(ProductMapper.toDto(products))
+                        .data(productMapper.toDto(products))
                         .success(true)
                         .message("OK")
                         .build())
