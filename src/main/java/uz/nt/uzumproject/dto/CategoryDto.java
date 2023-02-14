@@ -19,6 +19,6 @@ public class CategoryDto {
     private String name;
     @Positive(message = NEGATIVE_VALUE)
 //    @NotNull(message = NULL_VALUE)
-//    @Max(value = 500, message = SIZE_MISMATCH)
+    @Max(value = 500, message = SIZE_MISMATCH)
     private Integer parentId;
 }
