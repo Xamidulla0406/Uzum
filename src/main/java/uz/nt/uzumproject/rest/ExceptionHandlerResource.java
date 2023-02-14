@@ -1,16 +1,11 @@
 package uz.nt.uzumproject.rest;
 
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ResponseDto;
-import uz.nt.uzumproject.service.validator.AppStatusCodes;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
-
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;

@@ -25,7 +25,6 @@ public class ProductResources {
         return productService.update(productDto);
     }
 
-
     @GetMapping("/get-all-product")
     public ResponseDto<List<ProductDto>> getAll(){
 

@@ -13,8 +13,8 @@ import java.util.List;
 @RequestMapping("/category")
 @RequiredArgsConstructor
 public class CategoryResources {
-
     private final CategoryService categoryService;
+
     @PostMapping
     public ResponseDto<CategoryDto> add(@RequestBody @Valid CategoryDto categoryDto){
         return categoryService.addCategory(categoryDto);

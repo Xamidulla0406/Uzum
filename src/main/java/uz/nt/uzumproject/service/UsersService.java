@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
-
     private final UserMapper userMapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {

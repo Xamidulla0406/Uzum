@@ -13,7 +13,6 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDto {
-
     private Integer id;
     @NotBlank(message = NULL_VALUE)
     @Size(min = 3, max = 500)

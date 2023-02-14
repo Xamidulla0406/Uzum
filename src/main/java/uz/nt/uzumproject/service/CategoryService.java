@@ -17,7 +17,6 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
-
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 

@@ -12,7 +12,6 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 @Component
 public class ProductValidator {
 
-
     public List<ErrorDto> getError(ProductDto productDto) {
         List<ErrorDto> error = new ArrayList<>();
 

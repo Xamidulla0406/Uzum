@@ -22,9 +22,7 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
-
     private final ProductMapper productMapper;
-
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
         List<ErrorDto> error = productValidator.getError(productDto);

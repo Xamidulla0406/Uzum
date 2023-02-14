@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsersResources {
     private final UsersService usersService;
+
     @PostMapping
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
