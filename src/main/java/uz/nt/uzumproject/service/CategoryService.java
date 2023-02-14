@@ -69,13 +69,16 @@ public class CategoryService {
         }
     }
 
-    //public List<CategoryDto> list = new ArrayList<>();
 
-    public List<CategoryDto> listCategory(Integer categoryId) {
-        return categoryRepository.findAllByParentId(categoryId).stream()
-                .map(categoryMapper::toDto)
-                .collect(Collectors.toList());
+    public ResponseDto<List<CategoryDto>> listCategory(Integer categoryId) {
+        List<CategoryDto> list = new ArrayList<>(categoryRepository.findAllByParentId(categoryId));
+//        return  ResponseDto.<List<CategoryDto>>builder()
+//                .data(list.stream().map(categoryMapper::toDto)
+//                        .collect(Collectors.toList()))
+//                        .message(OK)
+//                        .success(true)
+//                        .build();
+        return null;
 
-//        return list.addAll(categoryRepository.findAllByParentId(categoryId).map(categoryMapper.toDto(categoryId)));
     }
 }

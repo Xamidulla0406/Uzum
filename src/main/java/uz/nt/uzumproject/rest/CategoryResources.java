@@ -22,7 +22,7 @@ public class CategoryResources {
     }
 
     @GetMapping
-    public List<CategoryDto> listCategory(@RequestParam Integer categoryId) {
+    public ResponseDto<List<CategoryDto>> listCategory(@RequestParam Integer categoryId) {
         return categoryService.listCategory(categoryId);
     }
 }
