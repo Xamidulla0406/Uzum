@@ -27,9 +27,9 @@ public class CategoryService {
                     ))
                     .message(OK)
                     .success(true)
-                    .build()
-            ;
-        }catch (Exception e){
+                    .build();
+
+        } catch (Exception e) {
             return ResponseDto.<CategoryDto>builder()
                     .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + ": " + e.getMessage())
