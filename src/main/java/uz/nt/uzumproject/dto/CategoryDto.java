@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 

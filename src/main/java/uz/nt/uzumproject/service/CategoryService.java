@@ -1,21 +1,15 @@
 package uz.nt.uzumproject.service;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import uz.nt.uzumproject.dto.CategoryDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.repository.CategoryRepository;
-import uz.nt.uzumproject.rest.CategoryResources;
 import uz.nt.uzumproject.service.mapper.CategoryMapper;
-import uz.nt.uzumproject.service.mapper.CommonMapper;
-import uz.nt.uzumproject.service.validator.AppStatusCodes;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
@@ -29,7 +23,7 @@ public class CategoryService {
 
     public ResponseDto<CategoryDto> addCategory(CategoryDto categoryDto) {
         if(categoryDto.getParentId() != null){
-            if(categoryRepository.findFirstByParentId(categoryDto.getParentId()).isEmpty()){
+            if(categoryRepository.findFirstById(categoryDto.getParentId()).isEmpty()){
                 return ResponseDto.<CategoryDto>builder()
                         .success(false)
                         .code(VALIDATION_ERROR_CODE)
@@ -51,6 +45,24 @@ public class CategoryService {
                     .code(DATABASE_ERROR_CODE)
                     .success(false)
                     .message(DATABASE_ERROR)
+                    .build();
+        }
+    }
+
+    public ResponseDto<List<CategoryDto>> getParentId(Integer id) {
+        try {
+            return ResponseDto.<List<CategoryDto>>builder()
+                    .message(OK)
+                    .success(true)
+                    .code(OK_CODE)
+                    .data(categoryRepository.findAllByParentId(id).stream().map(categoryMapper::toDto).collect(Collectors.toList()))
+                    .build();
+        }catch (Exception e){
+            return ResponseDto.<List<CategoryDto>>builder()
+                    .code(DATABASE_ERROR_CODE)
+                    .success(false)
+                    .message(DATABASE_ERROR + " " + e.getMessage())
+                    .data(null)
                     .build();
         }
     }
