@@ -7,17 +7,23 @@ import uz.nt.uzumproject.dto.CategoryDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.service.CategoryService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/category")
+@RequestMapping("/categories")
 public class CategoryResources {
-    public final CategoryService categoryService;
-    @GetMapping("/{id}")
-    public ResponseDto<CategoryDto> getCategory(@PathVariable Integer id){
-        return categoryService.getCategory(id);
-    }
+    private final CategoryService service;
     @PostMapping
-    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto){
-        return categoryService.addCategory(categoryDto);
+    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto dto){
+        return service.addCategory(dto);
+    }
+    @GetMapping
+    public ResponseDto<List<CategoryDto>> getCategories(){
+        return service.getCategories();
+    }
+    @GetMapping("by-id")
+    public ResponseDto<List<CategoryDto>> getCategoriesById(@RequestParam Integer id){
+        return service.getCategoriesByCategoryId(id);
     }
 }

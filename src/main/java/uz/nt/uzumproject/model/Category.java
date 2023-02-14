@@ -1,31 +1,25 @@
 package uz.nt.uzumproject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+import java.util.List;
+
 @Getter
 @Setter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
-<<<<<<< HEAD
-
     @Id
-    @GeneratedValue(generator = "category_id_seq")
-    @SequenceGenerator(name = "category_id_seq", sequenceName = "category_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "categoryIdSeq")
+    @SequenceGenerator(name="categoryIdSeq",sequenceName = "category_id_seq",allocationSize = 1)
     private Integer id;
     private String name;
     private Integer parentId;
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
 }
-=======
-    @Id
-    @GeneratedValue(generator = "category_id_seq")
-    @SequenceGenerator(name = "category_id_seq",sequenceName = "category_id,seq",allocationSize = 1)
-    private Integer id;
-    private String name;
-    private Integer parentId;
-}
->>>>>>> dev/MuhammadAli

@@ -14,10 +14,8 @@ import uz.nt.uzumproject.service.ImageService;
 @RestController
 @RequestMapping("image")
 @RequiredArgsConstructor
-public class ImageResource {
-
-    private final ImageService imageService;
-
+public class ImageResources {
+    private  final ImageService imageService;
     @PostMapping
     public ResponseDto<Image> uploadImage(@RequestBody MultipartFile image){
         return imageService.saveImage(image);

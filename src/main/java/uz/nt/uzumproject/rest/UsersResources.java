@@ -6,6 +6,8 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.UsersService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -24,5 +26,14 @@ public class UsersResources {
     @GetMapping("by-phone-number")
     public ResponseDto<UsersDto> getUserByPhoneNumber(@RequestParam String phoneNumber){
         return usersService.getUserByPhoneNumber(phoneNumber);
+    }
+    @DeleteMapping
+    public ResponseDto<UsersDto> deleteUser(@RequestParam Integer id){
+        return  usersService.deleteUser(id);
+    }
+
+    @GetMapping
+    public ResponseDto<List<UsersDto>> getAllUsers(){
+        return usersService.getAllUsers();
     }
 }
