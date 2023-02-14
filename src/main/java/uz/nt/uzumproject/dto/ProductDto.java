@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.nt.uzumproject.model.Category;
 
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
@@ -28,6 +29,5 @@ public class ProductDto {
     private String imageUrl;
     private Boolean isAvailable;
     @NotNull(message = NULL_VALUE)
-    @Positive
-    private Integer CategoryId;
+    private Category category;
 }

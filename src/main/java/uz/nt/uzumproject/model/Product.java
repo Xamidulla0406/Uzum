@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 @Entity
@@ -25,5 +24,6 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Image> images;
     private Boolean isAvailable;
-    private Integer categoryId;
+    @ManyToOne
+    private Category category;
 }
