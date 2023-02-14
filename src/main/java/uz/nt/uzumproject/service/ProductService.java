@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
-import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
+import uz.nt.uzumproject.model.Product;
 
 import java.util.List;
 import java.util.Optional;

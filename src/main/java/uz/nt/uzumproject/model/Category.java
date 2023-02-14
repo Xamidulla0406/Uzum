@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Category {
+<<<<<<< HEAD
 
     @Id
     @GeneratedValue(generator = "category_id_seq")
@@ -19,3 +20,12 @@ public class Category {
     private String name;
     private Integer parentId;
 }
+=======
+    @Id
+    @GeneratedValue(generator = "category_id_seq")
+    @SequenceGenerator(name = "category_id_seq",sequenceName = "category_id,seq",allocationSize = 1)
+    private Integer id;
+    private String name;
+    private Integer parentId;
+}
+>>>>>>> dev/MuhammadAli
