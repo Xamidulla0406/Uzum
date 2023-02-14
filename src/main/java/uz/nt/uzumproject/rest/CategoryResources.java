@@ -1,7 +1,8 @@
 package uz.nt.uzumproject.rest;
 
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ public class CategoryResources {
 
     private final CategoryService categoryService;
     @PostMapping
-    public ResponseDto<CategoryDto> add(@RequestBody @Valid CategoryDto categoryDto){
+    public ResponseDto<CategoryDto> add(@RequestBody @Validated CategoryDto categoryDto){
         return categoryService.addCategory(categoryDto);
     }
 }

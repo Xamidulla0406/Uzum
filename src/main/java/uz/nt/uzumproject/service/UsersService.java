@@ -72,16 +72,5 @@ public class UsersService {
         }
     }
 
-    public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
-        return usersRepository.findFirstByPhoneNumber(phoneNumber)
-                .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(userMapper.toDto(u))
-                        .success(true)
-                        .message("OK")
-                        .build())
-                .orElse(ResponseDto.<UsersDto>builder()
-                        .message("User with phone number " + phoneNumber + " is not found")
-                        .code(-1)
-                        .build());
-    }
+
 }
