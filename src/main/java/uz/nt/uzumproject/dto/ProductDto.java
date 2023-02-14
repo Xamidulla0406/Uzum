@@ -26,6 +26,7 @@ public class ProductDto {
     private Integer amount;
     @NotBlank(message = EMPTY_STRING)
     private String description;
+    private CategoryDto category;
     private String imageUrl;
 
     private CategoryDto category;
