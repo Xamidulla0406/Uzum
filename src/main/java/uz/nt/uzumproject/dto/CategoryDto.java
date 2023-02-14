@@ -3,6 +3,8 @@ package uz.nt.uzumproject.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.List;
+
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 
@@ -21,4 +23,6 @@ public class CategoryDto {
 //    @NotNull(message = NULL_VALUE)
     @Max(value = 500, message = SIZE_MISMATCH)
     private Integer parentId;
+    private List<CategoryDto> subCategories;
+
 }

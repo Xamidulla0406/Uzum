@@ -69,29 +69,14 @@ public class CategoryService {
         }
     }
 
-    public ResponseDto<CategoryDto> getCategory(Integer id) {
-        Optional<Category> optional = categoryRepository.findById(id);
-        CategoryDto categoryDto = null;
-        List<Category> list = categoryRepository.findAllByParentId(id);
-        List<CategoryDto> categoryList = new ArrayList<>();
-        if (optional.isPresent()){
-            categoryDto = categoryMapper.toDto(optional.get());
-            for (Category category : list) {
-                categoryList.add(categoryMapper.toDto(category));
-            }
-            categoryDto.setSubCategories(categoryList);
-        }
 
-        return ResponseDto.<CategoryDto>builder()
-                .message(optional.isPresent() ? OK : NOT_FOUND)
-                .code(optional.isPresent() ? OK_CODE : NOT_FOUND_ERROR_CODE)
-                .success(optional.isPresent())
-                .data(categoryDto)
+    public ResponseDto<List<CategoryDto>> listCategory(Integer categoryId) {
+        List<CategoryDto> list = new ArrayList<>(categoryRepository.findAllByParentId(categoryId));
+        return  ResponseDto.<List<CategoryDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .success(true)
+                .data(list.stream().collect(Collectors.toList()))
                 .build();
-    }
-
-
-
-
     }
 }

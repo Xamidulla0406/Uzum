@@ -21,8 +21,8 @@ public class CategoryResources {
         return categoryService.addCategory(categoryDto);
     }
 
-    @GetMapping("/{id}")
-    public ResponseDto<CategoryDto> getCategory(@PathVariable Integer id){
-        return categoryService.getCategory(id);
+    @GetMapping
+    public ResponseDto<List<CategoryDto>> listCategory(@RequestParam Integer categoryId) {
+        return categoryService.listCategory(categoryId);
     }
 }
