@@ -71,12 +71,12 @@ public class CategoryService {
 
 
     public ResponseDto<List<CategoryDto>> listCategory(Integer categoryId) {
-        List<CategoryDto> list = new ArrayList<>(categoryRepository.findAllByParentId(categoryId));
+        List<Category> list = new ArrayList<>(categoryRepository.findAllByParentId(categoryId));
         return  ResponseDto.<List<CategoryDto>>builder()
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data(list.stream().collect(Collectors.toList()))
+                .data(list.stream().map(categoryMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 }

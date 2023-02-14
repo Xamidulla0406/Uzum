@@ -14,5 +14,5 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
 
-    List<CategoryDto> findAllByParentId(Integer categoryId);
+    List<Category> findAllByParentId(Integer categoryId);
 }
