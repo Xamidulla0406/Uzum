@@ -1,8 +1,6 @@
 package uz.nt.uzumproject.service.mapper;
 
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;

@@ -41,6 +41,7 @@ public class ImageService {
                     .data(image)
                     .message("OK")
                     .success(true)
+                    .code(0)
                     .build();
         } catch (IOException e) {
             log.error("Error while saving file: {}", e.getMessage());
@@ -48,6 +49,7 @@ public class ImageService {
                     .code(2)
                     .data(image)
                     .message("Error while saving file: " + e.getMessage())
+                    .success(false)
                     .build();
         }
     }

@@ -12,26 +12,25 @@ import java.util.List;
 @RequestMapping("product")
 @RequiredArgsConstructor
 public class ProductResources {
-
     private final ProductService productService;
 
     @PostMapping
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
-        return productService.addProduct(productDto);
+    public ResponseDto<ProductDto> add(@RequestBody ProductDto productDto){
+
+        return productService.add(productDto);
     }
 
     @PatchMapping
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
-        return productService.updateProduct(productDto);
+    public ResponseDto<ProductDto> update(@RequestBody ProductDto productDto){
+        return productService.update(productDto);
     }
 
-    @GetMapping()
-    public ResponseDto<List<ProductDto>>getAllProducts(){
+
+    @GetMapping("/get-all-product")
+    public ResponseDto<List<ProductDto>> getAll(){
+
         return productService.getAllProducts();
     }
-    @GetMapping("by-id")
-    public ResponseDto<ProductDto>getProductById(@RequestParam Integer id){
-        return productService.getProductById(id);
-    }
+
 
 }
