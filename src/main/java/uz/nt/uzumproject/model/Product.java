@@ -27,6 +27,4 @@ public class Product {
     @ManyToOne
     private Category category;
     private Boolean isAvailable;
-    @ManyToOne
-    private Category category;
 }

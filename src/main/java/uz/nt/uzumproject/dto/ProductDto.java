@@ -29,6 +29,4 @@ public class ProductDto {
     private CategoryDto category;
     private String imageUrl;
     private Boolean isAvailable;
-    @NotNull(message = NULL_VALUE)
-    private Category category;
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.nt.uzumproject.service.validator.IsValidPhoneNumber;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class UsersDto {
     private Integer id;
-
+    @IsValidPhoneNumber
     private String phoneNumber;
     private String firstName;
     private String lastName;
@@ -21,5 +22,5 @@ public class UsersDto {
     private String email;
     private String gender;
     private String birthDate;
-    private List<ProductDto> productDtos;
+//    private List<ProductDto> productDtos;
 }
