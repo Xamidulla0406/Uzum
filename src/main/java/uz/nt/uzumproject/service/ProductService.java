@@ -111,4 +111,18 @@ public class ProductService {
                             .collect(Collectors.toList()))
                     .build();
         }
+
+    public ResponseDto<ProductDto> getProductById(Integer id) {
+        return productRepository.findById(id)
+                .map(p->ResponseDto.<ProductDto>builder()
+                        .data(productMapper.toDto(p))
+                        .success(true)
+                        .code(OK_CODE)
+                        .build())
+                .orElse(ResponseDto.<ProductDto>builder()
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .message(NOT_FOUND)
+                        .success(false)
+                        .build());
     }
+}

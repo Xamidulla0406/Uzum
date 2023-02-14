@@ -27,7 +27,10 @@ public class ProductResources {
 
     @GetMapping
     public ResponseDto<List<ProductDto>> getAll(){
-
         return productService.getAllProducts();
+    }
+    @GetMapping("/{id}")
+    public ResponseDto<ProductDto> getProductById(@PathVariable Integer id){
+        return productService.getProductById(id);
     }
 }

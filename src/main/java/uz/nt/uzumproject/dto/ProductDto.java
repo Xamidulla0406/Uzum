@@ -26,6 +26,8 @@ public class ProductDto {
     @NotEmpty(message =EMPTY_STRING)
     @NotNull(message = NULL_VALUE)
     private String description;
+
+    private CategoryDto category;
     private String imageUrl;
     private Boolean isAvailable;
 }
