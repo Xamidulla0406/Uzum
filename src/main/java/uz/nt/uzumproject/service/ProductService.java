@@ -114,5 +114,19 @@ public class ProductService {
                     .data(productRepository.findAll().stream().map(p-> productMapper.toDto(p)).collect(Collectors.toList()))
                     .build();
         }
+
+    public ResponseDto<ProductDto> getProductById(Integer id) {
+        return productRepository.findById(id)
+                .map(products -> ResponseDto.<ProductDto>builder()
+                        .data(ProductMapper.toDto(products))
+                        .success(true)
+                        .message("OK")
+                        .build())
+                .orElse(ResponseDto.<ProductDto>builder()
+                        .message("Product with id " + id + " not found")
+                        .code(-1)
+                        .build()
+                );
     }
+}
 

@@ -32,4 +32,9 @@ public class ProductResources {
     }
 
 
+    @GetMapping("by-id")
+    public ResponseDto<ProductDto>getProductById(@RequestParam Integer id){
+        return productService.getProductById(id);
+    }
+
 }

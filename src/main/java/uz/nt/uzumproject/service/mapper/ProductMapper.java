@@ -12,6 +12,8 @@ public abstract class ProductMapper implements CommonMapper<ProductDto, Product>
     protected CategoryMapper categoryMapper;
 
     @Mapping(target = "category", expression = "java(categoryMapper.toDto(product.getCategory()))")
-    public abstract ProductDto toDto(Product product);
+    public static ProductDto toDto(Product product) {
+        return null;
+    }
 
 }
