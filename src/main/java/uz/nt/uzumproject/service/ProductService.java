@@ -117,6 +117,7 @@ public class ProductService {
                 .map(p->ResponseDto.<ProductDto>builder()
                         .data(productMapper.toDto(p))
                         .success(true)
+                        .message(OK)
                         .code(OK_CODE)
                         .build())
                 .orElse(ResponseDto.<ProductDto>builder()
