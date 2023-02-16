@@ -28,7 +28,7 @@ public class SecurityConfiguration {
                     .withUser("a")
                     .password(passwordEncoder().encode("1"))
                     .roles("User");
-//            fjkladsfjaldskfa
+
     }
 
    @Bean
