@@ -23,8 +23,10 @@ public class Product {
     private String description;
     @OneToMany(mappedBy = "product")
     private List<Image> images;
-    // 1 ta category ga bir nechta productlar to'g'ri keladi.Foreign key product da bo'ladi
     @ManyToOne
     private Category category;
     private Boolean isAvailable;
 }
+//1. Product qo'shish
+//2. Bor productni o'zgartirish
+//3. Umumiy productlar ro'yxatini qaytarish
