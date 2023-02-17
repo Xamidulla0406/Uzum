@@ -18,7 +18,7 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole({'ADMIN', 'SUPERADMIN'})")
     public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
         return productService.addProduct(productDto);
     }

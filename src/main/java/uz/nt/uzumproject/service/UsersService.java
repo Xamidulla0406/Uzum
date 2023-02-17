@@ -1,6 +1,10 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
@@ -12,13 +16,16 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UsersService {
+public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = userMapper.toEntity(dto);
         usersRepository.save(users);
+        users.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
@@ -84,5 +91,10 @@ public class UsersService {
                         .message("User with phone number " + phoneNumber + " is not found")
                         .code(-1)
                         .build());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }
