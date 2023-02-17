@@ -21,6 +21,6 @@ public class UsersDto {
     private String email;
     @ValidGender
     private String gender;
+    private String password;
     private String birthDate;
-    private List<ProductDto> product;
 }

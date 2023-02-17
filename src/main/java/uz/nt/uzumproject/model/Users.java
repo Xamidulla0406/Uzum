@@ -20,6 +20,7 @@ public class Users {
     private String lastName;
     private String middleName;
     private String email;
+    private String password;
     private String gender;
     private Date birthDate;
 }
