@@ -25,6 +25,9 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Image> images;
     private Boolean isAvailable;
+    @ManyToOne
+    private Category category;
+
 //    mvn clean package -Dmaven .test.skip
 }
 //1. Product qo'shish

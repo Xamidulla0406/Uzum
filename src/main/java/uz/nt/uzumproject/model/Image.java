@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,4 +22,6 @@ public class Image {
     @ManyToOne
     private Product product;
     private LocalDateTime createdAt;
+
+
 }

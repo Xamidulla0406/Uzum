@@ -1,6 +1,8 @@
 package uz.nt.uzumproject.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
@@ -14,7 +16,7 @@ import java.util.List;
 public class UsersResources {
     private final UsersService usersService;
     @PostMapping
-    public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
+    public ResponseDto<UsersDto> addUsers(@RequestBody @Valid UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
 
@@ -35,6 +37,7 @@ public class UsersResources {
 
     @GetMapping("users-list")
     private List<ResponseDto<UsersDto>> getUserById(){
+        System.out.println("users list");
         return usersService.getAllUsers();
     }
 

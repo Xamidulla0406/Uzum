@@ -1,6 +1,8 @@
 package uz.nt.uzumproject.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
@@ -16,16 +18,18 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseDto<ProductDto> addProduct(@RequestBody @Valid ProductDto productDto){
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseDto<ProductDto> updateProduct(@RequestBody @Valid ProductDto productDto){
         return productService.updateProduct(productDto);
     }
 
-    @GetMapping()
+    @GetMapping("get-all-products")
     public ResponseDto<List<ProductDto>>getAllProducts(){
         return productService.getAllProducts();
     }

@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -31,9 +34,9 @@ public class ProductService {
         if(!errors.isEmpty()){
             return ResponseDto.<ProductDto>builder()
                     .errors(errors)
-                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .code(VALIDATION_ERROR_CODE)
                     .data(productDto)
-                    .message(AppStatusMessages.VALIDATION_ERROR)
+                    .message(VALIDATION_ERROR)
                     .build();
         }
 
@@ -44,7 +47,7 @@ public class ProductService {
         return ResponseDto.<ProductDto>builder()
                 .success(true)
                 .code(0)
-                .data(ProductMapperManual.toDto(product))
+                .data(productMapper.toDto(product))
                 .message("OK")
                 .build();
 
@@ -75,9 +78,9 @@ public class ProductService {
         if(!errors.isEmpty()){
             return ResponseDto.<ProductDto>builder()
                     .errors(errors)
-                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .code(VALIDATION_ERROR_CODE)
                     .data(productDto)
-                    .message(AppStatusMessages.VALIDATION_ERROR)
+                    .message(VALIDATION_ERROR)
                     .build();
         }
 
@@ -133,13 +136,13 @@ public class ProductService {
                 .message("OK")
                 .code(0)
                 .success(true)
-                .data( productRepository.findAll().stream().map(ProductMapperManual::toDto).collect(Collectors.toList()))
+                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()
-                        .data(ProductMapperManual.toDto(products))
+                        .data(productMapper.toDto(products))
                         .success(true)
                         .message("OK")
                         .build())
