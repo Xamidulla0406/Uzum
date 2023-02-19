@@ -20,5 +20,7 @@ public class UsersDto {
     private String email;
     //@ValidGender
     private String gender;
+    private String password;
+    private boolean enabled;
     private Date birthDate;
 }

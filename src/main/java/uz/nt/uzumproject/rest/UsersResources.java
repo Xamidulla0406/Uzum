@@ -2,6 +2,7 @@ package uz.nt.uzumproject.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ResponseDto;
@@ -16,13 +17,11 @@ import java.util.List;
 public class UsersResources {
     private final UsersService usersService;
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseDto<UsersDto> addUsers(@RequestBody @Valid UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
 
     @PatchMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseDto<UsersDto> updateUser(@RequestBody UsersDto usersDto){
         return usersService.updateUser(usersDto);
     }
@@ -33,11 +32,10 @@ public class UsersResources {
     }
 
     @DeleteMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseDto<UsersDto> deleteUser(@RequestParam Integer id){
         return  usersService.deleteUser(id);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseDto<List<UsersDto>> getAllUsers(){
         return usersService.getAllUsers();

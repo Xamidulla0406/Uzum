@@ -17,14 +17,12 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseDto<ProductDto> add(@RequestBody ProductDto productDto){
 
         return productService.add(productDto);
     }
 
     @PatchMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseDto<ProductDto> update(@RequestBody ProductDto productDto){
         return productService.update(productDto);
     }
@@ -35,7 +33,7 @@ public class ProductResources {
     }
     @GetMapping("/{id}")
     public ResponseDto<ProductDto> getProductById(@PathVariable Integer id , HttpServletRequest req){
-        req.getHeader("Authorization");
+
         return productService.getProductById(id);
     }
 }
