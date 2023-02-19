@@ -9,5 +9,6 @@ public class AppStatusMessages {
     public static final String UNEXPECTED_ERROR = "Unexpected error is occurred";
     public static final String PARENT_ID_NOT_FOUND = "The parent id is not fount for given data";
     public static final String DATABASE_ERROR = "Database error";
+    public static final String DUPLICATE_ERROR = "Value is duplicated";
     public static final String OK = "OK";
 }

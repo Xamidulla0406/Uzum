@@ -18,13 +18,13 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','CREATE')")
     public ResponseDto<ProductDto> addProduct(@RequestBody @Valid ProductDto productDto){
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','UPDATE')")
     public ResponseDto<ProductDto> updateProduct(@RequestBody @Valid ProductDto productDto){
         return productService.updateProduct(productDto);
     }

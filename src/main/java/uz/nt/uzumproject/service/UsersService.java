@@ -1,10 +1,15 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
+import uz.nt.uzumproject.model.Authorities;
 import uz.nt.uzumproject.model.Users;
+import uz.nt.uzumproject.repository.AuthorityRepository;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.service.mapper.UsersMapper;
 import uz.nt.uzumproject.service.mapper.UsersMapperManual;
@@ -15,14 +20,19 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UsersService {
+public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final UsersMapper usersMapper;
+
+    private final AuthorityRepository authorityRepository;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = usersMapper.toEntity(dto);
         users.setIsActive((short) 1);
+
+
         usersRepository.save(users);
+        authorityRepository.save(new Authorities(users.getEmail(),users.getRole()));
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
@@ -106,6 +116,7 @@ public class UsersService {
         users.setIsActive((short) 0);
         usersRepository.save(users);
 
+
         return ResponseDto.<UsersDto>builder()
                 .message("User with ID " + id + " is deleted")
                 .code(0)
@@ -121,5 +132,15 @@ public class UsersService {
                         .success(true)
                         .message("OK")
                         .build()).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+       Optional<Users> users = usersRepository.findFirstByEmail(username);
+
+       if(username.isEmpty())throw new UsernameNotFoundException("User with this email " + username + " is not found");
+
+        System.out.println(users.get().toString());
+       return usersMapper.toDto(users.get());
     }
 }

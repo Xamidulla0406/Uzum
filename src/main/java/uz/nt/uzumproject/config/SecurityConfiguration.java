@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.postgresql.Driver;
+import uz.nt.uzumproject.service.UsersService;
 
 import javax.sql.DataSource;
 
@@ -31,11 +35,20 @@ public class SecurityConfiguration {
     @Value("${spring.datasource.username}")
     private String username;
 
+    @Autowired
+
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    @Lazy
+    private UsersService usersService;
+
 
     @Autowired
     public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication().dataSource(dataSource())
-                .usersByUsernameQuery("select email as username, password, enabled from users where email = ?");
+        auth.authenticationProvider(authen());
+//                jdbcAuthentication().dataSource(dataSource())
+//                .usersByUsernameQuery("select email as username, password, enabled from users where email = ?");
 
 //                inMemoryAuthentication()
 //                .withUser("Xojiakbar")
@@ -46,6 +59,16 @@ public class SecurityConfiguration {
 //                .password(passwordEncoder().encode("1"))
 //                .roles("USER");
     }
+
+
+    public AuthenticationProvider authen(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(usersService);
+
+        return provider;
+    }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {

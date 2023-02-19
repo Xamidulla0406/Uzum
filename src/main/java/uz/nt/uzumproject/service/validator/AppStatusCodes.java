@@ -7,4 +7,5 @@ public class AppStatusCodes {
     public static final Integer OK_CODE = 0;
     public static final Integer DATABASE_ERROR_CODE = 1;
     public static final Integer UNEXPECTED_ERROR_CODE = 2;
+    public static final Integer DUPLICATE_ERROR_CODE = 3;
 }
