@@ -1,6 +1,8 @@
 package uz.nt.uzumproject.dto;
 
 import lombok.*;
+import uz.nt.uzumproject.service.validator.GenderAnnotation;
+import uz.nt.uzumproject.service.validator.PhoneNumberAnnotation;
 
 import java.util.List;
 
@@ -11,11 +13,13 @@ import java.util.List;
 @Builder
 public class UsersDto {
     private Integer id;
+    @PhoneNumberAnnotation
     private String phone;
     private String firstName;
     private String lastName;
     private String middleName;
     private String email;
+    @GenderAnnotation
     private String gender;
     private String birthDate;
     private List<ProductDto> product;
