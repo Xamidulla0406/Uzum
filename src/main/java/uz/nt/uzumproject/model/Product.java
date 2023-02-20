@@ -28,6 +28,3 @@ public class Product {
     private Category category;
     private Boolean isAvailable;
 }
-//1. Product qo'shish
-//2. Bor productni o'zgartirish
-//3. Umumiy productlar ro'yxatini qaytarish

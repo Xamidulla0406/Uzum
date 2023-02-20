@@ -4,8 +4,6 @@ import lombok.*;
 import uz.nt.uzumproject.service.validator.GenderAnnotation;
 import uz.nt.uzumproject.service.validator.PhoneNumberAnnotation;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor

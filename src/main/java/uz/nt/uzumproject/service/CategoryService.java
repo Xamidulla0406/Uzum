@@ -7,11 +7,9 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.repository.CategoryRepository;
 import uz.nt.uzumproject.service.mapper.CategoryMapper;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-
-import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
-import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.DATABASE_ERROR_CODE;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.DATABASE_ERROR;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.OK;
 
 @Service
 @RequiredArgsConstructor

@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
 public class Users implements UserDetails {
