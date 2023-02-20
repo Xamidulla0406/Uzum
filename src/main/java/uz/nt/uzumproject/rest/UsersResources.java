@@ -35,7 +35,7 @@ public class UsersResources {
     public ResponseDto<UsersDto> deleteUser(@RequestParam Integer id){
         return  usersService.deleteUser(id);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping
     public ResponseDto<List<UsersDto>> getAllUsers(){
         return usersService.getAllUsers();

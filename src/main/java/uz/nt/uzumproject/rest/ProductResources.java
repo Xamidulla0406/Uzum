@@ -17,21 +17,25 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseDto<ProductDto> add(@RequestBody ProductDto productDto){
 
         return productService.add(productDto);
     }
 
     @PatchMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseDto<ProductDto> update(@RequestBody ProductDto productDto){
         return productService.update(productDto);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public ResponseDto<List<ProductDto>> getAll(){
         return productService.getAllProducts();
     }
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public ResponseDto<ProductDto> getProductById(@PathVariable Integer id , HttpServletRequest req){
 
         return productService.getProductById(id);

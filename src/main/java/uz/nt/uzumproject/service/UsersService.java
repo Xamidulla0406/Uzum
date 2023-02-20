@@ -1,6 +1,9 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
@@ -17,7 +20,7 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
-public class UsersService {
+public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
 
@@ -144,5 +147,13 @@ public class UsersService {
                         .map(u-> userMapper.toDto(u))
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Users> users = usersRepository.findFirstByEmail(username);
+        if(users.isEmpty()) throw new UsernameNotFoundException("user is not found");
+
+        return userMapper.toDto(users.get());
     }
 }
