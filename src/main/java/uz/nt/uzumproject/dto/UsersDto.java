@@ -18,5 +18,9 @@ public class UsersDto {
     private String email;
     private String gender;
     private String birthDate;
+
+    private String password;
+
+    private Boolean enabled;
     private List<ProductDto> product;
 }

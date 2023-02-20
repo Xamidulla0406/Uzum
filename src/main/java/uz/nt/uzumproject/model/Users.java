@@ -22,4 +22,7 @@ public class Users {
     private String email;
     private String gender;
     private Date birthDate;
+    private String password;
+
+    private Boolean enabled;
 }

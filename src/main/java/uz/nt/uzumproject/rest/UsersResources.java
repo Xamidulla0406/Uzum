@@ -22,9 +22,9 @@ public class UsersResources {
     public ResponseDto<UsersDto> updateUser(@RequestBody UsersDto usersDto){
         return usersService.updateUser(usersDto);
     }
-    @PreAuthorize("hasRole('Admin')")
+//    @PreAuthorize("hasRole('Admin')")
 
-    @GetMapping("by-phone-number")
+    @GetMapping
     public ResponseDto<UsersDto> getUserByPhoneNumber(@RequestParam String phoneNumber){
         return usersService.getUserByPhoneNumber(phoneNumber);
     }

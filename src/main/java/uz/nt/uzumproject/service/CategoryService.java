@@ -1,22 +1,25 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.CategoryDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.repository.CategoryRepository;
 import uz.nt.uzumproject.service.mapper.CategoryMapper;
-import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-
-import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
-import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.DATABASE_ERROR_CODE;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.DATABASE_ERROR;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.OK;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
+
+    @Value("{spring.datasource.")
+    String url;
+
+
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
