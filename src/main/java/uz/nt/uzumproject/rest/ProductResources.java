@@ -1,6 +1,8 @@
 package uz.nt.uzumproject.rest;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
@@ -16,22 +18,26 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
+    @PreAuthorize("hasRole({'ADMIN', 'SUPERADMIN'})")
+    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
         return productService.updateProduct(productDto);
     }
 
     @GetMapping()
-    public ResponseDto<List<ProductDto>> getAllProducts() {
+    public ResponseDto<List<ProductDto>>getAllProducts(){
         return productService.getAllProducts();
     }
 
     @GetMapping("by-id")
-    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id) {
+    public ResponseDto<ProductDto>getProductById(@RequestParam Integer id, HttpServletRequest req){
+        String authorization = req.getHeader("Authorization");
+
         return productService.getProductById(id);
     }
 

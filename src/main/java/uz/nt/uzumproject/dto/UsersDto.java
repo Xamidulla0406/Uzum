@@ -22,5 +22,5 @@ public class UsersDto {
     @GenderAnnotation
     private String gender;
     private String birthDate;
-    private List<ProductDto> product;
+    private String password;
 }

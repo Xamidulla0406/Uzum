@@ -1,11 +1,10 @@
 package uz.nt.uzumproject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,5 +16,7 @@ public class Category {
     @SequenceGenerator(name = "category_id_seq", sequenceName = "category_id_seq", allocationSize = 1)
     private Integer id;
     private String name;
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
     private Integer parentId;
 }
