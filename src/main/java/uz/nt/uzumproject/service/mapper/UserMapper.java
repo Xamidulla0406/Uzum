@@ -24,6 +24,7 @@ public abstract class UserMapper {
     @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
     @Mapping(target = "phoneNumber", source = "phone")
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(dto.getPassword()))")
+    @Mapping(target = "enabled", expression = "java(true)")
     public abstract Users toEntity(UsersDto dto);
 
     @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")

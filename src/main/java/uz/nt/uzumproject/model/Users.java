@@ -3,7 +3,11 @@ package uz.nt.uzumproject.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -23,4 +27,8 @@ public class Users {
     private String password;
     private String gender;
     private Date birthDate;
+    private Boolean enabled;
+    @Column(columnDefinition = "text default 'USER'")
+    private String role = "USER";
+
 }

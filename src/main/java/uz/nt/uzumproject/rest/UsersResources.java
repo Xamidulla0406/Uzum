@@ -8,9 +8,7 @@ import uz.nt.uzumproject.service.UsersService;
 
 @RestController
 @RequestMapping("/user")
-@RequiredArgsConstructor
-public class UsersResources {
-    private final UsersService usersService;
+public record UsersResources(UsersService usersService) {
     @PostMapping
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
