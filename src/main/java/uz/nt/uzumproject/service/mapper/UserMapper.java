@@ -28,7 +28,7 @@ public abstract class UserMapper implements CommonMapper<UsersDto, Users>{
     @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
     @Mapping(target = "phone", source = "phoneNumber")
     @Mapping(target = "product", expression = "java(productService.getAllProducts().getData())")
-
+    @Mapping(target = "role", ignore = true)
     public abstract UsersDto toDto(Users entity);
 
 }
