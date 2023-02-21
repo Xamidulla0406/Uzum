@@ -28,7 +28,7 @@ public class UsersDto implements UserDetails {
     private String gender;
     private String password;
     private String birthDate;
-    private String role = "USER";
+    private String role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

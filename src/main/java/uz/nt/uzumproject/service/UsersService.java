@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Authorities;
@@ -13,6 +15,8 @@ import uz.nt.uzumproject.repository.AuthorityRepository;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.security.UserAuthorities;
 import uz.nt.uzumproject.service.mapper.UserMapper;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
 import java.util.Optional;
 
@@ -21,6 +25,8 @@ import java.util.Optional;
 public class UsersService implements UserDetailsService{
     private final UsersRepository usersRepository;
     private final AuthorityRepository authorityRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
     private final UserMapper userMapper;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
@@ -94,10 +100,29 @@ public class UsersService implements UserDetailsService{
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UsersDto loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Users> users = usersRepository.findFirstByEmail(username);
         if (users.isEmpty()) throw new UsernameNotFoundException("User with email" + username+" is not found");
 
         return userMapper.toDto(users.get());
+    }
+
+    public ResponseDto<String> loginUser(LoginDto dto) {
+        UsersDto usersDto = loadUserByUsername(dto.getUsername());
+
+        if (!passwordEncoder.matches(dto.getPassword(), usersDto.getPassword())){
+            return ResponseDto.<String>builder()
+                    .message("Password is not correct!")
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .build();
+        }
+
+        return ResponseDto.<String>builder()
+                .success(true)
+                .message(AppStatusMessages.OK)
+                .code(AppStatusCodes.OK_CODE)
+                .data(jwtService.generateToken(usersDto))
+                .build();
+
     }
 }
