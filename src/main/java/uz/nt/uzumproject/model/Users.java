@@ -22,4 +22,9 @@ public class Users {
     private String email;
     private String gender;
     private Date birthDate;
+    private String password;
+    private boolean enabled;
+    private Short isActive;
+    @Column(columnDefinition = "text default('USER')")
+    private String role;
 }
