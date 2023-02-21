@@ -1,8 +1,6 @@
 package uz.nt.uzumproject.security;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static uz.nt.uzumproject.security.UserAuthorities.*;
 
 public enum UserRoles {
