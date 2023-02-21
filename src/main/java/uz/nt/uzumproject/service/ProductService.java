@@ -39,7 +39,7 @@ public class ProductService {
         }
 
         Product product = productMapper.toEntity(productDto);
-
+        product.setIsAvailable(true);
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
