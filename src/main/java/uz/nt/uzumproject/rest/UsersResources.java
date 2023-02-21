@@ -1,6 +1,5 @@
 package uz.nt.uzumproject.rest;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
@@ -16,17 +15,17 @@ public record UsersResources(UsersService usersService) {
     }
 
     @PatchMapping
-    public ResponseDto<UsersDto> updateUser(@RequestBody UsersDto usersDto){
+    public ResponseDto<UsersDto> updateUser(@RequestBody UsersDto usersDto) {
         return usersService.updateUser(usersDto);
     }
 
     @GetMapping("by-phone-number")
-    public ResponseDto<UsersDto> getUserByPhoneNumber(@RequestParam String phoneNumber){
+    public ResponseDto<UsersDto> getUserByPhoneNumber(@RequestParam String phoneNumber) {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
     @GetMapping("login")
-    public ResponseDto<String> loginUser(@RequestBody LoginDto dto){
+    public ResponseDto<String> loginUser(@RequestBody LoginDto dto) {
         return usersService.loginUser(dto);
     }
 }

@@ -12,21 +12,21 @@ public enum UserRoles {
     MODERATOR(List.of(READ, CREATE)),
     SUPER_ADMIN(List.of(READ, UPDATE, DELETE, CREATE));
 
-    UserRoles(List<UserAuthorities> authorities){
+    UserRoles(List<UserAuthorities> authorities) {
         this.authorities = authorities;
     }
 
     List<UserAuthorities> authorities;
 
-    public UserRoles getRole(String roleName){
+    public UserRoles getRole(String roleName) {
         return valueOf(roleName);
     }
 
-    public List<String> getAuthorities(){
+    public List<String> getAuthorities() {
         List<String> list = new ArrayList<>(this.authorities.stream()
                 .map(UserAuthorities::getName)
                 .toList());
-        list.add("ROLE_"+this.name());
+        list.add("ROLE_" + this.name());
         return list;
     }
 }

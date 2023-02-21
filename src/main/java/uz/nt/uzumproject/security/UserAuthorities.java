@@ -7,13 +7,13 @@ public enum UserAuthorities {
     UPDATE("UPDATE"),
     DELETE("DELETE");
 
-    UserAuthorities(String name){
+    UserAuthorities(String name) {
         this.name = name;
     }
 
     private String name;
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 

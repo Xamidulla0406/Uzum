@@ -11,7 +11,7 @@ import lombok.Setter;
 @Table(
         name = "authorities",
         uniqueConstraints = @UniqueConstraint(name = "username_auth_unique",
-            columnNames = {"username","authority"}
+                columnNames = {"username", "authority"}
         )
 )
 @NoArgsConstructor
@@ -23,9 +23,8 @@ public class Authorities {
     private String username;
     private String authority;
 
-    Authorities(String username, String authority){
+    Authorities(String username, String authority) {
         this.username = username;
         this.authority = authority;
     }
-
 }

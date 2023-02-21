@@ -19,7 +19,7 @@ public class JwtService {
     @Autowired
     private Gson gson;
 
-    public String generateToken(UsersDto usersDto){
+    public String generateToken(UsersDto usersDto) {
 
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -27,5 +27,4 @@ public class JwtService {
                 .setSubject(gson.toJson(usersDto))
                 .compact();
     }
-
 }

@@ -19,22 +19,23 @@ public class ProductResources {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','SUPER_ADMIN')")
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
+    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
+    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
         return productService.updateProduct(productDto);
     }
 
     @GetMapping()
-    public ResponseDto<List<ProductDto>>getAllProducts(){
+    public ResponseDto<List<ProductDto>> getAllProducts() {
         return productService.getAllProducts();
     }
+
     @GetMapping("by-id")
-    public ResponseDto<ProductDto>getProductById(@RequestParam Integer id, HttpServletRequest req){
+    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id, HttpServletRequest req) {
         String authorization = req.getHeader("Authorization");
         return productService.getProductById(id);
     }

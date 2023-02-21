@@ -17,12 +17,12 @@ public class CategoryResource {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto){
+    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto) {
         return categoryService.addCategory(categoryDto);
     }
 
     @GetMapping("by-id")
-    public ResponseDto<List<CategoryDto>> getCategoryById(@RequestParam @Valid Integer id){
+    public ResponseDto<List<CategoryDto>> getCategoryById(@RequestParam @Valid Integer id) {
         return categoryService.getCategoryById(id);
     }
 

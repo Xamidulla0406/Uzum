@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
-import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.DATABASE_ERROR_CODE;
+import static uz.nt.uzumproject.service.validator.AppStatusCodes.OK_CODE;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.DATABASE_ERROR;
+import static uz.nt.uzumproject.service.validator.AppStatusMessages.OK;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class CategoryService {
 
     public ResponseDto<CategoryDto> addCategory(CategoryDto categoryDto) {
         try {
-           return ResponseDto.<CategoryDto>builder()
+            return ResponseDto.<CategoryDto>builder()
                     .data(categoryMapper.toDto(
                             categoryRepository.save(
                                     categoryMapper.toEntity(categoryDto)))
@@ -35,7 +37,7 @@ public class CategoryService {
                     .success(true)
                     .build();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseDto.<CategoryDto>builder()
                     .message(DATABASE_ERROR)
                     .code(DATABASE_ERROR_CODE)

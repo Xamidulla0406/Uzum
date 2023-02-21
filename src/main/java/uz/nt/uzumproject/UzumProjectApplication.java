@@ -9,5 +9,4 @@ public class UzumProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(UzumProjectApplication.class, args);
     }
-
 }

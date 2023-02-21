@@ -4,13 +4,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.service.ProductService;
 
-@Mapper(componentModel = "spring" , imports = {Product.class})
+@Mapper(componentModel = "spring", imports = {Product.class})
 public abstract class UserMapper {
 
 

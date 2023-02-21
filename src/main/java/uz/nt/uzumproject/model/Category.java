@@ -14,7 +14,7 @@ public class Category {
 
     @Id
     @GeneratedValue(generator = "categoryIdSeq")
-    @SequenceGenerator(name = "categoryIdSeq",sequenceName = "category_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "categoryIdSeq", sequenceName = "category_id_seq", allocationSize = 1)
     private Integer id;
     private String name;
     private Integer parentId;

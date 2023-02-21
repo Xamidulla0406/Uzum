@@ -18,7 +18,7 @@ public class ImageResource {
     private final ImageService imageService;
 
     @PostMapping
-    public ResponseDto<Image> uploadImage(@RequestBody MultipartFile image){
+    public ResponseDto<Image> uploadImage(@RequestBody MultipartFile image) {
         return imageService.saveImage(image);
     }
 }
