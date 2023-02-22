@@ -1,6 +1,7 @@
 package uz.nt.uzumproject.service;
 
 import com.google.gson.Gson;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,23 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2))
                 .setSubject(gson.toJson(usersDto))
                 .compact();
+    }
+
+    public Claims getClaim(String token){
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isExpired(String token){
+        return getClaim(token).getExpiration().getTime() < System.currentTimeMillis();
+    }
+
+    public UsersDto getSubject(String token){
+        String subject = getClaim(token).getSubject();
+
+        return gson.fromJson(subject, UsersDto.class);
     }
 
 }
