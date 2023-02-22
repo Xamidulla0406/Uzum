@@ -1,9 +1,8 @@
 package uz.nt.uzumproject.rest;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.UsersService;
@@ -12,11 +11,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-@RequiredArgsConstructor
-public class UsersResources {
-    private final UsersService usersService;
+public record UsersResources(UsersService usersService) {
     @PostMapping
-    public ResponseDto<UsersDto> addUsers(@RequestBody @Valid UsersDto usersDto) {
+    public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
 
@@ -30,15 +27,13 @@ public class UsersResources {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
-    @DeleteMapping
-    public ResponseDto<UsersDto> deleteUser(@RequestParam  Integer id){
-        return usersService.deleteUser(id);
+    @GetMapping("login")
+    public ResponseDto<String> login(@RequestBody LoginDto loginDto){
+        return usersService.login(loginDto);
     }
 
-    @GetMapping("users-list")
-    private List<ResponseDto<UsersDto>> getUserById(){
-        System.out.println("users list");
-        return usersService.getAllUsers();
+    @GetMapping("/{id}")
+    public ResponseDto<UsersDto> getUserById(@PathVariable Integer id){
+        return usersService.getById(id);
     }
-
 }

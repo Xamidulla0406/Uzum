@@ -1,37 +1,28 @@
 package uz.nt.uzumproject.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Authorities;
 import uz.nt.uzumproject.repository.AuthorityRepository;
-
-import java.util.Optional;
-
-import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
-import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
+import uz.nt.uzumproject.security.UserRoles;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
 @Service
-@RequiredArgsConstructor
-public class AuthorityService {
+public record AuthorityService(AuthorityRepository authorityRepository) {
 
-    private final AuthorityRepository authorityRepository;
-
-    public ResponseDto<Void> addAuthorityToUser(String username, String authority) {
-
-
-        if(authorityRepository.existsAuthoritiesByUsernameAndAuthority(username,authority)){
+    public ResponseDto<Void> addAuthorityToUser(String username, String authorityName) {
+        if (authorityRepository.existsByUsernameAndAuthority(username, authorityName)){
             return ResponseDto.<Void>builder()
-                    .code(DUPLICATE_ERROR_CODE)
-                    .message(DUPLICATE_ERROR)
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .message(AppStatusMessages.DUPLICATE_ERROR)
                     .build();
         }
-
-        authorityRepository.save(new Authorities(username,authority));
+        UserRoles.valueOf("MODERATOR");
 
         return ResponseDto.<Void>builder()
-                .message(OK)
-                .code(OK_CODE)
+                .message(AppStatusMessages.OK)
+                .success(true)
                 .build();
     }
 }

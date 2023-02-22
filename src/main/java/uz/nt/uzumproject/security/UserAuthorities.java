@@ -1,17 +1,25 @@
 package uz.nt.uzumproject.security;
 
+import org.springframework.security.core.parameters.P;
+import uz.nt.uzumproject.model.Authorities;
+
 public enum UserAuthorities {
-
-    CREATE("CREATE"),
+    /**
+     * Start of Objects list
+     */
     READ("READ"),
-    DELETE("DELETE"),
-    UPDATE("UPDATE");
+    CREATE("CREATE"),
+    UPDATE("UPDATE"),
+    DELETE("DELETE");
+    /**
+     * End of objects list
+     */
 
-    private String name;
-
-    UserAuthorities(String name) {
+    UserAuthorities(String name){
         this.name = name;
     }
+
+    private String name;
 
     public String getName(){
         return this.name;
