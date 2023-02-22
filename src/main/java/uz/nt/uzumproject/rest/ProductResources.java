@@ -20,14 +20,14 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
         UsersDto user = (UsersDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
         return productService.updateProduct(productDto);
     }

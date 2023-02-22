@@ -14,6 +14,5 @@ public class ProductDto {
     private String description;
     private CategoryDto category;
     private String imageUrl;
-    private CategoryDto category;
     private Boolean isAvailable;
 }
