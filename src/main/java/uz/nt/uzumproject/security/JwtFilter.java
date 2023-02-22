@@ -9,28 +9,35 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.filter.OncePerRequestFilter;
+import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import java.io.IOException;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
     private final Gson gson;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = request.getHeader("Authorization");
-
-        if (token != null && token.startsWith("Bearer ")){
-            if (jwtService.isExpired(token.substring(7))){
-                response.getWriter()
-                        .println("Token is invalid ");
-            }
-            else {
-                UsersDto user = jwtService.isVerified(token.substring(7));
+        String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Bearer ")){
+            String token = authorization.substring(7);
+            if (jwtService.isExpired(token)){
+                response.getWriter().println(gson.toJson(ResponseDto.builder()
+                                .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                                .message("Token is expired!")
+                        .build()));
+                response.setContentType("application/json");
+                response.setStatus(400);
+            }else {
+                UsersDto user = jwtService.getSubject(token);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

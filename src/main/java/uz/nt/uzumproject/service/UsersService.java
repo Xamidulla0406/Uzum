@@ -9,24 +9,27 @@ import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
+import uz.nt.uzumproject.model.Authorities;
 import uz.nt.uzumproject.model.Users;
+import uz.nt.uzumproject.repository.AuthorityRepository;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.security.JwtService;
+import uz.nt.uzumproject.security.UserAuthorities;
 import uz.nt.uzumproject.service.mapper.UserMapper;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
 import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
+    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = userMapper.toEntity(dto);
         usersRepository.save(users);
@@ -97,31 +100,34 @@ public class UsersService implements UserDetailsService {
                         .build());
     }
 
-    public List<ResponseDto<UsersDto>> getAllUsers() {
-        return usersRepository.findAll().stream()
-                .map(u ->
-                        ResponseDto.<UsersDto>builder()
-                                .data(userMapper.toDto(u))
-                                .success(true)
-                                .message("OK")
-                                .build()).collect(Collectors.toList());
-    }
-
     @Override
     public UsersDto loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Users> user = usersRepository.findFirstByEmail(username);
-        if (user.isEmpty()) throw new UsernameNotFoundException("User with this email " + username + " does not exist");
+        Optional<Users> users = usersRepository.findFirstByEmail(username);
+        if (users.isEmpty()) throw new UsernameNotFoundException("User with email " + username + " is not found");
 
-        return userMapper.toDto(user.get());
+        return userMapper.toDto(users.get());
     }
 
+    public ResponseDto<UsersDto> getById(Integer id) {
+        return usersRepository.findById(id)
+                .map(u -> ResponseDto.<UsersDto>builder()
+                        .success(true)
+                        .message(AppStatusMessages.OK)
+                        .data(userMapper.toDto(u))
+                        .build()
+                ).orElse(ResponseDto.<UsersDto>builder()
+                        .message(AppStatusMessages.NOT_FOUND)
+                        .code(AppStatusCodes.NOT_FOUND_ERROR_CODE)
+                        .build());
+
+    }
 
     public ResponseDto<String> login(LoginDto loginDto) {
         UsersDto users = loadUserByUsername(loginDto.getUsername());
         if (!passwordEncoder.matches(loginDto.getPassword(), users.getPassword())){
             return ResponseDto.<String>builder()
+                    .message("Password is not correct")
                     .code(AppStatusCodes.VALIDATION_ERROR_CODE)
-                    .message(AppStatusMessages.NOT_FOUND)
                     .build();
         }
 

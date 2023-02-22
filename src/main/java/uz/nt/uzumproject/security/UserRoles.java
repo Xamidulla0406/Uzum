@@ -8,24 +8,20 @@ import static uz.nt.uzumproject.security.UserAuthorities.*;
 public enum UserRoles {
     ADMIN(List.of(READ, UPDATE, CREATE)),
     USER(List.of(READ)),
-    MODERATOR(List.of(CREATE, READ)),
-    SUPER_ADMIN(List.of(READ, UPDATE, CREATE, DELETE));
+    MODERATOR(List.of(READ, CREATE)),
+    SUPER_ADMIN(List.of(READ, UPDATE, DELETE, CREATE));
 
-//    private String name;
-    public final List<UserAuthorities> authorities;
-    UserRoles(List<UserAuthorities> userAuthorities){
-        this.authorities = userAuthorities;
+    UserRoles(List<UserAuthorities> authorities){
+        this.authorities = authorities;
     }
-
-    public UserRoles getRole(String roleName){
-        return valueOf(roleName);
-    }
+    List<UserAuthorities> authorities;
 
     public List<String> getAuthorities(){
-        List<String> auth = new ArrayList<>(this.authorities.stream()
+        List<String> list = new ArrayList<>(this.authorities.stream()
                 .map(UserAuthorities::getName)
                 .toList());
-        auth.add("ROLE_" + this.name());
-        return auth;
+        list.add("ROLE_" + this.name());
+
+        return list;
     }
 }

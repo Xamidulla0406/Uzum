@@ -1,7 +1,9 @@
 package uz.nt.uzumproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,32 +11,32 @@ import uz.nt.uzumproject.security.UserRoles;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(value = {"password", "role", "authorities", "enabled", "AccountNonExpired", "AccountNonLocked", "CredentialsNonExpired", "username"}, allowSetters = true)
+@JsonIgnoreProperties(value = {"password", "role", "authorities", "username"}, allowSetters = true)
 public class UsersDto implements UserDetails {
     private Integer id;
-    private String phoneNumber;
+    private String phone;
     private String firstName;
     private String lastName;
     private String middleName;
     private String email;
     private String gender;
-    private Date birthDate;
-    private Boolean enabled;
+    private String birthDate;
     private String password;
     private String role;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return UserRoles.valueOf(role)
-                .getAuthorities()
-                .stream()
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+        return UserRoles.valueOf(role)//USER
+                .getAuthorities().stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .toList();
     }
 
     @Override
@@ -59,6 +61,6 @@ public class UsersDto implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return true;
     }
 }
