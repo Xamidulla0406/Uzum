@@ -1,6 +1,7 @@
 package uz.nt.uzumproject.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
@@ -16,6 +17,7 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
         return productService.addProduct(productDto);
     }

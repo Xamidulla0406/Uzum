@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -16,9 +17,12 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 @AllArgsConstructor
 public class CategoryDto {
     private Integer id;
+
     @NotBlank(message = EMPTY_STRING)
     @Size(min = 3, max = 100, message = SIZE_MISMATCH)
     private String name;
+
     @Positive(message = NEGATIVE_VALUE)
+    @Max(value = 500, message = SIZE_MISMATCH)
     private Integer parentId;
 }

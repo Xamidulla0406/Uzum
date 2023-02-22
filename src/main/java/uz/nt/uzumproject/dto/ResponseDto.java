@@ -18,7 +18,7 @@ public class ResponseDto<T> {
      * <p> 1 - Database error </p>
      * <p>2 - Unexpected error </p>
      */
-    private Integer code;
+    private int code;
     private String message;
     private boolean success;
     private T data;
