@@ -1,6 +1,7 @@
 package uz.nt.uzumproject.rest;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,5 +26,13 @@ public class ExceptionHandlerResource {
                                         .map(f -> new ErrorDto(f.getField(), f.getDefaultMessage()))
                                         .collect(toList()))
                                 .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> valid(UsernameNotFoundException e){
+        return ResponseEntity.status(403)
+                .body(ResponseDto.<Void>builder()
+                        .code(VALIDATION_ERROR_CODE).build());
+
     }
 }

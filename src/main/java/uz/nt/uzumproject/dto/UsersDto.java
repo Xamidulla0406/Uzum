@@ -33,7 +33,7 @@ public class UsersDto implements UserDetails {
     private Boolean enabled;
     private List<ProductDto> product;
 
-    private String role ;
+    private String role = "USER";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -47,7 +47,7 @@ public class UsersResources {
         return ResponseDto.<String>builder()
                 .success(true)
                 .message(AppStatusMessages.OK)
-                .data(jwtService.jwts(usersDto))
+                .data(jwtService.generationKey(usersDto))
                 .build();
     }
 }

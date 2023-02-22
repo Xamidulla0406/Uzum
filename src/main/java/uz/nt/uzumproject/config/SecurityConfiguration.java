@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.config;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import uz.nt.uzumproject.dto.ResponseDto;
+import uz.nt.uzumproject.secutiry.JwtFilter;
 import uz.nt.uzumproject.service.UsersService;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import javax.sql.DataSource;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -38,28 +43,35 @@ String username;
 
 String password;
 
+
 @Autowired
 @Lazy
 private UsersService usersService;
 
-    @Autowired
-    public void authorization(AuthenticationManagerBuilder authorizationManager) throws Exception {
-            authorizationManager
-                    .authenticationProvider(provider());
-//                    .jdbcAuthentication()
-//                    .dataSource(dataSource())
-//                    .usersByUsernameQuery("select email as username,password,enabled where email = ?");
+@Autowired
+private JwtFilter jwtFilter;
 
-//                    .inMemoryAuthentication()
-//                    .withUser("Saidafzalxon")
-//                    .password(passwordEncoder().encode("1620"))
-//                    .roles("Admin","User")
-//                    .and()
-//                    .withUser("a")
-//                    .password(passwordEncoder().encode("1"))
-//                    .roles("User");
+@Autowired
+private Gson gson;
 
-    }
+//    @Autowired
+//    public void authorization(AuthenticationManagerBuilder authorizationManager) throws Exception {
+//            authorizationManager
+//                    .authenticationProvider(provider());
+////                    .jdbcAuthentication()
+////                    .dataSource(dataSource())
+////                    .usersByUsernameQuery("select email as username,password,enabled where email = ?");
+//
+////                    .inMemoryAuthentication()
+////                    .withUser("Saidafzalxon")
+////                    .password(passwordEncoder().encode("1620"))
+////                    .roles("Admin","User")
+////                    .and()
+////                    .withUser("a")
+////                    .password(passwordEncoder().encode("1"))
+////                    .roles("User");
+//
+//    }
 
     @Bean
     public AuthenticationProvider provider(){
@@ -87,11 +99,24 @@ private UsersService usersService;
                    .requestMatchers(HttpMethod.POST,"/user").permitAll()
                    .requestMatchers(HttpMethod.GET,"/user/user").permitAll()
                .anyRequest().authenticated()
-               .and()
-               .httpBasic();
+                   .and()
+                   .authenticationProvider(provider())
+                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                   .exceptionHandling(e-> e.authenticationEntryPoint(entryPoint()));
+
                return http.build();
    }
 
+    private AuthenticationEntryPoint entryPoint(){
+        return (request, response, authException) ->
+        {
+            response.getWriter().println(gson.toJson(ResponseDto.<Void>builder()
+                    .message("Token is not valid")
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)));
+            response.setStatus(403);
+            response.setContentType("application/json");
+        };
+    }
 
    @Bean
     public PasswordEncoder passwordEncoder(){
