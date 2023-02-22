@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -19,6 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 import org.postgresql.Driver;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import uz.nt.uzumproject.security.JwtFilter;
 import uz.nt.uzumproject.service.UsersService;
 
 @Configuration
@@ -35,6 +38,8 @@ public class SecurityConfiguration {
     @Autowired
     @Lazy
     UsersService usersService;
+    @Autowired
+    JwtFilter jwtFilter;
 
     @Autowired
     public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
@@ -71,8 +76,7 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic()
-                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
     public DataSource dataSource(){
@@ -87,5 +91,7 @@ public class SecurityConfiguration {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    p
 
 }
