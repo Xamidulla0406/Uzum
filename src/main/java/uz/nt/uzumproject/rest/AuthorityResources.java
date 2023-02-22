@@ -1,6 +1,6 @@
 package uz.nt.uzumproject.rest;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,13 +9,18 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.service.AuthorityService;
 
 @RestController
-@RequestMapping("/authority")
-@RequiredArgsConstructor
+@RequestMapping("authority")
 public class AuthorityResources {
-    AuthorityService authorityService;
-    @PostMapping
-    public ResponseDto<Void> addAuthorityToUser(@RequestParam String username, String authority){
-        return authorityService.addAuthorityToUser(username,authority);
+
+    private final AuthorityService authorityService;
+
+    public AuthorityResources(AuthorityService authorityService) {
+        this.authorityService = authorityService;
     }
 
+    @PostMapping
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN')")
+    public ResponseDto<Void> addAuthority(@RequestParam String username, @RequestParam String authorityName){
+        return authorityService.addAuthorityToUser(username, authorityName);
+    }
 }

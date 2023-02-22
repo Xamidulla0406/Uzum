@@ -5,17 +5,28 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import uz.nt.uzumproject.dto.UsersDto;
+import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.model.Users;
-@Mapper(componentModel = "spring")
-public abstract class UserMapper implements CommonMapper<UsersDto, Users> {
+import uz.nt.uzumproject.service.ProductService;
+
+@Mapper(componentModel = "spring" , imports = {Product.class})
+public abstract class UserMapper implements CommonMapper<UsersDto, Users>{
+
+    @Autowired
+    protected ProductService productService;
+
     @Autowired
     protected PasswordEncoder passwordEncoder;
-    @Override
-    @Mapping(target = "isActive", expression = "java((short) 1)")
-    @Mapping(target = "enabled",expression = "java(true)")
-    @Mapping(target = "password",expression = "java(passwordEncoder.encode((dto.getPassword())))")
-    @Mapping(target= "role",expression = "java(\"USER\")")
-    abstract public Users toEntity(UsersDto dto);
-    @Override
-    abstract public UsersDto toDto(Users entity);
+
+    @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
+    @Mapping(target = "phoneNumber", source = "phone")
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(dto.getPassword()))")
+    @Mapping(target = "enabled", expression = "java(true)")
+    @Mapping(target = "role", ignore = true)
+    public abstract Users toEntity(UsersDto dto);
+
+    @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
+    @Mapping(target = "phone", source = "phoneNumber")
+    public abstract UsersDto toDto(Users entity);
+
 }

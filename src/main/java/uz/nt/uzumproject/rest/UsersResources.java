@@ -1,8 +1,6 @@
 package uz.nt.uzumproject.rest;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
@@ -12,12 +10,10 @@ import uz.nt.uzumproject.service.UsersService;
 import java.util.List;
 
 @RestController
-@RequestMapping("user")
-@RequiredArgsConstructor
-public class UsersResources {
-    private final UsersService usersService;
+@RequestMapping("/user")
+public record UsersResources(UsersService usersService) {
     @PostMapping
-    public ResponseDto<UsersDto> addUsers(@RequestBody @Valid UsersDto usersDto) {
+    public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
 
@@ -36,13 +32,8 @@ public class UsersResources {
         return usersService.login(loginDto);
     }
 
-    @DeleteMapping
-    public ResponseDto<UsersDto> deleteUser(@RequestParam Integer id){
-        return  usersService.deleteUser(id);
-    }
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    @GetMapping
-    public ResponseDto<List<UsersDto>> getAllUsers(){
-        return usersService.getAllUsers();
+    @GetMapping("/{id}")
+    public ResponseDto<UsersDto> getUserById(@PathVariable Integer id){
+        return usersService.getById(id);
     }
 }

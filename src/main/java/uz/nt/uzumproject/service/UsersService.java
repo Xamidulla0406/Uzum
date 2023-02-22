@@ -1,6 +1,7 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,170 +9,131 @@ import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
+import uz.nt.uzumproject.model.Authorities;
 import uz.nt.uzumproject.model.Users;
+import uz.nt.uzumproject.repository.AuthorityRepository;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.security.JwtService;
+import uz.nt.uzumproject.security.UserAuthorities;
 import uz.nt.uzumproject.service.mapper.UserMapper;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
-import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
 public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
+    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = userMapper.toEntity(dto);
-
         usersRepository.save(users);
 
         return ResponseDto.<UsersDto>builder()
                 .success(true)
                 .data(userMapper.toDto(users))
-                .message(OK)
-                .code(OK_CODE)
+                .message("OK")
                 .build();
     }
 
     public ResponseDto<UsersDto> updateUser(UsersDto usersDto) {
         if (usersDto.getId() == null){
             return ResponseDto.<UsersDto>builder()
-                    .message(NULL_VALUE)
-                    .code(VALIDATION_ERROR_CODE)
+                    .message("UserID is null")
+                    .code(-2)
                     .data(usersDto)
                     .build();
         }
 
-        Optional<Users> userOptional = usersRepository.findByIdAndIsActive(usersDto.getId(), (short) 1);
+        Optional<Users> userOptional = usersRepository.findById(usersDto.getId());
 
         if (userOptional.isEmpty()){
             return ResponseDto.<UsersDto>builder()
-                    .message(NOT_FOUND)
-                    .code(NOT_FOUND_ERROR_CODE)
+                    .message("User with ID " + usersDto.getId() + " is not found")
+                    .code(-1)
                     .data(usersDto)
                     .build();
         }
         Users user = userOptional.get();
-        if (usersDto.getFirstName() != null) {
-            user.setFirstName(usersDto.getFirstName());
-        }
-        if (usersDto.getLastName() != null) {
-            user.setLastName(usersDto.getLastName());
-        }
-        if (usersDto.getMiddleName() != null) {
-            user.setMiddleName(usersDto.getMiddleName());
-        }
-        if (usersDto.getEmail() != null) {
-            user.setEmail(usersDto.getEmail());
-        }
-        if (usersDto.getGender() != null) {
+        if (usersDto.getGender() != null){
             user.setGender(usersDto.getGender());
         }
-
-        if (usersDto.getPhoneNumber() != null) {
-            user.setPhoneNumber(usersDto.getPhoneNumber());
+        if (usersDto.getEmail() != null){
+            user.setEmail(usersDto.getEmail());
         }
-        if (usersDto.getBirthDate() != null) {
-            user.setBirthDate(usersDto.getBirthDate());
+        if (usersDto.getLastName() != null){
+            user.setLastName(usersDto.getLastName());
         }
+        //...
         try {
             usersRepository.save(user);
 
             return ResponseDto.<UsersDto>builder()
                     .data(userMapper.toDto(user))
-                    .code(OK_CODE)
                     .success(true)
-                    .message(OK)
+                    .message("OK")
                     .build();
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
                     .data(userMapper.toDto(user))
                     .code(1)
-                    .message(DATABASE_ERROR + e.getMessage())
+                    .message("Error while saving user: " + e.getMessage())
                     .build();
         }
     }
 
     public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
-        return usersRepository.findFirstByPhoneNumberAndIsActive(phoneNumber, (short) 1)
+        return usersRepository.findFirstByPhoneNumber(phoneNumber)
                 .map(u -> ResponseDto.<UsersDto>builder()
                         .data(userMapper.toDto(u))
                         .success(true)
-                        .message(OK)
+                        .message("OK")
                         .build())
                 .orElse(ResponseDto.<UsersDto>builder()
-                        .message(NOT_FOUND)
-                        .code(NOT_FOUND_ERROR_CODE)
+                        .message("User with phone number " + phoneNumber + " is not found")
+                        .code(-1)
                         .build());
-    }
-
-    public ResponseDto<UsersDto> deleteUser(Integer id) {
-        Optional<Users> user=usersRepository.findByIdAndIsActive(id,(short)1);
-        if(user.isEmpty()) {
-            return (ResponseDto.<UsersDto>builder()
-                    .message(NOT_FOUND)
-                    .code(NOT_FOUND_ERROR_CODE)
-                    .build());
-        }
-        Users delUser= user.get();
-        delUser.setIsActive((short) 0);
-        try {
-            usersRepository.save(delUser);
-            return ResponseDto.<UsersDto>builder()
-                    .success(true)
-                    .message(OK)
-                    .data(userMapper.toDto(delUser))
-                    .build();
-
-        }catch (Exception e){
-            return ResponseDto.<UsersDto>builder()
-                    .success(false)
-                    .message(e.getMessage())
-                    .code(OK_CODE)
-                    .build();
-        }
-    }
-
-    public ResponseDto<List<UsersDto>> getAllUsers() {
-        return ResponseDto.<List<UsersDto>>builder()
-                .code(OK_CODE)
-                .message(OK)
-                .success(true)
-                .data(usersRepository
-                        .findAllByIsActive(1)
-                        .stream()
-                        .map(userMapper::toDto)
-                        .collect(Collectors.toList()))
-                .build();
     }
 
     @Override
     public UsersDto loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Users> users = usersRepository.findFirstByEmail(username);
-        if(users.isEmpty()) throw new UsernameNotFoundException("user is not found");
+        if (users.isEmpty()) throw new UsernameNotFoundException("User with email " + username + " is not found");
 
         return userMapper.toDto(users.get());
     }
 
+    public ResponseDto<UsersDto> getById(Integer id) {
+        return usersRepository.findById(id)
+                .map(u -> ResponseDto.<UsersDto>builder()
+                        .success(true)
+                        .message(AppStatusMessages.OK)
+                        .data(userMapper.toDto(u))
+                        .build()
+                ).orElse(ResponseDto.<UsersDto>builder()
+                        .message(AppStatusMessages.NOT_FOUND)
+                        .code(AppStatusCodes.NOT_FOUND_ERROR_CODE)
+                        .build());
+
+    }
+
     public ResponseDto<String> login(LoginDto loginDto) {
         UsersDto users = loadUserByUsername(loginDto.getUsername());
-        if (passwordEncoder.matches(loginDto.getPassword(), users.getPassword())){
+        if (!passwordEncoder.matches(loginDto.getPassword(), users.getPassword())){
             return ResponseDto.<String>builder()
-                    .message("Password is wrong")
-                    .code(VALIDATION_ERROR_CODE)
+                    .message("Password is not correct")
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
                     .build();
         }
+
         return ResponseDto.<String>builder()
                 .success(true)
-                .message(OK)
+                .message(AppStatusMessages.OK)
                 .data(jwtService.generateToken(users))
                 .build();
     }

@@ -2,6 +2,7 @@ package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
@@ -19,111 +20,107 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
     private final ProductMapper productMapper;
 
-    public ResponseDto<ProductDto> add(ProductDto productDto) {
-        if(!productValidator.validateProduct(productDto).isEmpty()){
+    public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
+        List<ErrorDto> errors = productValidator.validateProduct(productDto);
+
+        if (!errors.isEmpty()){
             return ResponseDto.<ProductDto>builder()
+                    .errors(errors)
+                    .data(productDto)
+                    .message(VALIDATION_ERROR)
                     .code(VALIDATION_ERROR_CODE)
-                    .errors(productValidator.validateProduct(productDto))
+                    .success(false)
                     .build();
         }
+
         Product product = productMapper.toEntity(productDto);
-        product.setIsAvailable(true);
+
         productRepository.save(product);
 
         return ResponseDto.<ProductDto>builder()
-                .code(OK_CODE)
                 .success(true)
-                .message(OK)
+                .code(0)
                 .data(productMapper.toDto(product))
+                .message("OK")
                 .build();
-
     }
-    public ResponseDto<ProductDto> update (ProductDto productDto){
+
+    public ResponseDto<ProductDto> updateProduct(ProductDto productDto) {
         if (productDto.getId() == null) {
             return ResponseDto.<ProductDto>builder()
-                    .code(VALIDATION_ERROR_CODE)
-                    .message(NULL_VALUE)
+                    .message("Product ID is null")
+                    .code(-2)
                     .build();
         }
 
-        Optional<Product> productOptional = productRepository.findById(productDto.getId());
+        Optional<Product> optional = productRepository.findById(productDto.getId());
 
-        if (productOptional.isEmpty()) {
+        if (optional.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
                     .build();
         }
-        Product product = productOptional.get();
-        if (productDto.getAmount() < 0) {
-            return ResponseDto.<ProductDto>builder()
-                    .success(false)
-                    .code(VALIDATION_ERROR_CODE)
-                    .message(NEGATIVE_VALUE)
-                    .build();
-        }
-        if (productDto.getName() != null && !productDto.getName().equals("")) {
+
+        Product product = optional.get();
+
+        if (productDto.getName() != null) {
             product.setName(productDto.getName());
         }
-        if (productDto.getAmount() != null && productDto.getAmount()>0) {
+        if (productDto.getPrice() != null && productDto.getPrice() > 0) {
+            product.setPrice(productDto.getPrice());
+        }
+        if (productDto.getAmount() != null && productDto.getAmount() > 0) {
             product.setIsAvailable(true);
             product.setAmount(productDto.getAmount());
         }
-        if (productDto.getPrice() != null && productDto.getPrice()>=0) {
-            product.setPrice(productDto.getPrice());
-        }
-        if (productDto.getDescription() != null && !productDto.getDescription().equals("")) {
+        if (productDto.getDescription() != null) {
             product.setDescription(productDto.getDescription());
         }
+
         try {
-            if (product.getAmount() == 0) {
-                product.setIsAvailable(false);
-            }
+
             productRepository.save(product);
 
             return ResponseDto.<ProductDto>builder()
-                    .success(true)
-                    .code(OK_CODE)
                     .message(OK)
+                    .code(OK_CODE)
                     .data(productMapper.toDto(product))
+                    .success(true)
                     .build();
         } catch (Exception e) {
             return ResponseDto.<ProductDto>builder()
+                    .message(DATABASE_ERROR + ": " + e.getMessage())
                     .code(DATABASE_ERROR_CODE)
-                    .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }
-
     }
 
-    public ResponseDto<List<ProductDto>> getAllProducts () {
+    public ResponseDto<List<ProductDto>> getAllProducts() {
         return ResponseDto.<List<ProductDto>>builder()
-                .code(OK_CODE)
                 .message(OK)
+                .code(OK_CODE)
                 .success(true)
-                .data(productRepository
-                        .findAll().stream()
-                        .map(productMapper::toDto)
-                        .collect(Collectors.toList()))
+                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
-
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
-                .map(p->ResponseDto.<ProductDto>builder()
-                        .data(productMapper.toDto(p))
+                .map(products -> ResponseDto.<ProductDto>builder()
+                        .data(productMapper.toDto(products))
                         .success(true)
-                        .message(OK)
                         .code(OK_CODE)
+                        .message(OK)
                         .build())
                 .orElse(ResponseDto.<ProductDto>builder()
-                        .code(NOT_FOUND_ERROR_CODE)
                         .message(NOT_FOUND)
-                        .success(false)
-                        .build());
+                        .code(NOT_FOUND_ERROR_CODE)
+                        .build()
+                );
     }
 }
