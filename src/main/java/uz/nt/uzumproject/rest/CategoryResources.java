@@ -1,9 +1,7 @@
 package uz.nt.uzumproject.rest;
 
-
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,14 +11,14 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.service.CategoryService;
 
 @RestController
-@RequestMapping("/category")
 @RequiredArgsConstructor
+@RequestMapping("category")
 public class CategoryResources {
 
-    @Autowired
     private final CategoryService categoryService;
+
     @PostMapping
-    public ResponseDto<CategoryDto> add(@RequestBody @Validated CategoryDto categoryDto){
+    public ResponseDto<CategoryDto> addCategory(@RequestBody @Valid CategoryDto categoryDto){
         return categoryService.addCategory(categoryDto);
     }
 }

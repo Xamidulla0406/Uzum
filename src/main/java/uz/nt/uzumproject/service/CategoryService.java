@@ -1,20 +1,15 @@
 package uz.nt.uzumproject.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import uz.nt.uzumproject.dto.CategoryDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.repository.CategoryRepository;
-import uz.nt.uzumproject.rest.CategoryResources;
 import uz.nt.uzumproject.service.mapper.CategoryMapper;
-import uz.nt.uzumproject.service.mapper.CommonMapper;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
+
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
@@ -27,29 +22,22 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
 
     public ResponseDto<CategoryDto> addCategory(CategoryDto categoryDto) {
-        if(categoryDto.getParentId() != null){
-            if(categoryRepository.findFirstByParentId(categoryDto.getParentId()).isEmpty()){
-                return ResponseDto.<CategoryDto>builder()
-                        .success(false)
-                        .code(VALIDATION_ERROR_CODE)
-                        .data(categoryDto)
-                        .message(VALIDATION_ERROR)
-                        .build();
-            }
-        }
-        try{
+        try {
             return ResponseDto.<CategoryDto>builder()
+                    .data(categoryMapper.toDto(
+                            categoryRepository.save(
+                                    categoryMapper.toEntity(categoryDto)
+                            )
+                    ))
                     .message(OK)
-                    .data(categoryMapper.toDto(categoryRepository.save(categoryMapper.toEntity(categoryDto))))
                     .success(true)
-                    .code(OK_CODE)
-                    .build();
+                    .build()
+            ;
         }catch (Exception e){
             return ResponseDto.<CategoryDto>builder()
-                    .data(categoryDto)
                     .code(DATABASE_ERROR_CODE)
-                    .success(false)
-                    .message(DATABASE_ERROR)
+                    .message(DATABASE_ERROR + ": " + e.getMessage())
+                    .data(categoryDto)
                     .build();
         }
     }

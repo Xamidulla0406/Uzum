@@ -1,6 +1,8 @@
 package uz.nt.uzumproject.config;
 
-
+import com.google.gson.Gson;
+import io.jsonwebtoken.SignatureException;
+import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,14 +16,17 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import uz.nt.uzumproject.dto.ResponseDto;
+import uz.nt.uzumproject.security.JwtFilter;
 import uz.nt.uzumproject.service.UsersService;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import javax.sql.DataSource;
-import java.sql.Driver;
 
 @Configuration
 @EnableWebSecurity
@@ -29,53 +34,41 @@ import java.sql.Driver;
 public class SecurityConfiguration {
     @Value("${spring.datasource.url}")
     private String url;
-
     @Value("${spring.datasource.username}")
     private String username;
-
     @Value("${spring.datasource.password}")
     private String password;
 
     @Autowired
     @Lazy
     private UsersService usersService;
+    @Autowired
+    private JwtFilter jwtFilter;
+    @Autowired
+    private Gson gson;
 
     @Autowired
     public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
-
-//                jdbcAuthentication()
-//                .dataSource(dataSource())
-//                .usersByUsernameQuery("select email as username, password, enabled from users where email = ?");
-
-//                .inMemoryAuthentication()
-//                .withUser("Sevdiyor")
-//                .password(passwordEncoder().encode("salom"))
-//                .roles("ADMIN","USER")
-//                .and()
-//                .withUser("Firdavs")
-//                .roles("ADMIN")
-//                .password(passwordEncoder().encode("firdavs45"));
     }
 
-    public DataSource dataSource() {
-        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriverClass(Driver.class);
-        dataSource.setPassword(password);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-
-
-        return dataSource;
-    }
-
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService((UserDetailsService) usersService);
+        provider.setUserDetailsService(usersService);
+
         return provider;
     }
 
+    @Bean
+    public DataSource dataSource() {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+        dataSource.setDriverClass(Driver.class);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -87,18 +80,25 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic()
-                .and()
+                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
     }
 
+    private AuthenticationEntryPoint entryPoint(){
+        return (req, res, ex) -> {
+            res.getWriter().println(gson.toJson(ResponseDto.builder()
+                    .message("Token is not valid: " + ex.getMessage() +
+                            (ex.getCause() != null ? ex.getCause().getMessage() : ""))
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .build()));
+            res.setContentType("application/json");
+            res.setStatus(400);
+        };
+    }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-
 }
