@@ -1,16 +1,18 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.Users;
 import uz.nt.uzumproject.repository.UsersRepository;
+import uz.nt.uzumproject.security.JwtService;
 import uz.nt.uzumproject.service.mapper.UserMapper;
-import uz.nt.uzumproject.service.validator.AppStatusCodes;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,9 +22,11 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Service
 @RequiredArgsConstructor
-public class UsersService {
+public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
+    private final JwtService jwtService;
+    private final PasswordEncoder encoder;
 
     public ResponseDto<UsersDto> addUser(UsersDto dto) {
         Users users = userMapper.toEntity(dto);
@@ -125,5 +129,41 @@ public class UsersService {
                         .success(true)
                         .message(OK)
                         .build()).collect(Collectors.toList());
+    }
+
+    @Override
+    public UsersDto loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Users> users = usersRepository.findFirstByEmail(username);
+        if (users.isEmpty()) throw new UsernameNotFoundException("User with email" + username + " is not found");
+        return userMapper.toDto(users.get());
+    }
+
+    public ResponseDto<String> loginUser(LoginDto loginDto) {
+        UsersDto users = loadUserByUsername(loginDto.getUsername());
+        if (!encoder.matches(loginDto.getPassword(),users.getPassword())){
+            return ResponseDto.<String>builder()
+                    .message("Password is not correct"+users.getPassword())
+                    .code(VALIDATION_ERROR_CODE)
+                    .build();
+        }
+
+        return ResponseDto.<String>builder()
+                .success(true)
+                .message(OK)
+                .data(jwtService.generateToken(users))
+                .build();
+    }
+
+    public ResponseDto<UsersDto> getById(Integer id) {
+        return usersRepository.findById(id)
+                .map(u -> ResponseDto.<UsersDto>builder()
+                        .success(true)
+                        .message(OK)
+                        .data(userMapper.toDto(u))
+                        .build())
+                .orElse(ResponseDto.<UsersDto>builder()
+                        .code(NOT_FOUND_CODE)
+                        .message(NOT_FOUND)
+                        .build());
     }
 }

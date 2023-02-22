@@ -1,15 +1,18 @@
 package uz.nt.uzumproject.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Users {
     @Id
     @GeneratedValue(generator = "userIdSequence")
@@ -23,4 +26,8 @@ public class Users {
     private String gender;
     private Date birthDate;
     private short isActive;
+    private String password;
+    private Boolean enabled;
+    @Column(columnDefinition = "text default USER")
+    private String role = "USER";
 }

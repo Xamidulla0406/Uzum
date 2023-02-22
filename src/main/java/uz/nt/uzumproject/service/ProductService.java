@@ -12,6 +12,7 @@ import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
@@ -98,13 +99,11 @@ public class ProductService {
         }
     }
 
-    public ResponseDto<List<Product>> getAllProduct(){
-        List<Product> productList = productRepository.findAll();
-        return ResponseDto.<List<Product>>builder()
-                .code(OK_CODE)
+    public ResponseDto<List<ProductDto>> getAllProducts () {
+        return ResponseDto.<List<ProductDto>>builder()
                 .message(OK)
                 .success(true)
-                .data(productList)
+                .data(productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 }
