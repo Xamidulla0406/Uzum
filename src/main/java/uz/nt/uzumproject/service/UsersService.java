@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UsersService {
+public class UsersService{
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
     public ResponseDto<UsersDto> addUser(UsersDto dto) {

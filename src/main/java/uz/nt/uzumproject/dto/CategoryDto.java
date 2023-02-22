@@ -1,25 +1,25 @@
 package uz.nt.uzumproject.dto;
 
-import jakarta.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CategoryDto {
-
     private Integer id;
-    @NotBlank(message = NULL_VALUE)
-    @Size(min = 3, max = 500)
+    @NotBlank(message = EMPTY_STRING)
     private String name;
     @Positive(message = NEGATIVE_VALUE)
-    @Max(value = 500)
     private Integer parentId;
 }

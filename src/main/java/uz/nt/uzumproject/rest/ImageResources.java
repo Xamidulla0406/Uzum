@@ -17,6 +17,7 @@ import uz.nt.uzumproject.service.ImageService;
 @RequestMapping("/image")
 public class ImageResources {
 
+
     private final ImageService imageService;
 
     @PostMapping

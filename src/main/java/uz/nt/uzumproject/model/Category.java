@@ -1,12 +1,11 @@
 package uz.nt.uzumproject.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,4 +19,6 @@ public class Category {
     private Integer id;
     private String name;
     private Integer parentId;
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
 }

@@ -1,6 +1,7 @@
 package uz.nt.uzumproject.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
@@ -14,15 +15,18 @@ import java.util.List;
 public class ProductResources {
     private final ProductService productService;
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseDto<ProductDto> add(@RequestBody ProductDto productDto){
 
-        return productService.add(productDto);
+        return productService.addProduct(productDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping
     public ResponseDto<ProductDto> update(@RequestBody ProductDto productDto){
-        return productService.update(productDto);
+        return productService.updateProduct(productDto);
     }
 
 
