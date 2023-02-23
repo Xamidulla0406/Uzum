@@ -16,7 +16,6 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDto {
-
     private Integer id;
     @NotBlank(message = EMPTY_STRING)
     private String name;
