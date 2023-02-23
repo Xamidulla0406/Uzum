@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.filter.OncePerRequestFilter;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
@@ -27,17 +26,17 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
-        if (authorization != null && authorization.startsWith("Bearer ")){
+        if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring(7);
-            if (jwtService.isExpired(token)){
+            if (jwtService.isExpired(token)) {
                 response.getWriter().println(gson.toJson(ResponseDto.builder()
-                                .code(AppStatusCodes.VALIDATION_ERROR_CODE)
-                                .message("Token is expired!")
+                        .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                        .message("Token is expired!")
                         .build()));
                 response.setContentType("application/json");
                 response.setStatus(400);
-            }else {
-                UsersDto user = jwtService.getSubject(token);
+            } else {
+                UsersDto user = jwtService.getSubjects(token);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

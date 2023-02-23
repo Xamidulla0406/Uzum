@@ -1,7 +1,6 @@
 package uz.nt.uzumproject.config;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.SignatureException;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +47,7 @@ public class SecurityConfiguration {
     private Gson gson;
 
     @Autowired
-    public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+    public void authenticationManager(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(authenticationProvider());
     }
 
@@ -85,7 +84,7 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    private AuthenticationEntryPoint entryPoint(){
+    private AuthenticationEntryPoint entryPoint() {
         return (req, res, ex) -> {
             res.getWriter().println(gson.toJson(ResponseDto.builder()
                     .message("Token is not valid: " + ex.getMessage() +

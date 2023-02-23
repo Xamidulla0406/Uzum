@@ -1,7 +1,6 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,12 +8,9 @@ import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
-import uz.nt.uzumproject.model.Authorities;
 import uz.nt.uzumproject.model.Users;
-import uz.nt.uzumproject.repository.AuthorityRepository;
 import uz.nt.uzumproject.repository.UsersRepository;
 import uz.nt.uzumproject.security.JwtService;
-import uz.nt.uzumproject.security.UserAuthorities;
 import uz.nt.uzumproject.service.mapper.UserMapper;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
 import uz.nt.uzumproject.service.validator.AppStatusMessages;
@@ -26,7 +22,6 @@ import java.util.Optional;
 public class UsersService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
-    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
