@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class ResponseDto<T> {
 
-    private Integer code;
+    private int code;
     private String message;
     private boolean success;
     private T data;

@@ -24,5 +24,7 @@ public class Product {
     private String description;
     @OneToMany(mappedBy = "product")
     private List<Image> images;
+    @ManyToOne
+    private Category category;
     private Boolean isAvailable;
 }
