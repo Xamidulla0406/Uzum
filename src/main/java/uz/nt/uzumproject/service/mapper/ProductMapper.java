@@ -7,12 +7,11 @@ import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.model.Product;
 
 @Mapper (componentModel = "spring")
-public abstract class ProductMapper implements CommonMapper<ProductDto, Product> {
+public abstract class ProductMapper implements CommonMapper<ProductDto, Product>{
 
     @Autowired
     protected CategoryMapper categoryMapper;
 
-    @Mapping(target = "category", expression = "java(categoryMapper.toDto(entity.getCategory()))")
-    public abstract ProductDto toDto(Product entity);
-
+    @Mapping(target = "category", expression = "java(categoryMapper.toDto(product.getCategory()))")
+    public abstract ProductDto toDto(Product product);
 }
