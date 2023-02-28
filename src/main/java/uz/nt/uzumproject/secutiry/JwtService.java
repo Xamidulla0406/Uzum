@@ -56,7 +56,7 @@ public class JwtService {
 
     public UsersDto subject(String token){
         String uuid = claims(token).getSubject();
-        return userSessionRepository.findById(uuid).map(userSession -> gson.fromJson(userSession.getKey(), UsersDto.class))
+        return userSessionRepository.findById(uuid).map(userSession -> gson.fromJson(userSession.getUuid(), UsersDto.class))
                 .orElseThrow(() -> new JwtException("Token is expired"));
     }
 

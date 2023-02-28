@@ -1,7 +1,7 @@
 package uz.nt.uzumproject.config;
 
 import com.google.gson.Gson;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.SignatureException;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,105 +21,104 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import uz.nt.uzumproject.dto.ResponseDto;
-import uz.nt.uzumproject.secutiry.JwtFilter;
+import uz.nt.uzumproject.security.JwtFilter;
 import uz.nt.uzumproject.service.UsersService;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
-@Value("{spring.datasource.url")
-String url;
+    @Value("${spring.datasource.url}")
+    private String url;
+    @Value("${spring.datasource.username}")
+    private String username;
+    @Value("${spring.datasource.password}")
+    private String password;
 
+    @Autowired
+    @Lazy
+    private UsersService usersService;
+    @Autowired
+    private JwtFilter jwtFilter;
+    @Autowired
+    private Gson gson;
 
-@Value("{spring.datasource.username")
+    @Autowired
+    public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
 
-String username;
-
-@Value("{spring.datasource.password")
-
-String password;
-
-
-@Autowired
-@Lazy
-private UsersService usersService;
-
-@Autowired
-private JwtFilter jwtFilter;
-
-@Autowired
-private Gson gson;
-
-//    @Autowired
-//    public void authorization(AuthenticationManagerBuilder authorizationManager) throws Exception {
-//            authorizationManager
-//                    .authenticationProvider(provider());
-////                    .jdbcAuthentication()
-////                    .dataSource(dataSource())
-////                    .usersByUsernameQuery("select email as username,password,enabled where email = ?");
-//
-////                    .inMemoryAuthentication()
-////                    .withUser("Saidafzalxon")
-////                    .password(passwordEncoder().encode("1620"))
-////                    .roles("Admin","User")
-////                    .and()
-////                    .withUser("a")
-////                    .password(passwordEncoder().encode("1"))
-////                    .roles("User");
-//
-//    }
-
-    @Bean
-    public AuthenticationProvider provider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(usersService);
+
         return provider;
     }
 
+    @Bean
+    public DataSource dataSource() {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+        dataSource.setDriverClass(Driver.class);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
+    }
 
-//@Bean
-//DataSource dataSource(){
-//        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-//        dataSource.setDriverClass(Driver.class);
-//        dataSource.setUrl(url);
-//        dataSource.setUsername(username);
-//        dataSource.setPassword(password);
-//        return dataSource;
-//}
-   @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-           http
-                   .csrf().disable()
-               .authorizeHttpRequests()
-                   .requestMatchers(HttpMethod.POST,"/user").permitAll()
-                   .requestMatchers(HttpMethod.GET,"/user/user").permitAll()
-               .anyRequest().authenticated()
-                   .and()
-                   .authenticationProvider(provider())
-                   .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                   .exceptionHandling(e-> e.authenticationEntryPoint(entryPoint()));
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().configurationSource(corsConfig());
 
-               return http.build();
-   }
+         http
+                .authorizeHttpRequests()
+                .requestMatchers(HttpMethod.GET, "/user").permitAll()
+                .requestMatchers("/user/login").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+         return http.build();
+
+    }
+
+    private CorsConfigurationSource corsConfig(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod(HttpMethod.GET);
+        configuration.addAllowedHeader("Authorization");
+
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/*",configuration);
+        return urlBasedCorsConfigurationSource;
+    }
 
     private AuthenticationEntryPoint entryPoint(){
-        return (request, response, authException) ->
-        {
-            response.getWriter().println(gson.toJson(ResponseDto.<Void>builder()
-                    .message("Token is not valid")
-                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)));
-            response.setStatus(403);
-            response.setContentType("application/json");
+        return (req, res, ex) -> {
+            res.getWriter().println(gson.toJson(ResponseDto.builder()
+                    .message("Token is not valid: " + ex.getMessage() +
+                            (ex.getCause() != null ? ex.getCause().getMessage() : ""))
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .build()));
+            res.setContentType("application/json");
+            res.setStatus(400);
         };
     }
 
-   @Bean
-    public PasswordEncoder passwordEncoder(){
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-   }
+    }
 }

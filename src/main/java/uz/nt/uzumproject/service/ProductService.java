@@ -7,10 +7,12 @@ import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
+import uz.nt.uzumproject.repository.ProductRepositoryImpl;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
     private final ProductMapper productMapper;
+
+    private final ProductRepositoryImpl productRepositoryIml;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
@@ -110,6 +114,7 @@ public class ProductService {
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {
+
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()
                         .data(productMapper.toDto(products))
@@ -122,5 +127,71 @@ public class ProductService {
                         .code(NOT_FOUND_ERROR_CODE)
                         .build()
                 );
+    }
+
+
+    public ResponseDto<?> getProduct0(){
+        List<Product> list = productRepository.productNamed();
+        if(list.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .success(true)
+                .code(OK_CODE)
+                .data(list.stream().map(productMapper::toDto).toList())
+                .build();
+    }
+
+
+    public ResponseDto<?> getProduct1(){
+        List<Product> list = productRepository.productHQL();
+        if(list.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .success(true)
+                .code(OK_CODE)
+                .data(list.stream().map(productMapper::toDto).toList())
+                .build();
+    }
+
+    public ResponseDto<?> getProduct2(){
+        List<Product> list = productRepository.productNative();
+        if(list.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .success(true)
+                .code(OK_CODE)
+                .data(list.stream().map(productMapper::toDto).toList())
+                .build();
+    }
+
+    public ResponseDto<?> like(Map<String,String> like){
+        List<Product> list = productRepositoryIml.universalSearch(like);
+        if(list.isEmpty()){
+            return ResponseDto.<ProductDto>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .success(true)
+                .code(OK_CODE)
+                .data(list.stream().map(productMapper::toDto).toList())
+                .build();
     }
 }

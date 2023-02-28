@@ -1,19 +1,19 @@
 package uz.nt.uzumproject.model;
 
-
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-@AllArgsConstructor
 @Getter
 @Setter
-@RedisHash(timeToLive = 1000*2*2)
+@AllArgsConstructor
+@NoArgsConstructor
+@RedisHash(timeToLive = 60*60*2)
 public class UserSession {
     @Id
-    String key;
-
-    String value;
+    private String uuid;
+    private String userInfo;
 }

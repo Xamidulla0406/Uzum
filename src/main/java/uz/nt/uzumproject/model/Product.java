@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NamedQuery;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQuery(query = "select product from Product product",name = "ProductGet")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")
