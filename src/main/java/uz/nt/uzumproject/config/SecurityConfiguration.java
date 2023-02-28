@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.config;
 
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,13 +17,21 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 import org.postgresql.Driver;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.security.JwtFilter;
 import uz.nt.uzumproject.service.UsersService;
+import uz.nt.uzumproject.service.validator.AppStatusCodes;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -40,6 +49,8 @@ public class SecurityConfiguration {
     UsersService usersService;
     @Autowired
     JwtFilter jwtFilter;
+    @Autowired
+    Gson gson;
 
     @Autowired
     public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
@@ -66,8 +77,19 @@ public class SecurityConfiguration {
 
         return provider;
     }
+    private AuthenticationEntryPoint entryPoint(){
+        return ((request, response, exception) -> {
+            response.getWriter().println(gson.toJson(ResponseDto.builder()
+                    .message("Token is not valid "+exception.getMessage()+
+                            (exception.getCause()!=null?exception.getCause().getMessage():""))
+                    .code(AppStatusCodes.VALIDATION_ERROR_CODE)
+                    .build()));
+            response.setContentType("application/json");
+        });
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().configurationSource(corsConfigurationSource());
         return http
                 .csrf().disable()
                 .authorizeHttpRequests()
@@ -76,8 +98,21 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
+                .exceptionHandling(e->e.authenticationEntryPoint(entryPoint()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    private CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedHeaders(List.of("Authentication","SECRET-HEADER","Content-Type"));
+        cors.addAllowedMethod("*");
+        cors.addAllowedOrigin("null");
+
+        UrlBasedCorsConfigurationSource url = new UrlBasedCorsConfigurationSource();
+        url.registerCorsConfiguration("/**",cors);
+
+        return url;
     }
     public DataSource dataSource(){
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -87,6 +122,7 @@ public class SecurityConfiguration {
         dataSource.setUsername(username);
         return dataSource;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

@@ -6,10 +6,12 @@ import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
+import uz.nt.uzumproject.repository.ProductRepositoryImpl;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
     private final ProductMapper productMapper;
+    private final ProductRepositoryImpl productRepositoryImpl;
 
     public ResponseDto<ProductDto> add(ProductDto productDto) {
         if(!productValidator.validateProduct(productDto).isEmpty()){
@@ -125,5 +128,55 @@ public class ProductService {
                         .message(NOT_FOUND)
                         .success(false)
                         .build());
+    }
+
+    public ResponseDto<List<ProductDto>> getExpensiveProducts() {
+        List<ProductDto> products = productRepository.getExpensiveProductsWithHQL().stream()
+                .map(productMapper::toDto)
+                .toList();
+        return ResponseDto.<List<ProductDto>>builder()
+                .code(OK_CODE)
+                .message(OK)
+                .data(products)
+                .success(true)
+                .build();
+    }
+
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
+        List<Product> products = productRepository.universalSearch(productDto.getId(), productDto.getName(), productDto.getPrice(), productDto.getAmount());
+        if(products.isEmpty()){
+            return ResponseDto.<List<ProductDto>>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .success(false)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .code(OK_CODE)
+                .message(OK)
+                .success(true)
+                .data(products.stream().map(p->productMapper.toDto(p)).toList())
+                .build();
+
+    }
+
+    public ResponseDto<List<ProductDto>> universalSearch2(Map<String, String> params) {
+        List<Product> products = productRepositoryImpl.universalSearch(params);
+        if(products.isEmpty()){
+            return ResponseDto.<List<ProductDto>>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .success(false)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .code(OK_CODE)
+                .message(OK)
+                .success(true)
+                .data(products.stream().map(p->productMapper.toDto(p)).toList())
+                .build();
+
     }
 }

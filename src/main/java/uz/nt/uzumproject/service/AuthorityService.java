@@ -16,7 +16,6 @@ import java.util.List;
 public class AuthorityService {
     private final AuthorityRepository authorityRepository;
     public ResponseDto<Void> addAuthorityToUser(String username, String authority) {
-        List<Authorities> authorities = authorityRepository.findAllByUsername(username);
         if(authorityRepository.existsByUsernameAndAuthority(username,authority)){
             return ResponseDto.<Void>builder()
                     .code(AppStatusCodes.VALIDATION_ERROR_CODE)
@@ -25,9 +24,11 @@ public class AuthorityService {
                     .build();
         }
 
+        Authorities auth = new Authorities();
+        auth.setUsername(username);
+        auth.setAuthority(authority);
 
-
-
+        authorityRepository.save(auth);
 
         return ResponseDto.<Void>builder()
                 .code(AppStatusCodes.OK_CODE)
