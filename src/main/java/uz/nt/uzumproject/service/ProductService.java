@@ -9,6 +9,7 @@ import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.repository.ProductRepositoryImpl;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
@@ -26,8 +27,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
     private final ProductMapper productMapper;
-
-    private final ProductRepositoryImpl productRepositoryIml;
+    private final ProductRepositoryImpl productRepositoryImpl;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
@@ -51,6 +51,19 @@ public class ProductService {
                 .code(0)
                 .data(productMapper.toDto(product))
                 .message("OK")
+                .build();
+    }
+
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        List<ProductDto> products = productRepository.getExpensiveProducts2().stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .success(true)
+                .data(products)
                 .build();
     }
 
@@ -114,7 +127,6 @@ public class ProductService {
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {
-
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()
                         .data(productMapper.toDto(products))
@@ -129,69 +141,36 @@ public class ProductService {
                 );
     }
 
-
-    public ResponseDto<?> getProduct0(){
-        List<Product> list = productRepository.productNamed();
-        if(list.isEmpty()){
-            return ResponseDto.<ProductDto>builder()
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
+        List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
+        if (products.isEmpty()){
+            return ResponseDto.<List<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
                     .build();
         }
+
         return ResponseDto.<List<ProductDto>>builder()
                 .message(OK)
-                .success(true)
                 .code(OK_CODE)
-                .data(list.stream().map(productMapper::toDto).toList())
+                .data(products.stream().map(productMapper::toDto).toList())
                 .build();
     }
 
+    public ResponseDto<List<ProductDto>> universalSearch2(Map<String, String> params) {
+        List<Product> products = productRepositoryImpl.universalSearch(params);
 
-    public ResponseDto<?> getProduct1(){
-        List<Product> list = productRepository.productHQL();
-        if(list.isEmpty()){
-            return ResponseDto.<ProductDto>builder()
+        if (products.isEmpty()){
+            return ResponseDto.<List<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
                     .build();
         }
-        return ResponseDto.<List<ProductDto>>builder()
-                .message(OK)
-                .success(true)
-                .code(OK_CODE)
-                .data(list.stream().map(productMapper::toDto).toList())
-                .build();
-    }
 
-    public ResponseDto<?> getProduct2(){
-        List<Product> list = productRepository.productNative();
-        if(list.isEmpty()){
-            return ResponseDto.<ProductDto>builder()
-                    .code(NOT_FOUND_ERROR_CODE)
-                    .message(NOT_FOUND)
-                    .build();
-        }
         return ResponseDto.<List<ProductDto>>builder()
                 .message(OK)
-                .success(true)
                 .code(OK_CODE)
-                .data(list.stream().map(productMapper::toDto).toList())
-                .build();
-    }
-
-    public ResponseDto<?> like(Map<String,String> like){
-        List<Product> list = productRepositoryIml.universalSearch(like);
-        if(list.isEmpty()){
-            return ResponseDto.<ProductDto>builder()
-                    .code(NOT_FOUND_ERROR_CODE)
-                    .message(NOT_FOUND)
-                    .build();
-        }
-        return ResponseDto.<List<ProductDto>>builder()
-                .message(OK)
-                .success(true)
-                .code(OK_CODE)
-                .data(list.stream().map(productMapper::toDto).toList())
+                .data(products.stream().map(productMapper::toDto).toList())
                 .build();
     }
 }

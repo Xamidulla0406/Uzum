@@ -8,7 +8,6 @@ import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.UsersService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -27,6 +26,7 @@ public record UsersResources(UsersService usersService) {
     public ResponseDto<UsersDto> getUserByPhoneNumber(@RequestParam String phoneNumber){
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
+
     @GetMapping("login")
     public ResponseDto<String> login(@RequestBody LoginDto loginDto){
         return usersService.login(loginDto);
@@ -36,7 +36,4 @@ public record UsersResources(UsersService usersService) {
     public ResponseDto<UsersDto> getUserById(@PathVariable Integer id){
         return usersService.getById(id);
     }
-
-
-
 }

@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisHash;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(timeToLive = 60*60*2)
+@RedisHash(timeToLive = 60 * 60 * 2)
 public class UserSession {
     @Id
     private String uuid;

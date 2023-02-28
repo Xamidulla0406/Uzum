@@ -1,7 +1,6 @@
 package uz.nt.uzumproject.config;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.SignatureException;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,14 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.security.JwtFilter;
 import uz.nt.uzumproject.service.UsersService;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -78,31 +75,32 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().configurationSource(corsConfig());
+        http.cors().configurationSource(configurationSource());
 
-         http
+        return http
+                .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, "/user").permitAll()
+                .requestMatchers(HttpMethod.POST, "/user").permitAll()
                 .requestMatchers("/user/login").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-         return http.build();
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
 
     }
 
-    private CorsConfigurationSource corsConfig(){
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod(HttpMethod.GET);
-        configuration.addAllowedHeader("Authorization");
+    private CorsConfigurationSource configurationSource(){
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedHeaders(List.of("SECRET-HEADER", "Authorization", "Access-Control-Allow-Origin", "Content-Type"));
+        cors.addAllowedMethod("*");
+        cors.addAllowedOrigin("null");
 
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/*",configuration);
-        return urlBasedCorsConfigurationSource;
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cors);
+
+        return source;
     }
 
     private AuthenticationEntryPoint entryPoint(){

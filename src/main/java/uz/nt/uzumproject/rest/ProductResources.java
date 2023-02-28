@@ -21,7 +21,7 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
         UsersDto user = (UsersDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return productService.addProduct(productDto);
@@ -45,25 +45,18 @@ public class ProductResources {
         return productService.getProductById(id);
     }
 
-
-    @GetMapping("/named")
-    public ResponseDto<?> getNamed(){
-        return productService.getProduct0();
+    @GetMapping("/expensive-by-category")
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        return productService.getExpensiveProducts();
     }
 
-    @GetMapping("/hql")
-    public ResponseDto<?> getHQL(){
-        return productService.getProduct0();
+    @GetMapping("search")
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto){
+        return productService.universalSearch(productDto);
     }
 
-    @GetMapping("/native")
-    public ResponseDto<?> getNative(){
-        return productService.getProduct2();
+    @GetMapping("search-2")
+    public ResponseDto<List<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
+        return productService.universalSearch2(params);
     }
-
-    @GetMapping("/like")
-    public ResponseDto<?> like(@RequestParam  Map<String,String> like){
-        return productService.like(like);
-    }
-
 }
