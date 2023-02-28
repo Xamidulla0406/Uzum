@@ -27,13 +27,13 @@ public class ProductRepositoryImpl {
 
     private void generateQueryCondition(StringBuilder queryCondition , Map<String , String> params){
         if(params.containsKey("name")){
-            queryCondition.append(" AND p.name like :name ");
+            queryCondition.append(" AND upper(p.name) like :name ");
         }
         if(params.containsKey("amount")){
             queryCondition.append(" AND p.amount = :amount ");
         }
         if(params.containsKey("description")){
-            queryCondition.append(" AND p.description like :description ");
+            queryCondition.append(" AND upper(p.description) like :description ");
         }
         if(params.containsKey("price")){
             queryCondition.append(" AND p.price = :name ");
@@ -41,13 +41,13 @@ public class ProductRepositoryImpl {
     }
     private void setParam(Query query , Map<String , String> params){
         if(params.containsKey("name")){
-            query.setParameter("name","%"+params.get("name")+"%");
+            query.setParameter("name","%"+params.get("name").toUpperCase()+"%");
         }
         if(params.containsKey("amount")){
             query.setParameter("amount",Integer.parseInt(params.get("amount")));
         }
         if(params.containsKey("description")){
-            query.setParameter("description","%"+params.get("description")+"%");
+            query.setParameter("description","%"+params.get("description").toUpperCase()+"%");
         }
         if(params.containsKey("price")){
             query.setParameter("price",Integer.parseInt(params.get("price")));
