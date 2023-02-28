@@ -1,18 +1,15 @@
 package uz.nt.uzumproject.security;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.UserSession;
 import uz.nt.uzumproject.repository.UserSessionRepository;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -55,8 +52,6 @@ public class JwtService {
 
         return userSessionRepository.findById(uuid)
                 .map(s -> gson.fromJson(s.getUser(), UsersDto.class))
-                .orElseThrow();
-
-//        return gson.fromJson(subject, UsersDto.class);
+                .orElseThrow(() -> new JwtException("Token is expired"));
     }
 }

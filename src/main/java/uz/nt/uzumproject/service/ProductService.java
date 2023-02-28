@@ -2,15 +2,18 @@ package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
+import uz.nt.uzumproject.repository.ProductRepositoryImpl;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
     private final ProductMapper productMapper;
+    private final ProductRepositoryImpl productRepositoryImpl;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
@@ -122,5 +126,53 @@ public class ProductService {
                         .code(NOT_FOUND_ERROR_CODE)
                         .build()
                 );
+    }
+
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        List<ProductDto> products = productRepository.getExpensiveProducts2()
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .data(products)
+                .build();
+
+    }
+
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
+        List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
+        if(products.isEmpty()){
+            return ResponseDto.<List<ProductDto>>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .code(OK_CODE)
+                .message(OK)
+                .data(products.stream().map(productMapper::toDto).toList())
+                .build();
+
+    }
+
+    public ResponseDto<List<ProductDto>> universalSearch2(Map<String, String> params) {
+        List<Product> products = productRepositoryImpl.universalSearch(params);
+
+        if(products.isEmpty()){
+            return ResponseDto.<List<ProductDto>>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .code(OK_CODE)
+                .message(OK)
+                .data(products.stream().map(productMapper::toDto).toList())
+                .build();
     }
 }

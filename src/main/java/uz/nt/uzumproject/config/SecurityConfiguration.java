@@ -2,6 +2,7 @@ package uz.nt.uzumproject.config;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.SignatureException;
+import org.apache.tomcat.util.file.ConfigurationSource;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +22,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.security.JwtFilter;
 import uz.nt.uzumproject.service.UsersService;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -47,31 +52,10 @@ public class SecurityConfiguration {
     @Autowired
     private Gson gson;
 
-    @Autowired
-    public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
-
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(usersService);
-
-        return provider;
-    }
-
-    @Bean
-    public DataSource dataSource() {
-        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriverClass(Driver.class);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        return dataSource;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().configurationSource(configurationSource());
         return http
                 .csrf().disable()
                 .authorizeHttpRequests()
@@ -85,7 +69,42 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    private AuthenticationEntryPoint entryPoint(){
+    @Autowired
+    public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(usersService);
+
+        return provider;
+    }
+
+    private CorsConfigurationSource configurationSource() {
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedHeaders(List.of("Authorization", "Access-Control-Allow-Origin", "Content-Type"));
+        cors.addAllowedMethod("*");
+        cors.addAllowedOrigin("*");
+
+        UrlBasedCorsConfigurationSource urlBase = new UrlBasedCorsConfigurationSource();
+        urlBase.registerCorsConfiguration("*/*", cors);
+        return urlBase;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+        dataSource.setDriverClass(Driver.class);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
+    }
+
+
+    private AuthenticationEntryPoint entryPoint() {
         return (req, res, ex) -> {
             res.getWriter().println(gson.toJson(ResponseDto.builder()
                     .message("Token is not valid: " + ex.getMessage() +
