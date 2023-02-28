@@ -2,6 +2,7 @@ package uz.nt.uzumproject.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import uz.nt.uzumproject.model.Product;
@@ -10,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
+@RequiredArgsConstructor
 public class ProductRepositoryImpl {
 
-    @Autowired
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public List<Product> universalSearch(Map<String, String> params){
         String sqlQuery = "select p from Product p where 1 = 1 ";
