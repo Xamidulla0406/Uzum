@@ -26,4 +26,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                       @Param("name") String name,
                                       @Param("amount") Integer amount,
                                       @Param("price") Integer price);
+
+    List<Product> findAllByAmountLessThanEqual(Integer amount);
 }

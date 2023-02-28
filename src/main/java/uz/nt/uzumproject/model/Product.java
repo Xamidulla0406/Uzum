@@ -26,7 +26,7 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<Image> images;
     @ManyToOne
     private Category category;
