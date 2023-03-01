@@ -21,7 +21,7 @@ public class ProductResources {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'SUPERADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
         UsersDto user = (UsersDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return productService.addProduct(productDto);
@@ -55,8 +55,8 @@ public class ProductResources {
         return productService.universalSearch(productDto);
     }
 
-    @GetMapping("search2")
-    public ResponseDto<List<ProductDto>> universalSearch2(@RequestParam Map<String,String> params){
+    @GetMapping("search-2")
+    public ResponseDto<List<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
         return productService.universalSearch2(params);
     }
 }

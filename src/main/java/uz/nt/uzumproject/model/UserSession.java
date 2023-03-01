@@ -1,6 +1,5 @@
 package uz.nt.uzumproject.model;
 
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,11 +11,9 @@ import org.springframework.data.redis.core.RedisHash;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(timeToLive = 2 * 60 * 60)
+@RedisHash(timeToLive = 60 * 60 * 2)
 public class UserSession {
     @Id
     private String uuid;
     private String userInfo;
 }
-
-

@@ -9,6 +9,7 @@ import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.repository.ProductRepositoryImpl;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
+import uz.nt.uzumproject.service.validator.AppStatusMessages;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class ProductService {
     }
 
     public ResponseDto<List<ProductDto>> getExpensiveProducts(){
-        List<ProductDto> products = productRepository.getExpensiveProducts().stream()
+        List<ProductDto> products = productRepository.getExpensiveProducts2().stream()
                 .map(productMapper::toDto)
                 .toList();
 
@@ -141,9 +142,8 @@ public class ProductService {
     }
 
     public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
-        List<Product> products = productRepository.universalSearch(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
-
-        if(products.isEmpty()){
+        List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
+        if (products.isEmpty()){
             return ResponseDto.<List<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
@@ -152,7 +152,7 @@ public class ProductService {
 
         return ResponseDto.<List<ProductDto>>builder()
                 .message(OK)
-                .success(true)
+                .code(OK_CODE)
                 .data(products.stream().map(productMapper::toDto).toList())
                 .build();
     }
@@ -160,7 +160,7 @@ public class ProductService {
     public ResponseDto<List<ProductDto>> universalSearch2(Map<String, String> params) {
         List<Product> products = productRepositoryImpl.universalSearch(params);
 
-        if(products.isEmpty()){
+        if (products.isEmpty()){
             return ResponseDto.<List<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
@@ -169,7 +169,7 @@ public class ProductService {
 
         return ResponseDto.<List<ProductDto>>builder()
                 .message(OK)
-                .success(true)
+                .code(OK_CODE)
                 .data(products.stream().map(productMapper::toDto).toList())
                 .build();
     }

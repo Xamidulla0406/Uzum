@@ -20,6 +20,8 @@ public class JwtService {
 
     @Value("${spring.security.secret.key}")
     private String secretKey;
+    @Autowired
+    private UserSessionRepository userSessionRepository;
 
     @Autowired
     private Gson gson;

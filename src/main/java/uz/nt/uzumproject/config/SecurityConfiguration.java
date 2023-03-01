@@ -29,6 +29,7 @@ import uz.nt.uzumproject.service.UsersService;
 import uz.nt.uzumproject.service.validator.AppStatusCodes;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -75,8 +76,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().configurationSource(configurationSource());
+
         return http
-                .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
@@ -87,13 +88,14 @@ public class SecurityConfiguration {
                 .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+
     }
 
     private CorsConfigurationSource configurationSource(){
         CorsConfiguration cors = new CorsConfiguration();
-        cors.addAllowedHeader("*");
+        cors.setAllowedHeaders(List.of("SECRET-HEADER", "Authorization", "Access-Control-Allow-Origin", "Content-Type"));
         cors.addAllowedMethod("*");
-        cors.addAllowedOrigin("*");
+        cors.addAllowedOrigin("null");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
