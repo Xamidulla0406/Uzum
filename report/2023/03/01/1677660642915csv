@@ -1,0 +1,7 @@
+{"id":4,"name":"Iphone 11\n","price":3000,"amount":15,"description":"Iphone senga pro max","images":[],"category":{"id":12,"name":"Iphone","parentId":10},"isAvailable":true}
+{"id":5,"name":"Iphone 12","price":4000,"amount":15,"description":"Iphone senga pro max","images":[],"category":{"id":12,"name":"Iphone","parentId":10},"isAvailable":true}
+{"id":6,"name":"Iphone 13\n","price":5000,"amount":14,"description":"Iphone senga pro max","images":[],"category":{"id":12,"name":"Iphone","parentId":10},"isAvailable":true}
+{"id":7,"name":"Iphone 15","price":1000,"amount":14,"description":"Iphone senga pro max","images":[],"category":{"id":11,"name":"Telefon","parentId":10},"isAvailable":true}
+{"id":8,"name":"Name","price":900,"amount":1,"description":"hello","images":[],"category":{"id":11,"name":"Telefon","parentId":10}}
+{"id":2,"name":"Iphone 14","price":2000,"amount":15,"description":"Iphone senga pro max","images":[],"category":{"id":12,"name":"Iphone","parentId":10},"isAvailable":true}
+{"id":3,"name":"Iphone 15","price":1000,"amount":15,"description":"Iphone senga pro max","images":[],"category":{"id":12,"name":"Iphone","parentId":10},"isAvailable":true}
