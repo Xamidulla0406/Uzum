@@ -26,8 +26,6 @@ public class JwtService {
     @Autowired
     private Gson gson;
 
-    @Autowired
-    private UserSessionRepository userSessionRepository;
 
     public String generateToken(UsersDto user){
         String uuid = UUID.randomUUID().toString();
