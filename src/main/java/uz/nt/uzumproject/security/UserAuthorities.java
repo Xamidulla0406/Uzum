@@ -1,8 +1,5 @@
 package uz.nt.uzumproject.security;
 
-import org.springframework.security.core.parameters.P;
-import uz.nt.uzumproject.model.Authorities;
-
 public enum UserAuthorities {
     /**
      * Start of Objects list
