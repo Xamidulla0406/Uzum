@@ -23,4 +23,7 @@ public class Users {
     private String gender;
     private Date birthDate;
     private Short isActive;
+    private String password;
+    @Column(columnDefinition = "text default('USER')")
+    private String role = "USER";
 }

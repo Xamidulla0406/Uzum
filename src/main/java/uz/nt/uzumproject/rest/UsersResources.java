@@ -1,7 +1,7 @@
 package uz.nt.uzumproject.rest;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import uz.nt.uzumproject.dto.LoginDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.UsersService;
@@ -9,10 +9,8 @@ import uz.nt.uzumproject.service.UsersService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
-@RequiredArgsConstructor
-public class UsersResources {
-    private final UsersService usersService;
+@RequestMapping("user")
+public record UsersResources(UsersService usersService) {
 
     @PostMapping
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
@@ -37,4 +35,10 @@ public class UsersResources {
     public ResponseDto<List<UsersDto>> getAllUsers(){
         return usersService.getAllUsers();
     }
+
+    @GetMapping("login")
+    public ResponseDto<String> login(@RequestBody LoginDto loginDto){
+        return usersService.login(loginDto);
+    }
+
 }

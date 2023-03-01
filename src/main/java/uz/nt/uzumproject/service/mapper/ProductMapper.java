@@ -10,10 +10,8 @@ import uz.nt.uzumproject.model.Product;
 public abstract class ProductMapper implements CommonMapper<ProductDto, Product>{
     @Autowired
     protected CategoryMapper categoryMapper;
-
+    @Override
     @Mapping(target = "category", expression = "java(categoryMapper.toDto(product.getCategory()))")
-    public ProductDto toDto(Product product) {
-        return null;
-    }
+    public abstract ProductDto toDto(Product product);
 
 }

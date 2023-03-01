@@ -12,4 +12,6 @@ public interface UsersRepository extends JpaRepository<Users, Integer> {
     Optional<Users> findFirstByPhoneNumberAndIsActive(String phoneNumber,Short isActive);
     Optional<Users> findByIdAndIsActive(Integer id,Short isActive);
     List<Users> findAllByIsActive(Integer status);
+
+    Optional<Users> findFirstByEmail(String email);
 }
