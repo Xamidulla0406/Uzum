@@ -24,6 +24,11 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
@@ -89,6 +94,24 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>datatables</artifactId>
+            <version>1.10.15</version>
+        </dependency>
+
+<!--            <repository>-->
+<!--                <id>com.e-iceblue</id>-->
+<!--                <name>e-iceblue</name>-->
+<!--                <url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>-->
+<!--            </repository>-->
+
+<!--            <dependency>-->
+<!--                <groupId>e-iceblue</groupId>-->
+<!--                <artifactId>spire.xls</artifactId>-->
+<!--                <version>12.8.4</version>-->
+<!--            </dependency>-->
+
     </dependencies>
 
     <build>

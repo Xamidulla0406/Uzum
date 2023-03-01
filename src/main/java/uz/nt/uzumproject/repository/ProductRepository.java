@@ -28,4 +28,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                       @Param("price") Integer price);
 
     List<Product> findAllByAmountLessThanEqual(Integer amount);
+
+    List<Product> findAllByAmountIsBetween(Integer amount1, Integer amount2);
 }
