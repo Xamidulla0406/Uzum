@@ -11,6 +11,7 @@ import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.ProductService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("product")
@@ -42,6 +43,21 @@ public class ProductResources {
         String authorization = req.getHeader("Authorization");
 
         return productService.getProductById(id);
+    }
+
+    @GetMapping("expensive-by-category")
+    public ResponseDto<List<ProductDto>> getExpensiveProduct(){
+        return productService.getExpensiveProduct();
+    }
+
+    @GetMapping("search")
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto){
+        return productService.universalSearch(productDto);
+    }
+
+    @GetMapping("search-2")
+    public ResponseDto<List<ProductDto>> universalSearch2(@RequestParam Map<String, String> params){
+        return productService.universalSearch2(params);
     }
 
 }

@@ -13,6 +13,10 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQuery(query = "select p from Product p where coalesce(:id, id) = id" +
+        " and coalesce(:name, name) = name" +
+        " and coalesce(:amount, amount) = amount" +
+        " and coalesce(:price, price) = price", name = "findProductById")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")
