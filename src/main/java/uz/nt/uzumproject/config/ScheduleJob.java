@@ -1,9 +1,11 @@
 package uz.nt.uzumproject.config;
 
-import com.google.gson.Gson;
 import jakarta.transaction.Transactional;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -16,7 +18,6 @@ import uz.nt.uzumproject.service.ImageService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,33 +30,44 @@ public class ScheduleJob {
 
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-    private Gson gson;
 
-    @Async
-    @Scheduled(fixedRate = 1000)
-    public void print() throws InterruptedException {
-        System.out.println(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()) + "->"+ Thread.currentThread().getName());
-        Thread.sleep(10000);
-    }
+//    @Async
+//    @Scheduled(fixedRate = 1000) //fixedDelay without @Async / fixedRate + @Async
+//    public void print() throws InterruptedException {
+//        System.out.println(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()) + "->" + Thread.currentThread().getName());
+//        Thread.sleep(1000*60*60*24);
+//    }
 
     @Transactional
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
     public void report() throws IOException {
         List<Product> products = productRepository.findAllByAmountLessThanEqual(50);
-        File f = new File(ImageService.filePath("report", "csv"));
-        if (f.createNewFile()){
-            FileOutputStream fos = new FileOutputStream(f);
-            PrintWriter pw = new PrintWriter(fos);
+        File file = new File(ImageService.filePath("report", ".xls"));
+        String[] column = {"id", "name", "price", "amount", "description", "isAvailable"};
 
-            products.forEach(p -> {
-                String product = gson.toJson(p);
-                pw.println(product);
-            });
+        HSSFWorkbook workbook = new HSSFWorkbook();
 
-            pw.flush();
-            pw.close();
-            fos.close();
+        HSSFSheet sheet = workbook.createSheet("Product");
+        Row row = sheet.createRow(0);
+
+        for (int i = 0; i < column.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(column[i]);
         }
+
+        for (int i = 0; i < products.size(); i++) {
+            Row dataRow = sheet.createRow(i + 1);
+            dataRow.createCell(0).setCellValue(products.get(i).getId());
+            dataRow.createCell(1).setCellValue(products.get(i).getName());
+            dataRow.createCell(2).setCellValue(products.get(i).getPrice());
+            dataRow.createCell(3).setCellValue(products.get(i).getAmount());
+            dataRow.createCell(4).setCellValue(products.get(i).getDescription());
+            dataRow.createCell(5).setCellValue(products.get(i).getIsAvailable().toString());
+        }
+
+        FileOutputStream fos = new FileOutputStream(file);
+
+        workbook.write(fos);
+        fos.close();
     }
 }
