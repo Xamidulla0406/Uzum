@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.model.Product;
 
-@Mapper (componentModel = "spring")
+@Mapper(componentModel = "spring")
 public abstract class ProductMapper implements CommonMapper<ProductDto, Product> {
 
     @Autowired

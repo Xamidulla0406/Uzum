@@ -22,41 +22,41 @@ public class ProductResources {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
+    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
         UsersDto user = (UsersDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
+    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
         return productService.updateProduct(productDto);
     }
 
     @GetMapping()
-    public ResponseDto<List<ProductDto>> getAllProducts(){
+    public ResponseDto<List<ProductDto>> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("by-id")
-    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id, HttpServletRequest req){
+    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id, HttpServletRequest req) {
         String authorization = req.getHeader("Authorization");
 
         return productService.getProductById(id);
     }
 
     @GetMapping("/expensive-by-category")
-    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+    public ResponseDto<List<ProductDto>> getExpensiveProducts() {
         return productService.getExpensiveProducts();
     }
 
     @GetMapping("search")
-    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto){
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
         return productService.universalSearch(productDto);
     }
 
     @GetMapping("search-2")
-    public ResponseDto<List<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
+    public ResponseDto<List<ProductDto>> universalSearch(@RequestParam Map<String, String> params) {
         return productService.universalSearch2(params);
     }
 }

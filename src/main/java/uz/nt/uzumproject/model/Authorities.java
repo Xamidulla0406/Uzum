@@ -1,17 +1,13 @@
 package uz.nt.uzumproject.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@Table(
-        name = "authorities",
-        uniqueConstraints = @UniqueConstraint(name = "username_auth_unique",
-                columnNames = {"username", "authority"})
+@Table(name = "authorities", uniqueConstraints = @UniqueConstraint(name = "username_auth_unique", columnNames = {"username", "authority"})
 )
 public class Authorities {
     @Id
@@ -22,7 +18,7 @@ public class Authorities {
     private String username;
     private String authority;
 
-    public Authorities(String username, String authority){
+    public Authorities(String username, String authority) {
         this.username = username;
         this.authority = authority;
     }

@@ -20,7 +20,7 @@ public class AuthorityResources {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('SUPER_ADMIN')")
-    public ResponseDto<Void> addAuthority(@RequestParam String username, @RequestParam String authorityName){
+    public ResponseDto<Void> addAuthority(@RequestParam String username, @RequestParam String authorityName) {
         return authorityService.addAuthorityToUser(username, authorityName);
     }
 }

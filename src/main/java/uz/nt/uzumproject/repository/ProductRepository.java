@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import uz.nt.uzumproject.model.Product;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
@@ -23,7 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query(name = "findProductById")
     List<Product> findProductById(@Param("id") Integer id,
-                                      @Param("name") String name,
-                                      @Param("amount") Integer amount,
-                                      @Param("price") Integer price);
+                                  @Param("name") String name,
+                                  @Param("amount") Integer amount,
+                                  @Param("price") Integer price);
 }

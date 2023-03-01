@@ -8,17 +8,18 @@ public enum UserAuthorities {
     CREATE("CREATE"),
     UPDATE("UPDATE"),
     DELETE("DELETE");
+
     /**
      * End of objects list
      */
 
-    UserAuthorities(String name){
+    UserAuthorities(String name) {
         this.name = name;
     }
 
     private String name;
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 }

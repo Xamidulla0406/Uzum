@@ -91,7 +91,7 @@ public class SecurityConfiguration {
 
     }
 
-    private CorsConfigurationSource configurationSource(){
+    private CorsConfigurationSource configurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowedHeaders(List.of("SECRET-HEADER", "Authorization", "Access-Control-Allow-Origin", "Content-Type"));
         cors.addAllowedMethod("*");

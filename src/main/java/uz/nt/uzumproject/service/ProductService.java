@@ -9,7 +9,6 @@ import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.repository.ProductRepositoryImpl;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class ProductService {
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
 
-        if (!errors.isEmpty()){
+        if (!errors.isEmpty()) {
             return ResponseDto.<ProductDto>builder()
                     .errors(errors)
                     .data(productDto)
@@ -54,7 +53,7 @@ public class ProductService {
                 .build();
     }
 
-    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+    public ResponseDto<List<ProductDto>> getExpensiveProducts() {
         List<ProductDto> products = productRepository.getExpensiveProducts2().stream()
                 .map(productMapper::toDto)
                 .toList();
@@ -123,9 +122,10 @@ public class ProductService {
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
+                .data(productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
+
     public ResponseDto<ProductDto> getProductById(Integer id) {
         return productRepository.findById(id)
                 .map(products -> ResponseDto.<ProductDto>builder()
@@ -143,7 +143,7 @@ public class ProductService {
 
     public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
         List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
-        if (products.isEmpty()){
+        if (products.isEmpty()) {
             return ResponseDto.<List<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
@@ -160,7 +160,7 @@ public class ProductService {
     public ResponseDto<List<ProductDto>> universalSearch2(Map<String, String> params) {
         List<Product> products = productRepositoryImpl.universalSearch(params);
 
-        if (products.isEmpty()){
+        if (products.isEmpty()) {
             return ResponseDto.<List<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)

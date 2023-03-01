@@ -10,7 +10,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 public class AppConfig {
 
     @Bean
-    public Gson gson(){
+    public Gson gson() {
         return new Gson();
     }
 }
