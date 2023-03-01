@@ -1,5 +1,7 @@
 package uz.nt.uzumproject.rest;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.LoginDto;
@@ -11,7 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-public record UsersResources(UsersService usersService) {
+@RequiredArgsConstructor
+public class UsersResources {
+
+    private final UsersService usersService;
+
     @PostMapping
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
@@ -22,6 +28,7 @@ public record UsersResources(UsersService usersService) {
         return usersService.updateUser(usersDto);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping("by-phone-number")
     public ResponseDto<UsersDto> getUserByPhoneNumber(@RequestParam String phoneNumber){
         return usersService.getUserByPhoneNumber(phoneNumber);

@@ -2,7 +2,6 @@ package uz.nt.uzumproject.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 

@@ -13,7 +13,7 @@ public class ProductDto {
 
     private Integer id;
     private String name;
-    private Integer price;
+    private Double price;
     private Integer amount;
     private String description;
     private CategoryDto category;
