@@ -3,6 +3,9 @@ package uz.nt.uzumproject.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import uz.nt.uzumproject.model.Product;
 
@@ -15,17 +18,42 @@ public class ProductRepositoryImpl {
     @Autowired
     private EntityManager entityManager;
 
-    public List<Product> universalSearch(Map<String, String> params){
+    public Page<Product> universalSearch(Map<String, String> params){
+        int page = 0, size = 10;
+        if(params.containsKey("page")){
+            page = Math.max(0,Integer.parseInt(params.get("page")));
+        }
+        if(params.containsKey("size")){
+            size = Math.max(1,Integer.parseInt(params.get("size")));
+        }
+
         String sqlQuery = "select p from Product p where 1=1 ";
+        String sqlCountQuery = "select count(1) from Product p where 1=1 ";
         StringBuilder queryCondition = new StringBuilder();
+        StringBuilder countQueryCondition = new StringBuilder();
 
         generateQueryCondition(queryCondition, params);
+        generateQueryCondition(countQueryCondition, params);
 
         Query query = entityManager.createQuery(sqlQuery + queryCondition, Product.class);
+        Query countQuery = entityManager.createQuery(sqlCountQuery + countQueryCondition, Product.class);
 
         setParams(query, params);
+        setParams(countQuery, params);
 
-        return query.getResultList();
+        long count = (long) countQuery.getSingleResult();
+
+        if(page >= count / size){
+            if(count % size == 0) page = (int) (count / size) - 1;
+            else page = (int) (count / size);
+        }
+
+        query.setFirstResult(page);
+        query.setMaxResults(size);
+
+        List<Product> products = query.getResultList();
+
+        return new PageImpl<>(products, PageRequest.of(page, size), count);
     }
 
     private void generateQueryCondition(StringBuilder queryCondition, Map<String, String> params){

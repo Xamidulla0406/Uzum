@@ -36,12 +36,6 @@ public class ScheduleJob {
     @Autowired
     private Gson gson;
 
-    @Async
-    @Scheduled(fixedRate = 1000)
-    public void print() throws InterruptedException {
-        System.out.println(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()) + "->"+ Thread.currentThread().getName());
-        Thread.sleep(10000);
-    }
 
     @Transactional
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
