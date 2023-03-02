@@ -30,13 +30,12 @@ public class ProductRepositoryImpl {
         String sqlQuery = "select p from Product p where 1=1 ";
         String sqlCountQuery = "select count(1) from Product p where 1=1 ";
         StringBuilder queryCondition = new StringBuilder();
-        StringBuilder countQueryCondition = new StringBuilder();
 
         generateQueryCondition(queryCondition, params);
-        generateQueryCondition(countQueryCondition, params);
+        generateQueryCondition(queryCondition, params);
 
         Query query = entityManager.createQuery(sqlQuery + queryCondition, Product.class);
-        Query countQuery = entityManager.createQuery(sqlCountQuery + countQueryCondition, Product.class);
+        Query countQuery = entityManager.createQuery(sqlCountQuery + queryCondition, Product.class);
 
         setParams(query, params);
         setParams(countQuery, params);

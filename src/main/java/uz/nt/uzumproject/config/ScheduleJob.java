@@ -38,7 +38,7 @@ public class ScheduleJob {
 
 
     @Transactional
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
     public void report() throws IOException {
         List<Product> products = productRepository.findAllByAmountLessThanEqual(50);
         File f = new File(ImageService.filePath("report", "csv"));
@@ -58,7 +58,7 @@ public class ScheduleJob {
     }
 
     @Transactional
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
     public void report2() throws IOException {
         String[] rowHeading = {"Id", "Name", "Price", "Amount", "Description", "Category"};
 
