@@ -47,7 +47,7 @@ public class ProductRepositoryImpl {
             else page = (int) (count / size);
         }
 
-        query.setFirstResult(page);
+        query.setFirstResult(page * size);
         query.setMaxResults(size);
 
         List<Product> products = query.getResultList();
