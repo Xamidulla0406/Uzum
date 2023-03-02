@@ -1,5 +1,10 @@
 package uz.nt.uzumproject.rest;
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.LoginDto;
@@ -7,6 +12,7 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.UsersService;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 @RestController
@@ -28,8 +34,18 @@ public record UsersResources(UsersService usersService) {
     }
 
     @GetMapping("login")
-    public ResponseDto<String> login(@RequestBody LoginDto loginDto){
-        return usersService.login(loginDto);
+    public ResponseDto<String> login(@RequestBody LoginDto loginDto) throws NoSuchMethodException {
+        Link link = Link.of("/product/","product-list");
+        ResponseDto<String> response = usersService.login(loginDto);
+        response.add(link);
+
+        Method getUserByPhoneNumber = UsersResources.class
+                .getDeclaredMethod("getUserByPhoneNumber", String.class);
+
+        response.add(WebMvcLinkBuilder.linkTo(getUserByPhoneNumber)
+                .withRel("user-by_phone-number")
+                .expand("+998911169608"));
+        return response;
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,9 @@
 package uz.nt.uzumproject.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
@@ -8,6 +11,7 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.repository.ProductRepositoryImpl;
+import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.AppStatusMessages;
 import uz.nt.uzumproject.service.validator.ProductValidator;
@@ -118,12 +122,27 @@ public class ProductService {
         }
     }
 
-    public ResponseDto<List<ProductDto>> getAllProducts() {
-        return ResponseDto.<List<ProductDto>>builder()
+    public ResponseDto<List<EntityModel<ProductDto>>> getAllProducts() {
+        List<EntityModel<ProductDto>> products = productRepository.findAll().stream()
+                .map(p -> {
+                    EntityModel<ProductDto> entityModel = EntityModel.of(productMapper.toDto(p));
+
+                    try {
+                        entityModel.add(WebMvcLinkBuilder.linkTo(ProductResources.class.getDeclaredMethod("getProductById", Integer.class, HttpServletRequest.class))
+                                .withSelfRel()
+                                .expand(p.getId()));
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return entityModel;
+                })
+                .toList();
+
+        return ResponseDto.<List<EntityModel<ProductDto>>>builder()
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
+                .data(products)
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {

@@ -2,6 +2,7 @@ package uz.nt.uzumproject.rest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class ProductResources {
     }
 
     @GetMapping()
-    public ResponseDto<List<ProductDto>> getAllProducts(){
+    public ResponseDto<List<EntityModel<ProductDto>>> getAllProducts(){
         return productService.getAllProducts();
     }
 
