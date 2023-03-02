@@ -1,6 +1,8 @@
 package uz.nt.uzumproject.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -87,14 +89,16 @@ public class UsersService implements UserDetailsService {
         }
     }
 
-    public ResponseDto<UsersDto> getUserByPhoneNumber(String phoneNumber) {
+    public ResponseDto<EntityModel<UsersDto>> getUserByPhoneNumber(String phoneNumber) {
         return usersRepository.findFirstByPhoneNumber(phoneNumber)
-                .map(u -> ResponseDto.<UsersDto>builder()
-                        .data(userMapper.toDto(u))
+                .map(u -> ResponseDto.<EntityModel<UsersDto>>builder()
+                        .data(EntityModel.of(userMapper.toDto(u),
+                                Link.of("http://localhost:9000/user", "edit"),
+                                Link.of("http://localhost:9000/user/" + u.getId(), "delete")))
                         .success(true)
                         .message("OK")
                         .build())
-                .orElse(ResponseDto.<UsersDto>builder()
+                .orElse(ResponseDto.<EntityModel<UsersDto>>builder()
                         .message("User with phone number " + phoneNumber + " is not found")
                         .code(-1)
                         .build());

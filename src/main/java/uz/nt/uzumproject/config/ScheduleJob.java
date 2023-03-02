@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@EnableScheduling
+//@EnableScheduling
 @Component
 @EnableAsync
 public class ScheduleJob {
@@ -33,7 +33,7 @@ public class ScheduleJob {
     private Gson gson;
 
     @Async
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(cron = "${cron.config}")
     public void print() throws InterruptedException {
         System.out.println(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()) + "->"+ Thread.currentThread().getName());
         Thread.sleep(10000);
