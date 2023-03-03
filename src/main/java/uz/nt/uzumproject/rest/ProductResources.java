@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class ProductResources {
 
     private final ProductService productService;
@@ -68,3 +70,7 @@ public class ProductResources {
         return productService.universalSearch2(params);
     }
 }
+//1.Dependency springdoc-openapi-starter-webmvc-ui
+//2.SecurityFilterChain requestMatchers => permitAll (/v3/api-docs/**, /swagger-ui/**, /swagger-ui.html)
+//3.SecurityScheme
+//4.Controller => SecurityRequirement

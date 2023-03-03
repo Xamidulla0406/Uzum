@@ -1,5 +1,9 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.hateoas.EntityModel;
@@ -18,8 +22,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/user")
+@SecurityRequirement(name = "Authorization")
 public record UsersResources(UsersService usersService) {
-    @PostMapping
+
+    @Operation(
+            method = "Add new User",
+            description = "Need to send UsersDto to this endpoint to create new user",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Users info", content = @Content(mediaType = "application/json")),
+            responses = {@ApiResponse(responseCode = "200", description = "OK"),
+                         @ApiResponse(responseCode = "403", description = "Authorization error")}
+    )
+    @PostMapping(consumes = "application/xml;charset=UTF-8")
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
@@ -34,6 +47,7 @@ public record UsersResources(UsersService usersService) {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
+    @Operation(summary = "Get JWT token")
     @PostMapping(value = "login")
     public ResponseDto<String> login(@RequestBody LoginDto loginDto) throws NoSuchMethodException {
         Link link = Link.of("/product/", "product-list");
