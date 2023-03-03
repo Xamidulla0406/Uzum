@@ -17,7 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             nativeQuery = true)
     List<Product> getExpensiveProducts();
 
-    @Query(value = "select t from Product t where (t.category.id, t.price) in (select p.category.id, max(p.price) from Product p\n" +
+    @Query(value = "select t from Product t where(t.category.id, t.price) in (select p.category.id, max(p.price) from Product p\n" +
             "group by p.category.id)")
     List<Product> getExpensiveProducts2();
 
@@ -30,4 +30,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findAllByAmountLessThanEqual(Integer amount);
 
     List<Product> findAllByAmountIsBetween(Integer amount1, Integer amount2);
+
+    List<Product> findAllByAmountAndPrice(Integer amount, Integer price);
 }
