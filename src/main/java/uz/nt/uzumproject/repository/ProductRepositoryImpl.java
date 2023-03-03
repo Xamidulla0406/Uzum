@@ -3,6 +3,10 @@ package uz.nt.uzumproject.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import uz.nt.uzumproject.model.Product;
 
@@ -14,17 +18,40 @@ public class ProductRepositoryImpl {
 
     @Autowired
     private EntityManager entityManager;
-    public List<Product> universalSearch(Map<String, String> params) {
+    public Page<Product> universalSearch(Map<String, String> params) {
+        int page = 0, size = 10;
+
+        if(params.containsKey("size")){
+            size = Math.max(Integer.parseInt(params.get("size")), 1);
+        }
+        if(params.containsKey("page")){
+            page = Math.max(Integer.parseInt(params.get("page")), 0);
+        }
+        String sqlCountQuery = "select count(1) from Product p where 1=1 ";
         String sqlQuery = "select p from Product p where 1=1 ";
         StringBuilder queryCondition = new StringBuilder();
 
+
         generateQueryCondition(queryCondition, params);
 
-        Query query = entityManager.createQuery(sqlQuery+queryCondition);
+        Query query = entityManager.createQuery(sqlQuery+queryCondition, Product.class);
+        Query countQuery = entityManager.createQuery(sqlCountQuery+queryCondition, Product.class);
 
         setParams(query, params);
+        setParams(countQuery, params);
 
-        return query.getResultList();
+        long count = (long) countQuery.getSingleResult();
+
+        if(count/size <= page){
+            if(count % size == 0){
+                page = (int) count/size - 1;
+            }else page = (int) count/size;
+        }
+        query.setFirstResult(size*page);
+        query.setMaxResults(size);
+
+
+        return new PageImpl<Product>(query.getResultList(), PageRequest.of(page, size), count/size);
 
     }
 

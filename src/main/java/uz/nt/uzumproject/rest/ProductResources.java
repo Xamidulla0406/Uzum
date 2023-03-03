@@ -2,6 +2,8 @@ package uz.nt.uzumproject.rest;
 
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,9 @@ public class ProductResources {
     }
 
     @GetMapping
-    public ResponseDto<List<ProductDto>> getAll(){
-        return productService.getAllProducts();
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAll(@RequestParam(defaultValue = "0") Integer page,
+                                                             @RequestParam(defaultValue = "10") Integer size){
+        return productService.getAllProducts(page, size);
     }
 
 
@@ -60,8 +63,13 @@ public class ProductResources {
     }
 
     @GetMapping("/search2")
-    public ResponseDto<List<ProductDto>> search2(@RequestParam Map<String, String> params){
+    public ResponseDto<Page<ProductDto>> search2(@RequestParam Map<String, String> params){
         return productService.universalSearch2(params);
+    }
+
+    @GetMapping("sort")
+    public ResponseDto<List<ProductDto>> getAllProductWithSort(@RequestParam List<String> sort){
+        return productService.getAllProductWithSort(sort);
     }
 
 }

@@ -1,0 +1,18 @@
+package uz.nt.uzumproject.config;
+
+import com.google.gson.*;
+import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Component
+public class LocalDateTimeDeserializer implements JsonDeserializer<LocalDateTime> {
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    @Override
+    public LocalDateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        return LocalDateTime.parse(jsonElement.getAsString(), formatter);
+    }
+}
