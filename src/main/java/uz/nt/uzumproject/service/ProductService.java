@@ -1,19 +1,27 @@
 package uz.nt.uzumproject.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
+import uz.nt.uzumproject.repository.ProductRepositoryImpl;
+import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
@@ -24,6 +32,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
     private final ProductMapper productMapper;
+    private final ProductRepositoryImpl productRepositoryImpl;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
         List<ErrorDto> errors = productValidator.validateProduct(productDto);
@@ -47,6 +56,19 @@ public class ProductService {
                 .code(0)
                 .data(productMapper.toDto(product))
                 .message("OK")
+                .build();
+    }
+
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        List<ProductDto> products = productRepository.getExpensiveProducts2().stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .success(true)
+                .data(products)
                 .build();
     }
 
@@ -101,12 +123,36 @@ public class ProductService {
         }
     }
 
-    public ResponseDto<List<ProductDto>> getAllProducts() {
-        return ResponseDto.<List<ProductDto>>builder()
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size){
+        Long count = productRepository.count();
+
+        PageRequest pageRequest = PageRequest.of(
+                (count / size) <= page ?
+                        (count % size == 0 ? (int) (count / size) - 1
+                                : (int) (count / size))
+                        : page,
+                size,
+                Sort.by("price").descending());
+
+        Page<EntityModel<ProductDto>> products = productRepository.findAll(pageRequest)
+                .map(p -> {
+                    EntityModel<ProductDto> entityModel = EntityModel.of(productMapper.toDto(p));
+                    try {
+                        entityModel.add(linkTo(ProductResources.class
+                                                    .getDeclaredMethod("getProductById", Integer.class, HttpServletRequest.class))
+                                                .withSelfRel()
+                                                .expand(p.getId()));
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return entityModel;
+                });
+
+        return ResponseDto.<Page<EntityModel<ProductDto>>>builder()
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
+                .data(products)
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {
@@ -122,5 +168,57 @@ public class ProductService {
                         .code(NOT_FOUND_ERROR_CODE)
                         .build()
                 );
+    }
+
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
+        List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
+        if (products.isEmpty()){
+            return ResponseDto.<List<ProductDto>>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .data(products.stream().map(productMapper::toDto).toList())
+                .build();
+    }
+
+    public ResponseDto<Page<ProductDto>> universalSearch2(Map<String, String> params) {
+        Page<Product> products = productRepositoryImpl.universalSearch(params);
+
+        if (products.isEmpty()){
+            return ResponseDto.<Page<ProductDto>>builder()
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .message(NOT_FOUND)
+                    .build();
+        }
+
+        return ResponseDto.<Page<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .data(products.map(productMapper::toDto))
+                .build();
+    }
+
+    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
+//        List<ProductDto> products = productRepository.findAllByOrderByPriceDesc().stream().map(productMapper::toDto).toList();
+
+        List<Sort.Order> orders = sort.stream()
+                .map(s -> new Sort.Order(Sort.Direction.DESC, s))
+                .toList();
+
+        List<ProductDto> products = productRepository.findAll(Sort.by(orders)).stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .data(products)
+                .message("OK")
+                .code(0)
+                .success(true)
+                .build();
     }
 }

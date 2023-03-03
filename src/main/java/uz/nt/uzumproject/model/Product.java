@@ -13,6 +13,10 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQuery(query = "select p from Product p where coalesce(:id, id) = id " +
+        "and coalesce(:name, name) = name " +
+        "and coalesce(:price, price) = price " +
+        "and coalesce(:amount, amount) = amount", name = "findProductById")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")
@@ -22,7 +26,7 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<Image> images;
     @ManyToOne
     private Category category;

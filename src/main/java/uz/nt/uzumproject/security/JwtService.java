@@ -1,7 +1,10 @@
 package uz.nt.uzumproject.security;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,9 +12,7 @@ import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.model.UserSession;
 import uz.nt.uzumproject.repository.UserSessionRepository;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.UUID;
 
 @Component
