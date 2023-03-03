@@ -2,10 +2,13 @@ package uz.nt.uzumproject.rest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
+import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.service.ProductService;
 
 import java.util.List;
@@ -30,10 +33,10 @@ public class ProductResources {
         return productService.update(productDto);
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
-    public ResponseDto<List<ProductDto>> getAll(){
-        return productService.getAllProducts();
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAll(@RequestParam(defaultValue = "0")Integer page, @RequestParam(defaultValue = "1") Integer size){
+        return productService.getAllProducts(page, size);
     }
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
@@ -45,15 +48,15 @@ public class ProductResources {
     public ResponseDto<List<ProductDto>> getExpensiveProducts(){
         return productService.getExpensiveProducts();
     }
-//    @GetMapping("/universal-search")
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-//    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto){
-//        return productService.universalSearch(productDto);
-//    }
     @GetMapping("/universal-search")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseDto<List<ProductDto>> universalSearch2(Map<String,String> params){
+    public ResponseDto<Page <ProductDto>> universalSearch2( @RequestParam Map<String,String> params){
         return productService.universalSearch2(params);
+    }
+
+    @GetMapping("/sort")
+    public ResponseDto<List<ProductDto>> getSort(@RequestParam List<String> field){
+        return productService.getSort(field);
     }
 
 }

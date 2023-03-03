@@ -1,6 +1,8 @@
 package uz.nt.uzumproject.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.ap.internal.model.source.Method;
+import org.springframework.hateoas.Link;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,10 @@ public class UsersResources {
 
     @GetMapping("login")
     public ResponseDto<String> login(@RequestBody LoginDto loginDto){
-        return usersService.login(loginDto);
+        Link link = Link.of("/product/get-all","get-all-products");
+        ResponseDto<String> response = usersService.login(loginDto);
+        response.add(link);
+
+        return response;
     }
 }

@@ -27,7 +27,7 @@ public class ImageService {
 
         try {
             String filePath;
-            Files.copy(file.getInputStream(), Path.of(filePath=filePath(image.getExtension())));
+            Files.copy(file.getInputStream(), Path.of(filePath=filePath("upload", image.getExtension())));
             image.setUrl(filePath);
             imageRepository.save(image);
             return ResponseDto.<Image>builder()
@@ -48,10 +48,10 @@ public class ImageService {
 
     }
 
-    private String filePath(String ext){
+    public synchronized static String filePath(String folder , String ext){
         LocalDate localDate=LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        File file=new File("upload/"+path);
+        File file=new File(folder+"/"+path);
         if(!file.exists()){
             file.mkdirs();
         }

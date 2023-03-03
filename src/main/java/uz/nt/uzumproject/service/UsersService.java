@@ -95,7 +95,7 @@ public class UsersService implements UserDetailsService {
         }catch (Exception e){
             return ResponseDto.<UsersDto>builder()
                     .data(userMapper.toDto(user))
-                    .code(1)
+                    .code(DATABASE_ERROR_CODE)
                     .message(DATABASE_ERROR + e.getMessage())
                     .build();
         }

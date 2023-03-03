@@ -1,6 +1,7 @@
 package uz.nt.uzumproject.dto;
 
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResponseDto<T> {
+public class ResponseDto<T>  extends RepresentationModel<ResponseDto<T>> {
     /**
      * Response code for defining type of error:
      * <p> -2 - Validation error </p>
