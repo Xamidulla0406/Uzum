@@ -126,12 +126,13 @@ public class ProductService {
     public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size){
         Long count = productRepository.count();
 
-        PageRequest pageRequest = PageRequest.of((count / size) <= page ?
-                (count % size == 0 ?
-                        (int) (count / size) - 1 :
-                        (int) (count / size)) : page, size);
-
-        pageRequest.withSort(Sort.by("price").descending());
+        PageRequest pageRequest = PageRequest.of(
+                (count / size) <= page ?
+                        (count % size == 0 ? (int) (count / size) - 1
+                                : (int) (count / size))
+                        : page,
+                size,
+                Sort.by("price").descending());
 
         Page<EntityModel<ProductDto>> products = productRepository.findAll(pageRequest)
                 .map(p -> {
