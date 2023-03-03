@@ -1,22 +1,27 @@
 package uz.nt.uzumproject.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
 import uz.nt.uzumproject.repository.ProductRepositoryImpl;
+import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static uz.nt.uzumproject.service.validator.AppStatusCodes.*;
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 
@@ -105,12 +110,30 @@ public class ProductService {
         }
     }
 
-    public ResponseDto<List<ProductDto>> getAllProducts() {
-        return ResponseDto.<List<ProductDto>>builder()
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size) {
+        long count = productRepository.count();
+        PageRequest pageRequest = PageRequest.of((count / size) <= page ? (int) (count % size == 0 ? (int) (count / size) - 1 : (count / size)) : page, size);
+
+        pageRequest = pageRequest.withSort(Sort.by("price").descending());
+        Page<EntityModel<ProductDto>> products = productRepository.findAll(pageRequest)
+                .map(p -> {
+                    EntityModel<ProductDto> entityModel = EntityModel.of(productMapper.toDto(p));
+                    try {
+                        entityModel.add(linkTo(ProductResources.class.getDeclaredMethod("getProductById", Integer.class, HttpServletRequest.class))
+                                .withSelfRel()
+                                .expand(p.getId()));
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return entityModel;
+                });
+
+
+        return ResponseDto.<Page<EntityModel<ProductDto>>>builder()
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
+                .data(products)
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {
@@ -159,20 +182,35 @@ public class ProductService {
 
     }
 
-    public ResponseDto<List<ProductDto>> universalSearch2(Map<String, String> params) {
-        List<Product> products = productRepositoryImpl.universalSearch(params);
+    public ResponseDto<Page<ProductDto>> universalSearch2(Map<String, String> params) {
+        Page<Product> products = productRepositoryImpl.universalSearch(params);
 
         if(products.isEmpty()){
-            return ResponseDto.<List<ProductDto>>builder()
+            return ResponseDto.<Page<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
                     .build();
         }
 
-        return ResponseDto.<List<ProductDto>>builder()
+        return ResponseDto.<Page<ProductDto>>builder()
                 .code(OK_CODE)
                 .message(OK)
-                .data(products.stream().map(productMapper::toDto).toList())
+                .data(products.map(productMapper::toDto))
+                .build();
+    }
+
+    public ResponseDto<List<ProductDto>> getProductsWithSort(List<String> sort) {
+
+        List<Sort.Order> orders = sort.stream().map(s ->new Sort.Order(Sort.Direction.DESC, s)).toList();
+        List<ProductDto> productDtos = productRepository.findAll(Sort.by(orders))
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .data(productDtos)
+                .message("OK")
+                .success(true)
                 .build();
     }
 }
