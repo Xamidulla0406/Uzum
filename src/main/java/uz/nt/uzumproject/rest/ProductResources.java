@@ -1,7 +1,9 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class ProductResources {
 
     private final ProductService productService;
@@ -35,8 +38,8 @@ public class ProductResources {
     }
 
     @GetMapping()
-    public ResponseDto<List<EntityModel<ProductDto>>> getAllProducts(){
-        return productService.getAllProducts();
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "1") Integer size){
+        return productService.getAllProducts(page,size);
     }
 
     @GetMapping("by-id")
@@ -57,7 +60,13 @@ public class ProductResources {
     }
 
     @GetMapping("search-2")
-    public ResponseDto<List<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
+    public ResponseDto<Page<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
         return productService.universalSearch2(params);
+    }
+
+
+    @GetMapping("sort")
+    public ResponseDto<List<ProductDto>> getAllProductsWithSort(@RequestParam List<String> sort){
+        return productService.getAllProductsWithSort(sort);
     }
 }

@@ -33,14 +33,14 @@ public class ScheduleJob {
     private Gson gson;
 
     @Async
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 24,timeUnit = TimeUnit.HOURS)
     public void print() throws InterruptedException {
         System.out.println(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()) + "->"+ Thread.currentThread().getName());
         Thread.sleep(10000);
     }
 
     @Transactional
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 24, timeUnit = TimeUnit.HOURS)
     public void report() throws IOException {
         List<Product> products = productRepository.findAllByAmountLessThanEqual(50);
         File f = new File(ImageService.filePath("report", ".csv"));
@@ -58,7 +58,7 @@ public class ScheduleJob {
             fos.close();
         }
     }
-    @Scheduled(fixedDelay = 2, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelay = 24, timeUnit = TimeUnit.HOURS)
     public void toExel() throws IOException {
         List<Product> products = productRepository.findAllByAmountLessThanEqual(50);
         HSSFWorkbook workbook = new HSSFWorkbook();
