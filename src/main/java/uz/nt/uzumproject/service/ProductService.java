@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ErrorDto;
@@ -125,9 +126,15 @@ public class ProductService {
     public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size) {
         Long count = productRepository.count();
 
-        Page<EntityModel<ProductDto>> products = productRepository.findAll(
-                PageRequest.of((count / size) <= page ? (count % size == 0 ? (int)(count / size) - 1 : (int)(count / size)) : page, size)
-                )
+        PageRequest pageRequest = PageRequest.of((count / size) <= page ?
+                (count % size == 0 ?
+                        (int) (count / size) - 1 :
+                        (int) (count / size)) : page, size);
+
+        pageRequest.withSort(Sort.by("price").descending());
+
+
+        Page<EntityModel<ProductDto>> products = productRepository.findAll(pageRequest)
                 .map(p -> {
                     EntityModel<ProductDto> entityModel = EntityModel.of(productMapper.toDto(p));
                     try {
@@ -193,6 +200,22 @@ public class ProductService {
                 .message(OK)
                 .code(OK_CODE)
                 .data(products.map(productMapper::toDto))
+                .build();
+    }
+
+    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
+        List<Sort.Order> orders = sort.stream()
+                .map(s -> new Sort.Order(Sort.Direction.DESC, s))
+                .toList();
+
+        List<ProductDto> products = productRepository.findAll(Sort.by(orders)).stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .data(products)
+                .message(OK)
+                .success(true)
                 .build();
     }
 }

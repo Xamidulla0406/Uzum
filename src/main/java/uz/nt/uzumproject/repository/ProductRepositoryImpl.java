@@ -32,7 +32,6 @@ public class ProductRepositoryImpl {
         StringBuilder queryCondition = new StringBuilder();
 
         generateQueryCondition(queryCondition, params);
-        generateQueryCondition(queryCondition, params);
 
         Query query = entityManager.createQuery(sqlQuery + queryCondition, Product.class);
         Query countQuery = entityManager.createQuery(sqlCountQuery + queryCondition, Product.class);

@@ -61,4 +61,9 @@ public class ProductResources {
     public ResponseDto<Page<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
         return productService.universalSearch2(params);
     }
+
+    @GetMapping("sort")
+    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort){
+        return productService.getAllProductsWithSort(sort);
+    }
 }
