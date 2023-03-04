@@ -11,11 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ResponseDto<T> extends RepresentationModel<ResponseDto<T>> {
-
     private int code;
     private String message;
     private boolean success;
-    private List<ErrorDto> errors;
     private T data;
-//    private List<ErrorDto> errors;
+    private List<ErrorDto> errors;
 }

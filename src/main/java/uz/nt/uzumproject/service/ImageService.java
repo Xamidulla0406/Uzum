@@ -9,8 +9,6 @@ import uz.nt.uzumproject.dto.ImageDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Image;
 import uz.nt.uzumproject.repository.ImageRepository;
-import uz.nt.uzumproject.service.mapper.ImageMapper;
-import uz.nt.uzumproject.service.mapper.UserMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +25,7 @@ import java.time.format.DateTimeFormatterBuilder;
 @Slf4j
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final UserMapper usersMapper;
-    private final ImageMapper imageMapper;
-    public ResponseDto<ImageDto> saveImage(MultipartFile file) {
-
+    public ResponseDto<Image> saveImage(MultipartFile file) {
         Image image = new Image();
         image.setName(file.getOriginalFilename());
         image.setExtension(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
@@ -42,22 +37,22 @@ public class ImageService {
             image.setUrl(filePath);
             imageRepository.save(image);
 
-            return ResponseDto.<ImageDto>builder()
-                    .data(imageMapper.toDto(image))
+            return ResponseDto.<Image>builder()
+                    .data(image)
                     .message("OK")
                     .success(true)
                     .build();
         } catch (IOException e) {
             log.error("Error while saving file: {}", e.getMessage());
-            return ResponseDto.<ImageDto>builder()
+            return ResponseDto.<Image>builder()
                     .code(2)
-                    .data(imageMapper.toDto(image))
+                    .data(image)
                     .message("Error while saving file: " + e.getMessage())
                     .build();
         }
     }
 
-    public static  synchronized String filePath(String folder, String ext){
+    public static synchronized String filePath(String folder, String ext){
         LocalDate localDate = LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         File file = new File(folder + "/" + path);

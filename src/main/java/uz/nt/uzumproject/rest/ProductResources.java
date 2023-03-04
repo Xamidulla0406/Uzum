@@ -1,17 +1,16 @@
 package uz.nt.uzumproject.rest;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.dto.UsersDto;
-import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.service.ProductService;
 
 import java.util.List;
@@ -27,32 +26,51 @@ public class ProductResources {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
-    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
+    public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto){
         UsersDto user = (UsersDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return productService.addProduct(productDto);
     }
 
     @PatchMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
+    public ResponseDto<ProductDto> updateProduct(@RequestBody ProductDto productDto){
         return productService.updateProduct(productDto);
     }
 
+    @GetMapping()
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(@RequestParam(defaultValue = "10") Integer size,
+                                                                     @RequestParam(defaultValue = "0") Integer page){
+        return productService.getAllProducts(page, size);
+    }
+
     @GetMapping("sort")
-    public ResponseDto<List<ProductDto>> getAllProducts(@RequestParam List<String> sort) {
-        return productService.getAllProducts(sort);
+    public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort){
+        return productService.getAllProductsWithSort(sort);
     }
 
     @GetMapping("by-id")
-    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id, HttpServletRequest req) {
+    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id, HttpServletRequest req){
         String authorization = req.getHeader("Authorization");
 
         return productService.getProductById(id);
     }
 
-    @GetMapping("search")
-    public ResponseDto<Page<Product>> universalSearch(@RequestParam Map<String, String> map) {
-        return productService.universalSearch(map);
+    @GetMapping("/expensive-by-category")
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        return productService.getExpensiveProducts();
+    }
 
+    @GetMapping("search")
+    public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto){
+        return productService.universalSearch(productDto);
+    }
+
+    @GetMapping("search-2")
+    public ResponseDto<Page<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
+        return productService.universalSearch2(params);
     }
 }
+//1.Dependency springdoc-openapi-starter-webmvc-ui
+//2.SecurityFilterChain requestMatchers => permitAll (/v3/api-docs/**, /swagger-ui/**, /swagger-ui.html)
+//3.SecurityScheme
+//4.Controller => SecurityRequirement

@@ -1,6 +1,5 @@
 package uz.nt.uzumproject.config;
 
-import com.fasterxml.jackson.databind.JsonSerializable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -13,7 +12,8 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime> {
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     @Override
     public JsonElement serialize(LocalDateTime localDateTime, Type type, JsonSerializationContext jsonSerializationContext) {
         return new JsonPrimitive(formatter.format(localDateTime));
