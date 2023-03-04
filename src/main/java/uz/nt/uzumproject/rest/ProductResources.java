@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class ProductResources {
     private final ProductService productService;
 
@@ -33,7 +35,7 @@ public class ProductResources {
         return productService.update(productDto);
     }
 
-    @GetMapping("/get-all")
+    @GetMapping()
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     public ResponseDto<Page<EntityModel<ProductDto>>> getAll(@RequestParam(defaultValue = "0")Integer page, @RequestParam(defaultValue = "1") Integer size){
         return productService.getAllProducts(page, size);

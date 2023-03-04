@@ -1,4 +1,5 @@
 package uz.nt.uzumproject.rest;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.ap.internal.model.source.Method;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class UsersResources {
     private final UsersService usersService;
     @PostMapping
@@ -45,9 +47,9 @@ public class UsersResources {
         return usersService.getAllUsers();
     }
 
-    @GetMapping("login")
+    @PostMapping("login")
     public ResponseDto<String> login(@RequestBody LoginDto loginDto){
-        Link link = Link.of("/product/get-all","get-all-products");
+        Link link = Link.of("/product","get-all-products");
         ResponseDto<String> response = usersService.login(loginDto);
         response.add(link);
 
