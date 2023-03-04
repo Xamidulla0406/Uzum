@@ -23,6 +23,7 @@ public class UsersResources {
     private final UsersService usersService;
     @Operation(
             method = "Add new User",
+            summary = "Add new User",
             description = "Need to send UsersDto to this end point to create new user",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Users info",
             content = @Content(mediaType = "application/json")
@@ -32,7 +33,7 @@ public class UsersResources {
     public ResponseDto<UsersDto> addUsers(@RequestBody @Valid UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
-
+    @Operation(summary = "edit user")
     @PatchMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseDto<UsersDto> updateUser(@RequestBody UsersDto usersDto){
@@ -43,6 +44,7 @@ public class UsersResources {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
+    @Operation(summary = "delete user by id")
     @DeleteMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseDto<UsersDto> deleteUser(@RequestParam Integer id){
@@ -55,7 +57,7 @@ public class UsersResources {
 
         return usersService.getAllUsers();
     }
-
+    @Operation(summary = "get JWT token")
     @PostMapping("login")
     public ResponseDto<String> login(@RequestBody LoginDto loginDto){
         Link link = Link.of("/product","get-all-products");
