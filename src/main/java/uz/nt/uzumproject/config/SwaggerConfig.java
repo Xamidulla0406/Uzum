@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
                 title = "API Documentation for Uzum Market",
                 description = "Uzum market is set of products....",
                 termsOfService = "www.example.com",
-                contact = @Contact(name = "Abduvohid Ergashev", email = "abduvohid0131@gmail.com", url = "https://t.me/wwis_mwrwq"),
+                contact = @Contact(name = "Otaxo'jayev Muzaffarxo'ja", email = "25102006omr@gmail.com", url = "https://t.me/muzaffar_khuja"),
                 version = "1.0.0",
                 license = @License(name = "MIT", url = "https://choosealicense.com/licenses/mit/")
         ),
