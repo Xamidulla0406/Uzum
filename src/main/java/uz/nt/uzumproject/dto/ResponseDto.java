@@ -1,6 +1,7 @@
 package uz.nt.uzumproject.dto;
 
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
@@ -9,12 +10,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResponseDto<T> {
+public class ResponseDto<T> extends RepresentationModel<ResponseDto<T>> {
 
     private int code;
     private String message;
     private boolean success;
     private List<ErrorDto> errors;
     private T data;
-    private List<ErrorDto> errors;
+//    private List<ErrorDto> errors;
 }

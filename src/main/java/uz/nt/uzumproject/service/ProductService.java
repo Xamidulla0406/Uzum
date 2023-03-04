@@ -1,16 +1,21 @@
 package uz.nt.uzumproject.service;
 
+import jakarta.persistence.criteria.Order;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Product;
 import uz.nt.uzumproject.repository.ProductRepository;
+import uz.nt.uzumproject.repository.ProductRepositoryImpl;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +28,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductValidator productValidator;
+    private final ProductRepositoryImpl productRepositoryImpl;
     private final ProductMapper productMapper;
 
     public ResponseDto<ProductDto> addProduct(ProductDto productDto) {
@@ -101,12 +107,17 @@ public class ProductService {
         }
     }
 
-    public ResponseDto<List<ProductDto>> getAllProducts() {
+    public ResponseDto<List<ProductDto>> getAllProducts(List<String> sort) {
+
+        List<Sort.Order> orderSort = sort.stream().map( p -> new Sort.Order(Sort.Direction.ASC,p)).toList();
+
+        List<ProductDto> productList = productRepository.findAll(Sort.by(orderSort)).stream().map(productMapper::toDto).toList();
+
         return ResponseDto.<List<ProductDto>>builder()
                 .message(OK)
                 .code(OK_CODE)
                 .success(true)
-                .data( productRepository.findAll().stream().map(productMapper::toDto).collect(Collectors.toList()))
+                .data( productList)
                 .build();
     }
     public ResponseDto<ProductDto> getProductById(Integer id) {
@@ -122,5 +133,23 @@ public class ProductService {
                         .code(NOT_FOUND_ERROR_CODE)
                         .build()
                 );
+    }
+
+    public ResponseDto<Page<Product>> universalSearch(Map<String, String> map) {
+
+        Page page =  productRepositoryImpl.universalSearch(map);
+
+        if (page.isEmpty()) {
+            return ResponseDto.<Page<Product>>builder()
+                    .message(NOT_FOUND)
+                    .code(NOT_FOUND_ERROR_CODE)
+                    .build();
+        }
+
+        return ResponseDto.<Page<Product>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .data(page)
+                .build();
     }
 }

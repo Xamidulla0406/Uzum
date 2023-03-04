@@ -2,6 +2,9 @@ package uz.nt.uzumproject.config;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.SignatureException;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +39,12 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@SecurityScheme(
+        name = "Authorization",
+        in = SecuritySchemeIn.HEADER,
+        type = SecuritySchemeType.APIKEY
+
+)
 public class SecurityConfiguration {
     @Value("${spring.datasource.url}")
     private String url;
@@ -83,7 +92,8 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                .requestMatchers("/user/login").permitAll()
+                .requestMatchers("/user/login", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

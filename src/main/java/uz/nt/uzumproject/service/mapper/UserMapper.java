@@ -19,14 +19,14 @@ public abstract class UserMapper implements CommonMapper<UsersDto, Users>{
     protected PasswordEncoder passwordEncoder;
 
     @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
-    @Mapping(target = "phoneNumber", source = "phone")
+//    @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(dto.getPassword()))")
     @Mapping(target = "enabled", expression = "java(true)")
     @Mapping(target = "role", ignore = true)
     public abstract Users toEntity(UsersDto dto);
 
     @Mapping(target = "birthDate", dateFormat = "dd.MM.yyyy")
-    @Mapping(target = "phone", source = "phoneNumber")
+//    @Mapping(target = "phone", source = "phoneNumber")
     public abstract UsersDto toDto(Users entity);
 
 }

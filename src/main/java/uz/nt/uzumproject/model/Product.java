@@ -16,7 +16,7 @@ import java.util.List;
 @NamedQuery(query = "select p from Product p where coalesce(:id,id) = id " +
         "and coalesce(:name , name) = name " +
         "and coalesce(:price , price) = price " +
-        "and coalesce(:amount , amount) = amount" , name = "universalSearch"
+        "and coalesce(:amount , amount) = amount" , name = "`universalSearch`"
 )
 public class Product {
     @Id
@@ -32,8 +32,8 @@ public class Product {
     @ManyToOne
     private Category category;
     private Boolean isAvailable;
-    @ManyToOne
-    private Category category;
+//    @ManyToOne
+//    private Category category;
 
 //    mvn clean package -Dmaven .test.skip
 }

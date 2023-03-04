@@ -23,7 +23,7 @@ public class Users {
     private String middleName;
     private String email;
     private String gender;
-    private Date birthDate;
+    private String birthDate;
     private String password;
     private Boolean enabled;
     @Column(columnDefinition = "text default 'USER'")

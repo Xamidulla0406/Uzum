@@ -14,7 +14,7 @@ import uz.nt.uzumproject.service.ImageService;
 @RestController
 @RequestMapping("image")
 @RequiredArgsConstructor
-public class ImageResource {
+public class ImageResources {
 
     private final ImageService imageService;
 

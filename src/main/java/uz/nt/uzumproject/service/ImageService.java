@@ -10,7 +10,7 @@ import uz.nt.uzumproject.dto.ResponseDto;
 import uz.nt.uzumproject.model.Image;
 import uz.nt.uzumproject.repository.ImageRepository;
 import uz.nt.uzumproject.service.mapper.ImageMapper;
-import uz.nt.uzumproject.service.mapper.UsersMapper;
+import uz.nt.uzumproject.service.mapper.UserMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatterBuilder;
 @Slf4j
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final UsersMapper usersMapper;
+    private final UserMapper usersMapper;
     private final ImageMapper imageMapper;
     public ResponseDto<ImageDto> saveImage(MultipartFile file) {
 
@@ -38,7 +38,7 @@ public class ImageService {
 
         try {
             String filePath;
-            Files.copy(file.getInputStream(), Path.of(filePath = filePath(image.getExtension())));
+            Files.copy(file.getInputStream(), Path.of(filePath = filePath("upload", image.getExtension())));
             image.setUrl(filePath);
             imageRepository.save(image);
 
@@ -57,10 +57,10 @@ public class ImageService {
         }
     }
 
-    private synchronized String filePath(String ext){
+    public static  synchronized String filePath(String folder, String ext){
         LocalDate localDate = LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        File file = new File("upload/" + path);
+        File file = new File(folder + "/" + path);
         if (!file.exists()){
             file.mkdirs();
         }

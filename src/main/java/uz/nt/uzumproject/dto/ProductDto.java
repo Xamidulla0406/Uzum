@@ -28,7 +28,6 @@ public class ProductDto {
     private CategoryDto category;
     private String imageUrl;
 
-    private CategoryDto category;
 
 
 }

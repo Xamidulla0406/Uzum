@@ -9,8 +9,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import uz.nt.uzumproject.security.UserRoles;
 
+import java.sql.Date;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -20,13 +20,13 @@ import java.util.List;
 @JsonIgnoreProperties(value = {"password", "role", "authorities", "username"}, allowSetters = true)
 public class UsersDto implements UserDetails {
     private Integer id;
-    private String phone;
     private String firstName;
     private String lastName;
     private String middleName;
     private String email;
     private String gender;
-    private String birthDate;
+    private String phoneNumber;
+    private String  birthDate;
     private String password;
     private String role;
 
