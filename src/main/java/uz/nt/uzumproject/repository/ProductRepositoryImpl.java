@@ -20,11 +20,12 @@ public class ProductRepositoryImpl {
 
     public Page<Product> universalSearch(Map<String, String> params){
         int page = 0, size = 10;
-        if(params.containsKey("page")){
-            page = Math.max(0,Integer.parseInt(params.get("page")));
+
+        if (params.containsKey("size")){
+            size = Math.max(Integer.parseInt(params.get("size")), 1);
         }
-        if(params.containsKey("size")){
-            size = Math.max(1,Integer.parseInt(params.get("size")));
+        if (params.containsKey("page")){
+            page = Integer.parseInt(params.get("page"));
         }
 
         String sqlQuery = "select p from Product p where 1=1 ";
@@ -41,12 +42,13 @@ public class ProductRepositoryImpl {
 
         long count = (long) countQuery.getSingleResult();
 
-        if(page >= count / size){
-            if(count % size == 0) page = (int) (count / size) - 1;
-            else page = (int) (count / size);
+        if (page >= count / size){
+            if (count % size == 0){
+                page = (int) count / size - 1;
+            }else page = (int) count / size;
         }
 
-        query.setFirstResult(page * size);
+        query.setFirstResult(size * page);
         query.setMaxResults(size);
 
         List<Product> products = query.getResultList();

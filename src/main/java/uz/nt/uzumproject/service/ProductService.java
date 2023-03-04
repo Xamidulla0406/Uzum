@@ -17,7 +17,6 @@ import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -124,25 +123,25 @@ public class ProductService {
         }
     }
 
-    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size) {
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size){
         Long count = productRepository.count();
 
-        PageRequest pageRequest = PageRequest.of((count / size) <= page ?
-                (count % size == 0 ?
-                        (int) (count / size) - 1 :
-                        (int) (count / size)) : page, size);
-
-        pageRequest.withSort(Sort.by("price").descending());
-
+        PageRequest pageRequest = PageRequest.of(
+                (count / size) <= page ?
+                        (count % size == 0 ? (int) (count / size) - 1
+                                : (int) (count / size))
+                        : page,
+                size,
+                Sort.by("price").descending());
 
         Page<EntityModel<ProductDto>> products = productRepository.findAll(pageRequest)
                 .map(p -> {
                     EntityModel<ProductDto> entityModel = EntityModel.of(productMapper.toDto(p));
                     try {
                         entityModel.add(linkTo(ProductResources.class
-                                .getDeclaredMethod("getProductById", Integer.class, HttpServletRequest.class))
-                                .withSelfRel()
-                                .expand(p.getId()));
+                                                    .getDeclaredMethod("getProductById", Integer.class, HttpServletRequest.class))
+                                                .withSelfRel()
+                                                .expand(p.getId()));
                     } catch (NoSuchMethodException e) {
                         throw new RuntimeException(e);
                     }
@@ -205,6 +204,8 @@ public class ProductService {
     }
 
     public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
+//        List<ProductDto> products = productRepository.findAllByOrderByPriceDesc().stream().map(productMapper::toDto).toList();
+
         List<Sort.Order> orders = sort.stream()
                 .map(s -> new Sort.Order(Sort.Direction.DESC, s))
                 .toList();
@@ -215,7 +216,8 @@ public class ProductService {
 
         return ResponseDto.<List<ProductDto>>builder()
                 .data(products)
-                .message(OK)
+                .message("OK")
+                .code(0)
                 .success(true)
                 .build();
     }

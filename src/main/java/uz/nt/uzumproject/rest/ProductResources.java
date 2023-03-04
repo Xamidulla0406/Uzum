@@ -1,8 +1,6 @@
 package uz.nt.uzumproject.rest;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,8 +38,14 @@ public class ProductResources {
     }
 
     @GetMapping()
-    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size){
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(@RequestParam(defaultValue = "10") Integer size,
+                                                                     @RequestParam(defaultValue = "0") Integer page){
         return productService.getAllProducts(page, size);
+    }
+
+    @GetMapping("sort")
+    public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort){
+        return productService.getAllProductsWithSort(sort);
     }
 
     @GetMapping("by-id")
@@ -65,9 +69,8 @@ public class ProductResources {
     public ResponseDto<Page<ProductDto>> universalSearch(@RequestParam Map<String, String> params){
         return productService.universalSearch2(params);
     }
-
-    @GetMapping("sort")
-    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort){
-        return productService.getAllProductsWithSort(sort);
-    }
 }
+//1.Dependency springdoc-openapi-starter-webmvc-ui
+//2.SecurityFilterChain requestMatchers => permitAll (/v3/api-docs/**, /swagger-ui/**, /swagger-ui.html)
+//3.SecurityScheme
+//4.Controller => SecurityRequirement

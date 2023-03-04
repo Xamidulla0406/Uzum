@@ -37,7 +37,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@SecurityScheme(name = "Authorization", in = SecuritySchemeIn.HEADER, type = SecuritySchemeType.APIKEY)
 public class SecurityConfiguration {
     @Value("${spring.datasource.url}")
     private String url;
@@ -86,11 +85,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                 .requestMatchers("/user/login").permitAll()
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/v3/api-docs.yaml", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
+//                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
