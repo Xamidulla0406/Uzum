@@ -1,5 +1,8 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class ProductResources {
 
     private final ProductService productService;

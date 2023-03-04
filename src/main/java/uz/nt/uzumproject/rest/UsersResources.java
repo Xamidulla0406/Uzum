@@ -1,5 +1,8 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -17,6 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class UsersResources {
 
     private final UsersService usersService;
@@ -37,7 +41,7 @@ public class UsersResources {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
-    @GetMapping("login")
+    @PostMapping("login")
     public ResponseDto<String> login(@RequestBody LoginDto loginDto) throws NoSuchMethodException {
         Link link = Link.of("/product/", "product-list");
         ResponseDto<String> response = usersService.login(loginDto);

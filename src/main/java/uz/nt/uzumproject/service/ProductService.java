@@ -17,6 +17,7 @@ import uz.nt.uzumproject.rest.ProductResources;
 import uz.nt.uzumproject.service.mapper.ProductMapper;
 import uz.nt.uzumproject.service.validator.ProductValidator;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
