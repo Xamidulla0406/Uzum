@@ -32,7 +32,7 @@ public record UsersResources(UsersService usersService) {
             responses = {@ApiResponse(responseCode = "200", description = "OK"),
                          @ApiResponse(responseCode = "403", description = "Authorization error")}
     )
-    @PostMapping(consumes = "application/xml;charset=UTF-8")
+    @PostMapping()
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
@@ -59,7 +59,7 @@ public record UsersResources(UsersService usersService) {
 
         response.add(linkTo(getUserByPhoneNumber)
                 .withRel("user-by-phone-number")
-                .expand("+998909664793"));
+                .expand("+998906978087"));
 
         return response;
     }
