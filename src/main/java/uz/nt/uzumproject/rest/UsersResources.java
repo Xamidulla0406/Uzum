@@ -1,4 +1,6 @@
 package uz.nt.uzumproject.rest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,13 @@ import java.util.List;
 @SecurityRequirement(name = "Authorization")
 public class UsersResources {
     private final UsersService usersService;
+    @Operation(
+            method = "Add new User",
+            description = "Need to send UsersDto to this end point to create new user",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Users info",
+            content = @Content(mediaType = "application/json")
+            )
+    )
     @PostMapping
     public ResponseDto<UsersDto> addUsers(@RequestBody @Valid UsersDto usersDto) {
         return usersService.addUser(usersDto);
