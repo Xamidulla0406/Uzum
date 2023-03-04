@@ -1,11 +1,9 @@
 package uz.nt.uzumproject.config;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.SignatureException;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import org.apache.tomcat.util.file.ConfigurationSource;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,9 +37,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@SecurityScheme(name = "Authorization",
-        in = SecuritySchemeIn.HEADER,
-        type = SecuritySchemeType.APIKEY)
 public class SecurityConfiguration {
     @Value("${spring.datasource.url}")
     private String url;
@@ -58,23 +53,6 @@ public class SecurityConfiguration {
     @Autowired
     private Gson gson;
 
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().configurationSource(configurationSource());
-        return http
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                .requestMatchers("/user/login", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
-
     @Autowired
     public void authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
@@ -88,17 +66,6 @@ public class SecurityConfiguration {
         return provider;
     }
 
-    private CorsConfigurationSource configurationSource() {
-        CorsConfiguration cors = new CorsConfiguration();
-        cors.setAllowedHeaders(List.of("Authorization", "Access-Control-Allow-Origin", "Content-Type"));
-        cors.addAllowedMethod("*");
-        cors.addAllowedOrigin("*");
-
-        UrlBasedCorsConfigurationSource urlBase = new UrlBasedCorsConfigurationSource();
-        urlBase.registerCorsConfiguration("*/*", cors);
-        return urlBase;
-    }
-
     @Bean
     public DataSource dataSource() {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -109,8 +76,38 @@ public class SecurityConfiguration {
         return dataSource;
     }
 
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors().configurationSource(configurationSource());
 
-    private AuthenticationEntryPoint entryPoint() {
+        return http
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers(HttpMethod.POST, "/user").permitAll()
+                .requestMatchers("/user/login").permitAll()
+                .requestMatchers("/v3/api-docs.yaml", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+//                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+
+    }
+
+    private CorsConfigurationSource configurationSource(){
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedHeaders(List.of("SECRET-HEADER", "Authorization", "Access-Control-Allow-Origin", "Content-Type"));
+        cors.addAllowedMethod("*");
+        cors.addAllowedOrigin("null");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cors);
+
+        return source;
+    }
+
+    private AuthenticationEntryPoint entryPoint(){
         return (req, res, ex) -> {
             res.getWriter().println(gson.toJson(ResponseDto.builder()
                     .message("Token is not valid: " + ex.getMessage() +

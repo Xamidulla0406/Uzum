@@ -1,7 +1,11 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +22,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/user")
-@RequiredArgsConstructor
 @SecurityRequirement(name = "Authorization")
-public class UsersResources {
-    private final UsersService usersService;
-    @PostMapping
+public record UsersResources(UsersService usersService) {
+
+    @Operation(
+            method = "Add new User",
+            description = "Need to send UsersDto to this endpoint to create new user",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Users info", content = @Content(mediaType = "application/json")),
+            responses = {@ApiResponse(responseCode = "200", description = "OK"),
+                         @ApiResponse(responseCode = "403", description = "Authorization error")}
+    )
+    @PostMapping(consumes = "application/xml;charset=UTF-8")
     public ResponseDto<UsersDto> addUsers(@RequestBody UsersDto usersDto) {
         return usersService.addUser(usersDto);
     }
@@ -37,16 +47,21 @@ public class UsersResources {
         return usersService.getUserByPhoneNumber(phoneNumber);
     }
 
-    @PostMapping("login")
+    @Operation(summary = "Get JWT token")
+    @PostMapping(value = "login")
     public ResponseDto<String> login(@RequestBody LoginDto loginDto) throws NoSuchMethodException {
-        Link link = Link.of("/product", "product-list");
-        ResponseDto<String> resposeDto = usersService.login(loginDto);
-        resposeDto.add(link);
+        Link link = Link.of("/product/", "product-list");
+        ResponseDto<String> response = usersService.login(loginDto);
+        response.add(link);
 
+        Method getUserByPhoneNumber = UsersResources.class
+                .getDeclaredMethod("getUserByPhoneNumber", String.class);
 
-        Method getUserByPhone = UsersResources.class.getDeclaredMethod("getUserByPhoneNumber", String.class);
-        resposeDto.add(linkTo(getUserByPhone).withRel("user-by-phone-number").expand("+998906978087"));
-        return resposeDto;
+        response.add(linkTo(getUserByPhoneNumber)
+                .withRel("user-by-phone-number")
+                .expand("+998909664793"));
+
+        return response;
     }
 
     @GetMapping("/{id}")

@@ -10,3 +10,7 @@ public interface AuthorityRepository extends JpaRepository<Authorities, Integer>
     List<Authorities> findAllByUsername(String username);
     boolean existsByUsernameAndAuthority(String username, String auth);
 }
+//Method query
+//HQL query
+//Native query
+//Named query

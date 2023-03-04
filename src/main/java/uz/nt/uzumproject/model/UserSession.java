@@ -9,11 +9,11 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @RedisHash(timeToLive = 60 * 60 * 2)
 public class UserSession {
     @Id
     private String uuid;
-    private String user;
+    private String userInfo;
 }

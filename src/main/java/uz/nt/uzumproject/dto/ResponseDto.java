@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ResponseDto<T> extends RepresentationModel<ResponseDto<T>> {
-
     private int code;
     private String message;
     private boolean success;

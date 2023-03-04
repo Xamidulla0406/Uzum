@@ -94,7 +94,7 @@ public class UsersService implements UserDetailsService {
                 .map(u -> ResponseDto.<EntityModel<UsersDto>>builder()
                         .data(EntityModel.of(userMapper.toDto(u),
                                 Link.of("http://localhost:9000/user", "edit"),
-                                Link.of("http://localhost:9000/user/delete/" + u.getId(), "delete")))
+                                Link.of("http://localhost:9000/user/" + u.getId(), "delete")))
                         .success(true)
                         .message("OK")
                         .build())

@@ -52,7 +52,7 @@ public class ImageService {
         }
     }
 
-    public static  synchronized String filePath(String folder, String ext){
+    public static synchronized String filePath(String folder, String ext){
         LocalDate localDate = LocalDate.now();
         String path = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         File file = new File(folder + "/" + path);

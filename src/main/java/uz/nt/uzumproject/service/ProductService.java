@@ -59,6 +59,19 @@ public class ProductService {
                 .build();
     }
 
+    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
+        List<ProductDto> products = productRepository.getExpensiveProducts2().stream()
+                .map(productMapper::toDto)
+                .toList();
+
+        return ResponseDto.<List<ProductDto>>builder()
+                .message(OK)
+                .code(OK_CODE)
+                .success(true)
+                .data(products)
+                .build();
+    }
+
     public ResponseDto<ProductDto> updateProduct(ProductDto productDto) {
         if (productDto.getId() == null) {
             return ResponseDto.<ProductDto>builder()
@@ -110,24 +123,30 @@ public class ProductService {
         }
     }
 
-    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size) {
-        long count = productRepository.count();
-        PageRequest pageRequest = PageRequest.of((count / size) <= page ? (int) (count % size == 0 ? (int) (count / size) - 1 : (count / size)) : page, size);
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(Integer page, Integer size){
+        Long count = productRepository.count();
 
-        pageRequest = pageRequest.withSort(Sort.by("price").descending());
+        PageRequest pageRequest = PageRequest.of(
+                (count / size) <= page ?
+                        (count % size == 0 ? (int) (count / size) - 1
+                                : (int) (count / size))
+                        : page,
+                size,
+                Sort.by("price").descending());
+
         Page<EntityModel<ProductDto>> products = productRepository.findAll(pageRequest)
                 .map(p -> {
                     EntityModel<ProductDto> entityModel = EntityModel.of(productMapper.toDto(p));
                     try {
-                        entityModel.add(linkTo(ProductResources.class.getDeclaredMethod("getProductById", Integer.class, HttpServletRequest.class))
-                                .withSelfRel()
-                                .expand(p.getId()));
+                        entityModel.add(linkTo(ProductResources.class
+                                                    .getDeclaredMethod("getProductById", Integer.class, HttpServletRequest.class))
+                                                .withSelfRel()
+                                                .expand(p.getId()));
                     } catch (NoSuchMethodException e) {
                         throw new RuntimeException(e);
                     }
                     return entityModel;
                 });
-
 
         return ResponseDto.<Page<EntityModel<ProductDto>>>builder()
                 .message(OK)
@@ -151,23 +170,9 @@ public class ProductService {
                 );
     }
 
-    public ResponseDto<List<ProductDto>> getExpensiveProducts(){
-        List<ProductDto> products = productRepository.getExpensiveProducts2()
-                .stream()
-                .map(productMapper::toDto)
-                .toList();
-
-        return ResponseDto.<List<ProductDto>>builder()
-                .message(OK)
-                .code(OK_CODE)
-                .data(products)
-                .build();
-
-    }
-
     public ResponseDto<List<ProductDto>> universalSearch(ProductDto productDto) {
         List<Product> products = productRepository.findProductById(productDto.getId(), productDto.getName(), productDto.getAmount(), productDto.getPrice());
-        if(products.isEmpty()){
+        if (products.isEmpty()){
             return ResponseDto.<List<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
@@ -175,17 +180,16 @@ public class ProductService {
         }
 
         return ResponseDto.<List<ProductDto>>builder()
-                .code(OK_CODE)
                 .message(OK)
+                .code(OK_CODE)
                 .data(products.stream().map(productMapper::toDto).toList())
                 .build();
-
     }
 
     public ResponseDto<Page<ProductDto>> universalSearch2(Map<String, String> params) {
         Page<Product> products = productRepositoryImpl.universalSearch(params);
 
-        if(products.isEmpty()){
+        if (products.isEmpty()){
             return ResponseDto.<Page<ProductDto>>builder()
                     .code(NOT_FOUND_ERROR_CODE)
                     .message(NOT_FOUND)
@@ -193,23 +197,27 @@ public class ProductService {
         }
 
         return ResponseDto.<Page<ProductDto>>builder()
-                .code(OK_CODE)
                 .message(OK)
+                .code(OK_CODE)
                 .data(products.map(productMapper::toDto))
                 .build();
     }
 
-    public ResponseDto<List<ProductDto>> getProductsWithSort(List<String> sort) {
+    public ResponseDto<List<ProductDto>> getAllProductsWithSort(List<String> sort) {
+//        List<ProductDto> products = productRepository.findAllByOrderByPriceDesc().stream().map(productMapper::toDto).toList();
 
-        List<Sort.Order> orders = sort.stream().map(s ->new Sort.Order(Sort.Direction.DESC, s)).toList();
-        List<ProductDto> productDtos = productRepository.findAll(Sort.by(orders))
-                .stream()
+        List<Sort.Order> orders = sort.stream()
+                .map(s -> new Sort.Order(Sort.Direction.DESC, s))
+                .toList();
+
+        List<ProductDto> products = productRepository.findAll(Sort.by(orders)).stream()
                 .map(productMapper::toDto)
                 .toList();
 
         return ResponseDto.<List<ProductDto>>builder()
-                .data(productDtos)
+                .data(products)
                 .message("OK")
+                .code(0)
                 .success(true)
                 .build();
     }
