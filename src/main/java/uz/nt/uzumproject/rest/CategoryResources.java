@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import uz.nt.uzumproject.service.CategoryService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("category")
+@SecurityRequirement(name = "Authorization")
 public class CategoryResources {
 
     private final CategoryService categoryService;

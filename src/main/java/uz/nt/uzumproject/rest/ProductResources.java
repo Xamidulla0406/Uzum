@@ -1,5 +1,6 @@
 package uz.nt.uzumproject.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class ProductResources {
 
     private final ProductService productService;
