@@ -1,8 +1,10 @@
 package uz.nt.uzumproject.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-import uz.nt.uzumproject.service.validator.AppStatusMessages;
 
 import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 

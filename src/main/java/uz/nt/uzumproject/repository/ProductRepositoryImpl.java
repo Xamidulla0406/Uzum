@@ -3,6 +3,9 @@ package uz.nt.uzumproject.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import uz.nt.uzumproject.model.Product;
 
@@ -15,17 +18,40 @@ public class ProductRepositoryImpl {
     @Autowired
     private EntityManager entityManager;
 
-    public List<Product> universalSearch(Map<String, String> params) {
+    public Page<Product> universalSearch(Map<String, String> params) {
+        int page = 0, size = 10;
+
+        if (params.containsKey("size"))
+            size = Integer.parseInt(params.get("size"));
+
+        if (params.containsKey("page"))
+            page = Integer.parseInt(params.get("page"));
+
         String sqlQuery = "select p from Product p where 1=1 ";
+        String sqlCountQuery = "select count(1) from Product p where 1=1";
         StringBuilder queryCondition = new StringBuilder();
 
         generateQueryCondition(queryCondition, params);
 
         Query query = entityManager.createQuery(sqlQuery + queryCondition, Product.class);
+        Query countQuery = entityManager.createQuery(sqlCountQuery + queryCondition, Product.class);
 
         setParams(query, params);
+        setParams(countQuery, params);
 
-        return query.getResultList();
+        long count = (long) countQuery.getSingleResult();
+
+        if (page >= count / size) {
+            if (count % size == 0)
+                page = (int) count / size - 1;
+        } else page = (int) count / size;
+
+        query.setFirstResult(size * page);
+        query.setMaxResults(size);
+
+        List<Product> products = query.getResultList();
+
+        return new PageImpl<>(products, PageRequest.of(page, size), count);
     }
 
     private void generateQueryCondition(StringBuilder queryCondition, Map<String, String> params) {
@@ -38,7 +64,6 @@ public class ProductRepositoryImpl {
         if (params.containsKey("price")) {
             queryCondition.append(" AND p.price = :price");
         }
-        //...
     }
 
     private void setParams(Query query, Map<String, String> params) {

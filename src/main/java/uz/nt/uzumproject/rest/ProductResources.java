@@ -1,13 +1,13 @@
 package uz.nt.uzumproject.rest;
 
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.nt.uzumproject.dto.ProductDto;
 import uz.nt.uzumproject.dto.ResponseDto;
-import uz.nt.uzumproject.dto.UsersDto;
 import uz.nt.uzumproject.service.ProductService;
 
 import java.util.List;
@@ -16,6 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("product")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class ProductResources {
 
     private final ProductService productService;
@@ -23,7 +24,7 @@ public class ProductResources {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseDto<ProductDto> addProduct(@RequestBody ProductDto productDto) {
-        UsersDto user = (UsersDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        UsersDto user = (UsersDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return productService.addProduct(productDto);
     }
 
@@ -34,14 +35,12 @@ public class ProductResources {
     }
 
     @GetMapping()
-    public ResponseDto<List<ProductDto>> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseDto<Page<EntityModel<ProductDto>>> getAllProducts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        return productService.getAllProducts(page, size);
     }
 
     @GetMapping("by-id")
-    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id, HttpServletRequest req) {
-        String authorization = req.getHeader("Authorization");
-
+    public ResponseDto<ProductDto> getProductById(@RequestParam Integer id) {
         return productService.getProductById(id);
     }
 
@@ -56,7 +55,12 @@ public class ProductResources {
     }
 
     @GetMapping("search-2")
-    public ResponseDto<List<ProductDto>> universalSearch(@RequestParam Map<String, String> params) {
+    public ResponseDto<Page<ProductDto>> universalSearch(@RequestParam Map<String, String> params) {
         return productService.universalSearch2(params);
+    }
+
+    @GetMapping("sort")
+    public ResponseDto<List<ProductDto>> getProducts(@RequestParam List<String> sort) {
+        return productService.getAllProductWithSort(sort);
     }
 }
