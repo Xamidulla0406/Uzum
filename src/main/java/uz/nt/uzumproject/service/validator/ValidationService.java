@@ -1,9 +1,5 @@
 package uz.nt.uzumproject.service.validator;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import uz.nt.uzumproject.dto.ErrorDto;
 import uz.nt.uzumproject.dto.ProductDto;
 
@@ -17,7 +13,7 @@ import static uz.nt.uzumproject.service.validator.AppStatusMessages.*;
 //@Setter
 //@NoArgsConstructor
 //@AllArgsConstructor
-public class ValidationSerivce {
+public class ValidationService {
 
     public static List<ErrorDto> validation(ProductDto dto){
         List<ErrorDto> errors = new ArrayList<>();
