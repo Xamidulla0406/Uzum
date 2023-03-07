@@ -1,0 +1,3 @@
+{"id":1,"name":"apple","price":147,"amount":41,"description":"shirin","images":[],"category":{"id":1,"name":"olma"}}
+{"id":2,"name":"shoptolio","price":100,"amount":41,"description":"shirin","images":[],"category":{"id":2,"name":"olma mahsulotlari"}}
+{"id":4,"name":"orik","price":71,"amount":47,"description":"nordon","images":[],"category":{"id":1,"name":"olma"}}
