@@ -1,6 +1,9 @@
 package uz.nt.uzumproject.config;
 
 import com.google.gson.Gson;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,10 +85,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                 .requestMatchers("/user/login").permitAll()
+                .requestMatchers("/v3/api-docs.yaml", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
+//                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
