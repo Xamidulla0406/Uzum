@@ -37,6 +37,11 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@SecurityScheme(
+        name = "Authorization",
+        in = SecuritySchemeIn.HEADER,
+        type = SecuritySchemeType.APIKEY
+)
 public class SecurityConfiguration {
     @Value("${spring.datasource.url}")
     private String url;
