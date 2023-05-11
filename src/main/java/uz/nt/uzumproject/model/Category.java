@@ -1,10 +1,11 @@
 package uz.nt.uzumproject.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +17,6 @@ public class Category {
     private Integer id;
     private String name;
     private Integer parentId;
-    @OneToMany(mappedBy = "category")
-    private List<Product> product;
+//    @OneToMany(mappedBy = "category")
+//    private List<Product> product;
 }

@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtService.isExpired(token)){
                 response.getWriter().println(gson.toJson(ResponseDto.builder()
                         .code(AppStatusCodes.VALIDATION_ERROR_CODE)
-                        .message("Is token not ")
+                        .message("Token is expired!")
                         .build()));
                 response.setContentType("application/json");
                 response.setStatus(400);

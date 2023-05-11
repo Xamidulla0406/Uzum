@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NamedQuery;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQuery(query = "select p from Product p where p.id = :id", name = "findById")
 public class Product {
     @Id
     @GeneratedValue(generator = "productIdSeq")
@@ -22,7 +24,7 @@ public class Product {
     private Integer price;
     private Integer amount;
     private String description;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<Image> images;
     @ManyToOne
     private Category category;
